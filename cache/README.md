@@ -14,5 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# AMP Access Prototyping
 
+```
+npm i
+npm start
+```
+
+When Publisher is running, you can open, e.g.
+```
+http://localhost:8001/localhost:8002/archive/article.amp.html
+```
