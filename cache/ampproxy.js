@@ -18,7 +18,7 @@
 
 var accessdb = require('./accessdb');
 var consts = require('./consts');
-var viewer = require('./viewer');
+var htmlparser = require('htmlparser2');
 var util = require('./util');
 
 
@@ -81,13 +81,6 @@ class AmpProxy {
    * @return {?string}
    */
   getCacheToken_(req) {
-    // TODOSPEC: Confirm this. This is problematic because:
-    // 1. We use cookie to get CacheToken, but there's only one place where
-    //    it can be reliably set, in postback.login request handler. What if
-    //    this method becomes unavailable?
-    // 2. How do we prevent malicious users from abusing this key?
-    // 3. Can we propagate GAIA context into cache request? How?
-    // 4. How do we ensure stability of this token?
     return util.getCookie(req.serverReq, consts.CACHE_TOKEN_COOKIE) || null;
   }
 
@@ -105,47 +98,83 @@ class AmpProxy {
     //   "You are reading article 3 of 10."
     // Do we need to?
 
-    // TODO: consider hasAccess to be a enum of values: UNKNOWN, DENIED, etc.
-    let pos = 0;
+    const that = this;
     let blockOutput = 0;
-    while (pos < html.length) {
-      let marker = nextMarker(html, pos);
-      if (!marker) {
-        break;
-      }
-
-      if (!blockOutput && pos < marker.startPos) {
-        resp.write(html.substring(pos, marker.startPos));
-      }
-      pos = marker.endPos + 1;
-
-      if (marker.open) {
-        if (!blockOutput) {
-          if (marker.name == 'NOTOK' && hasAccess ||
-                marker.name == 'OK' && !hasAccess) {
+    let parser = new htmlparser.Parser({
+      onopentag: function(name, attrs) {
+        console.log('---- onopentag: ' + name, blockOutput, attrs['amp-access']);
+        if (blockOutput) {
+          console.log('----- blocked');
+          blockOutput++;
+          return;
+        }
+        if (attrs && attrs['amp-access'] !== undefined) {
+          if (!that.checkAccess_(attrs['amp-access'], hasAccess)) {
             blockOutput = 1;
           }
-        } else {
-          blockOutput++;
         }
-      } else {
-        if (blockOutput > 0) {
-          blockOutput--;
-          if (blockOutput == 0) {
+        if (blockOutput) {
+          return;
+        }
+        resp.write('<');
+        resp.write(name);
+        if (attrs) {
+          for (let k in attrs) {
+            resp.write(' ');
+            resp.write(k);
+            if (attrs[k] !== '') {
+              resp.write('="');
+              resp.write(attrs[k]);
+              resp.write('"');
+            }
           }
         }
-      }
-    }
-
-    if (pos < html.length) {
-      resp.write(html.substring(pos));
-    }
-
-    if (!hasAccess) {
-      viewer.includeViewerCode(req.host, req.path, resp);
-    }
-
+        resp.write('>');
+      },
+      onclosetag: function(name) {
+        console.log('---- onclosetag: ' + name, blockOutput);
+        if (blockOutput) {
+          blockOutput--;
+          return;
+        }
+        if (name == 'head') {
+          // Inject amp-login extension.
+          resp.write('<script async custom-element="amp-login"' +
+              ' src="/client/amp-login.js"></script>');
+        }
+        resp.write('</');
+        resp.write(name);
+        resp.write('>');
+      },
+      ontext: function(text) {
+        if (blockOutput) {
+          return;
+        }
+        resp.write(text);
+      },
+      oncomment: function(text) {
+        if (blockOutput) {
+          return;
+        }
+        resp.write('<!--');
+        resp.write(text);
+        resp.write('-->');
+      },
+    }, {decodeEntities: false});
+    parser.write(html);
+    parser.end();
     resp.end();
+  }
+
+  checkAccess_(expr, hasAccess) {
+    // TODO: proper expression evaluator.
+    if (expr == 'access = 1') {
+      return hasAccess;
+    }
+    if (expr == 'access = 0') {
+      return !hasAccess;
+    }
+    return false;
   }
 
 }

@@ -16,10 +16,16 @@
  */
 
 
+var consts = require('./consts');
+var fs = require('fs');
 var http = require('http');
-var postback = require('./postback');
+var pathModule = require('path');
+var saveauth = require('./saveauth');
 var proxy = require('./proxy');
 var util = require('./util');
+
+var ROOT = __dirname;
+var CLIENT_ROOT = pathModule.join(ROOT, 'client');
 
 
 /**
@@ -43,16 +49,17 @@ class Server {
      */
     this.routes_ = [];
 
-    // Postback
-    this.routes_.push({regexp: /^\/postback/,
-        handler: postback.getPostbackHandler()});
-    this.routes_.push({regexp: /^\/loginwait/,
-        handler: postback.getLoginWaitHandler()});
-    this.routes_.push({regexp: /^\/login/,
-        handler: postback.getLoginHandler()});
+    // AccessDB
+    this.routes_.push({regexp: /^\/saveauth/,
+        handler: saveauth.getHandler()});
 
     // Other
-    this.routes_.push({regexp: /favicon.*/, handler: this.devnull_.bind(this)});
+    this.routes_.push({regexp: /favicon.*/,
+        handler: this.devnull_.bind(this)});
+
+    // Local Client
+    this.routes_.push({regexp: /^\/client\/.*/,
+        handler: this.client_.bind(this)});
 
     // Proxy
     this.routes_.push({regexp: /^\/.*\/.*/, handler: proxy.getHandler()});
@@ -108,6 +115,55 @@ class Server {
   devnull_(req, resp) {
     resp.writeHead(204);
     resp.end();
+  }
+
+  /**
+   * Local client file.
+   * @param {!Request} req
+   * @parma {!http.ServerResponse} response
+   * @private
+   */
+  client_(req, resp) {
+    console.log('Local client request: ', req.path);
+
+    if (!req.path || req.path == '/' || req.path == '/client/') {
+      this.notfound_(req, resp);
+      return;
+    }
+
+    let filePath = pathModule.join(CLIENT_ROOT, req.path.substring(
+        '/client/'.length));
+    console.log('- file path: ', filePath);
+    let stat = fs.statSync(filePath);
+
+    let contentType = 'text/html';
+    if (filePath.lastIndexOf('.js') + 3 == filePath.length) {
+      contentType = 'text/javascript';
+    }
+
+    let headers = {
+      'Content-Type': contentType,
+      'Content-Length': stat.size
+    };
+
+    if (filePath.indexOf('amp-login.html') != -1) {
+      // NOTE! This is our one and only chance to set a cookie reliably.
+      let cacheToken = util.getCookie(req.serverReq, consts.CACHE_TOKEN_COOKIE);
+      if (!cacheToken) {
+        cacheToken = 'CACHE' + Math.random();
+        let cookieExpirationTime = new Date(Date.now() + 1000 * 60 * 60 * 2);
+        headers['Set-Cookie'] = util.setCookie(consts.CACHE_TOKEN_COOKIE,
+            cacheToken, cookieExpirationTime);
+        console.log('--- Set cookie: ', cacheToken);
+      } else {
+        console.log('--- Existing cookie: ', cacheToken);
+      }
+    }
+
+    resp.writeHead(200, headers);
+
+    let readStream = fs.createReadStream(filePath);
+    readStream.pipe(resp);
   }
 
   /**

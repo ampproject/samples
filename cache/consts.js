@@ -17,4 +17,4 @@
 
 
 /** @const {string} */
-module.exports.CACHE_TOKEN_COOKIE = 'CacheToken';
+module.exports.CACHE_TOKEN_COOKIE = 'CacheToken2';

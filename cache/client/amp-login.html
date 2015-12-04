@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+<meta name="description" content="Access - AMP Cache Login">
+  <meta charset="utf-8">
+  <title>AMP Cache Login</title>
+  <style>
+    body {
+      margin: 8px;
+    }
+    #info {
+      color: orange;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AMP Cache Login</h1>
+
+  <p>
+    This is an AMP Cache Login page. You will be redirected to the target
+    Login Page within few seconds.
+  </p>
+
+  <p>
+    In reality this will be done via server-side
+    redirect.
+  </p>
+
+  <div style="margin-top: 20px;">
+    <button id=proceed onclick="proceed()">Proceed</button>
+  </div>
+
+  <div id="info"></div>
+
+  <script>
+    function proceed() {
+      document.getElementById('proceed').disabled = true;
+      var redirectUrl = parseQueryString(location.search)['redirect'];
+      var returnUrl = location.href;
+      if (returnUrl.indexOf('?') != -1) {
+        returnUrl = returnUrl.substring(0, returnUrl.indexOf('?'));
+      }
+      returnUrl = returnUrl.replace('login.html', 'login-result.html');
+      redirectUrl += '?return=' + encodeURIComponent(returnUrl);
+      document.getElementById('info').textContent = 'Redirecting now to ' +
+          redirectUrl;
+      setTimeout(function() {
+        location.replace(redirectUrl);
+      }, 2000);
+    }
+
+    function parseQueryString(queryString) {
+      var params = {};
+      if (!queryString) {
+        return params;
+      }
+      if (queryString.indexOf('?') == 0 || queryString.indexOf('#') == 0) {
+        queryString = queryString.substr(1);
+      }
+      var pairs = queryString.split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i];
+        var eqIndex = pair.indexOf('=');
+        var name;
+        var value;
+        if (eqIndex != -1) {
+          name = decodeURIComponent(pair.substring(0, eqIndex)).trim();
+          value = decodeURIComponent(pair.substring(eqIndex + 1)).trim();
+        } else {
+          name = decodeURIComponent(pair).trim();
+          value = '';
+        }
+        if (name) {
+          params[name] = value;
+        }
+      }
+      return params;
+    }
+
+  </script>
+
+</body>
+</html>

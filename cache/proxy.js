@@ -18,6 +18,7 @@
 
 var ampProxy = require('./ampproxy');
 var http = require('http');
+var urlModule = require('url');
 var util = require('./util');
 
 
@@ -46,6 +47,31 @@ class BoringProxy {
       console.log('-- metadata request failed:', reason);
       return Promise.reject(reason);
     });
+  }
+
+  /**
+   * @param {string} cacheUrlString
+   * @return {string}
+   */
+  getProxyUrl(cacheUrlString) {
+    let req = urlModule.parse(cacheUrlString);
+    let host = null;
+    let path = null;
+
+    // URL: https://cache.com/publisher.com/archive/story1.html
+    if (req.path) {
+      let index1 = req.path.indexOf('/');
+      let index2 = req.path.indexOf('/', 1);
+      if (index1 == 0 && index2 != -1) {
+        host = req.path.substring(1, index2);
+        path = req.path.substring(index2);
+      }
+    }
+    if (!host || !path) {
+      return null;
+    }
+
+    return req.protocol + '//' + host + path;
   }
 
   /**

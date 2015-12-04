@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
+<meta name="description" content="Access - AMP Cache Login">
+  <meta charset="utf-8">
+  <title>AMP Cache Login Result</title>
+  <style>
+    body {
+      margin: 8px;
+    }
+    #info {
+      color: orange;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AMP Cache: Login Successfull</h1>
+
+  <p>
+    The reader has been been authenticated by the publisher. This page persists
+    the Reader ID/Auth association in the AMP Cache and sends the message to
+    the AMP Runtime. AMP Runtime is expected to close the login dialog.
+  </p>
+
+  <p>
+    In reality this will be done immediately.
+  </p>
+
+  <div style="margin-top: 20px;">
+    <button id=proceed onclick="proceed()">Proceed</button>
+  </div>
+
+  <div id="info"></div>
+
+  <script>
+    function proceed() {
+      document.getElementById('proceed').disabled = true;
+
+      // amp-login-result.html#authtoken=1234567
+      var authToken = parseQueryString(location.hash)['authtoken'];
+      document.getElementById('info').textContent =
+          'Sending message to runtime with ' + authToken;
+
+      var origin = location.protocol + '//' + location.host;
+      window.addEventListener('message', function(e) {
+        if (e.origin == origin && e.source != window) {
+          document.getElementById('info').textContent += '... NOW!';
+          setTimeout(function() {
+            e.source.postMessage({
+              type: 'login-ok',
+              authToken: authToken
+            }, origin);
+          }, 2000);
+        }
+      });
+      // TODO(dvoytenko): support redirect protocol for native
+    }
+
+    function parseQueryString(queryString) {
+      var params = {};
+      if (!queryString) {
+        return params;
+      }
+      if (queryString.indexOf('?') == 0 || queryString.indexOf('#') == 0) {
+        queryString = queryString.substr(1);
+      }
+      var pairs = queryString.split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i];
+        var eqIndex = pair.indexOf('=');
+        var name;
+        var value;
+        if (eqIndex != -1) {
+          name = decodeURIComponent(pair.substring(0, eqIndex)).trim();
+          value = decodeURIComponent(pair.substring(eqIndex + 1)).trim();
+        } else {
+          name = decodeURIComponent(pair).trim();
+          value = '';
+        }
+        if (name) {
+          params[name] = value;
+        }
+      }
+      return params;
+    }
+  </script>
+
+</body>
+</html>
