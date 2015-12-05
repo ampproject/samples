@@ -85,7 +85,7 @@ class AccessDb {
   }
 
   /**
-   * Verifies "postback" request. To prevent malicious agents from just posting
+   * Verifies "saveauth" request. To prevent malicious agents from just posting
    * us with successful login tokens, we immediately verify the received tokens
    * against the target publisher.
    *
@@ -95,7 +95,7 @@ class AccessDb {
    * @param {string} authToken
    * @return {!Promise}
    */
-  verifyPostback(origin, cacheToken, accessSpec, authToken) {
+  verifySaveAuth(origin, cacheToken, accessSpec, authToken) {
     return this.verifyAccess_(origin, cacheToken, accessSpec, authToken);
   }
 

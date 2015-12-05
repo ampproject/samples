@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-## AMP Cache Prototype
+## AMP Publisher Prototype
+
 
 ```
 npm i
@@ -23,17 +24,5 @@ npm start
 
 Optionally, `edit /etc/hosts`:
 <pre>
-  127.0.0.1               cache.localhost
+  127.0.0.1               pub.localhost
 </pre>
-
-
-When Publisher is running, you can open, e.g.
-
-```
-http://localhost:8001/localhost:8002/archive/article.amp.html
-```
-
-Or
-```
-http://cache.localhost:8001/pub.localhost:8002/archive/article.amp.html
-```
