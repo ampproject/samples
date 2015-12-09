@@ -21,7 +21,9 @@ var fs = require('fs');
 var http = require('http');
 var pathModule = require('path');
 var saveauth = require('./saveauth');
+var pingback = require('./pingback');
 var proxy = require('./proxy');
+var readerIdService = require('./readeridservice');
 var util = require('./util');
 
 var ROOT = __dirname;
@@ -52,6 +54,10 @@ class Server {
     // AccessDB
     this.routes_.push({regexp: /^\/saveauth/,
         handler: saveauth.getHandler()});
+
+    // Pingback
+    this.routes_.push({regexp: /^\/pingback/,
+        handler: pingback.getHandler()});
 
     // Other
     this.routes_.push({regexp: /favicon.*/,
@@ -148,16 +154,7 @@ class Server {
 
     if (filePath.indexOf('amp-login.html') != -1) {
       // NOTE! This is our one and only chance to set a cookie reliably.
-      let cacheToken = util.getCookie(req.serverReq, consts.CACHE_TOKEN_COOKIE);
-      if (!cacheToken) {
-        cacheToken = 'CACHE' + Math.random();
-        let cookieExpirationTime = new Date(Date.now() + 1000 * 60 * 60 * 2);
-        headers['Set-Cookie'] = util.setCookie(consts.CACHE_TOKEN_COOKIE,
-            cacheToken, cookieExpirationTime);
-        console.log('--- Set cookie: ', cacheToken);
-      } else {
-        console.log('--- Existing cookie: ', cacheToken);
-      }
+      readerIdService.ensureReaderIdFirstParty(req, headers);
     }
 
     resp.writeHead(200, headers);

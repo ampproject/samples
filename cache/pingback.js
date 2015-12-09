@@ -26,37 +26,35 @@ var util = require('./util');
 
 /**
  */
-class SaveAuth {
+class Pingback {
 
   constructor() {
   }
 
   getHandler() {
-    return this.saveAuth_.bind(this);
+    return this.pingback_.bind(this);
   }
 
   /**
-   * Handles "saveauth" request. The amp-login-result.html calls "saveauth"
-   * after the successful login operation.
+   * Handles "pingback" request.
    * @param {!Request} req
    * @parma {!http.ServerResponse} response
    * @private
    */
-  saveAuth_(req, resp) {
-    let authToken = req.query['authtoken'];
+  pingback_(req, resp) {
     let url = req.query['url'];
     let readerId = readerIdService.getReaderId(req);
-    console.log('Handle saveauth: ', authToken, readerId, url);
+    console.log('Handle pingback: ', url, readerId);
 
-    if (!authToken || !url) {
-      console.log('---- auth token and url must be specified -> 400');
-      resp.writeHead(400);
+    if (!readerId) {
+      console.log('----- no reader id');
+      resp.writeHead(404);
       resp.end();
       return;
     }
 
-    if (!readerId) {
-      console.log('---- no cookie -> 400');
+    if (!url) {
+      console.log('----- no url');
       resp.writeHead(400);
       resp.end();
       return;
@@ -87,15 +85,11 @@ class SaveAuth {
       resp.writeHead(500);
       resp.end();
     }).then((accessSpec) => {
-      return accessdb.verifySaveAuth(origin, readerId,
-          accessSpec, authToken);
-    }).then(() => {
-      // TODO(dvoytenko): include request to reload.
-      console.log('---- success!');
       resp.writeHead(200);
       resp.end();
+      return accessdb.pingback(origin, readerId, accessSpec, proxyUrl);
     });
   }
 }
 
-module.exports = new SaveAuth();
+module.exports = new Pingback();

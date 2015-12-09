@@ -19,6 +19,7 @@
 var accessdb = require('./accessdb');
 var consts = require('./consts');
 var htmlparser = require('htmlparser2');
+var readerIdService = require('./readeridservice');
 var util = require('./util');
 
 
@@ -44,44 +45,53 @@ class AmpProxy {
   proxy(req, resp, origin, metadata, html) {
     console.log('Handle AMP proxy: ', req.path);
 
+    const contentType = 'text/html';
+
     let accessSpec = util.getAccessSpec(metadata);
     console.log('---- access spec: ', accessSpec);
 
     // No access spec - no restrictions, serve as is.
     if (!accessSpec) {
       console.log('---- NO ACCESS SPEC');
+      resp.writeHead(200, {'Content-Type': contentType});
       resp.write(html);
       resp.end();
       return;
     }
 
-    let cacheToken = this.getCacheToken_(req);
-    let now = Date.now();
-    console.log('---- cache token: ', cacheToken);
+    const readerId = readerIdService.getReaderId(req);
+    console.log('---- Reader ID: ', readerId);
+
+    // If not done yet - do session redirect.
+    if (!readerId) {
+      if (readerIdService.sessionRedirect(req, resp)) {
+        // Shortcitcuit. The user agent will ask for the document again.
+        return;
+      }
+    }
+
+    // Everything is here: proceed with 200.
+    resp.writeHead(200, {'Content-Type': contentType});
 
     // We know nothing about this user - assume that there's no access.
-    if (!cacheToken) {
-      console.log('---- no cache token -> no access');
-      this.proxyWithAccess_(req, html, metadata, accessSpec, false, resp);
+    if (!readerId) {
+      console.log('---- no reader id -> no access');
+      this.proxyWithAccess_(req, html, metadata, accessSpec, null, resp);
       return;
     }
 
-    accessdb.hasAccess(origin, cacheToken, accessSpec).then((hasAccess) => {
-      console.log('---- has access:', hasAccess);
-      this.proxyWithAccess_(req, html, metadata, accessSpec, hasAccess, resp);
-    }, (reason) => {
-      console.log('---- failed: ', reason);
-    });
-  }
-
-  /**
-   * Returns "cache token" for the request. It identifies a AMP Cache user or
-   * a AMP Cache session.
-   * @param {!Request} req
-   * @return {?string}
-   */
-  getCacheToken_(req) {
-    return util.getCookie(req.serverReq, consts.CACHE_TOKEN_COOKIE) || null;
+    accessdb.getAccessProfile(origin, readerId, accessSpec).
+        then((accessProfile) => {
+          console.log('---- access profile:', accessProfile);
+          return accessProfile;
+        }, (reason) => {
+          console.log('---- failed: ', reason);
+          this.proxyWithAccess_(req, html, metadata, accessSpec, null, resp);
+          throw reason;
+        }).then((accessProfile) => {
+          this.proxyWithAccess_(req, html, metadata, accessSpec, accessProfile,
+              resp);
+        });
   }
 
   /**
@@ -89,11 +99,11 @@ class AmpProxy {
    * @param {string} html
    * @param {!Metadata} metadata
    * @param {!AccessSpec} accessSpec
-   * @param {boolean} hasAccess
+   * @param {!AccessProfile} accessProfile
    * @param {!http.ServerResponse} resp
    * @private
    */
-  proxyWithAccess_(req, html, metadata, accessSpec, hasAccess, resp) {
+  proxyWithAccess_(req, html, metadata, accessSpec, accessProfile, resp) {
     // TODOSPEC: In the metered case, how do we display
     //   "You are reading article 3 of 10."
     // Do we need to?
@@ -102,14 +112,12 @@ class AmpProxy {
     let blockOutput = 0;
     let parser = new htmlparser.Parser({
       onopentag: function(name, attrs) {
-        console.log('---- onopentag: ' + name, blockOutput, attrs['amp-access']);
         if (blockOutput) {
-          console.log('----- blocked');
           blockOutput++;
           return;
         }
         if (attrs && attrs['amp-access'] !== undefined) {
-          if (!that.checkAccess_(attrs['amp-access'], hasAccess)) {
+          if (!that.checkAccess_(attrs['amp-access'], accessProfile)) {
             blockOutput = 1;
           }
         }
@@ -132,7 +140,6 @@ class AmpProxy {
         resp.write('>');
       },
       onclosetag: function(name) {
-        console.log('---- onclosetag: ' + name, blockOutput);
         if (blockOutput) {
           blockOutput--;
           return;
@@ -141,6 +148,14 @@ class AmpProxy {
           // Inject amp-login extension.
           resp.write('<script async custom-element="amp-login"' +
               ' src="/client/amp-login.js"></script>');
+        }
+        if (name == 'body') {
+          // TODO(dvoytenko): this belongs in the runtime itself and only on
+          // "visible".
+          resp.write('<script>');
+          resp.write('new Image().src = "/pingback?url=' +
+              encodeURIComponent(req.url.href) + '";');
+          resp.write('</script>');
         }
         resp.write('</');
         resp.write(name);
@@ -166,8 +181,15 @@ class AmpProxy {
     resp.end();
   }
 
-  checkAccess_(expr, hasAccess) {
+  /**
+   * @param {string} expr
+   * @param {!AccessProfile} accessProfile
+   * @return {boolean}
+   * @private
+   */
+  checkAccess_(expr, accessProfile) {
     // TODO: proper expression evaluator.
+    const hasAccess = accessProfile && accessProfile.hasAccess;
     if (expr == 'access = 1') {
       return hasAccess;
     }
@@ -176,7 +198,6 @@ class AmpProxy {
     }
     return false;
   }
-
 }
 
 module.exports = new AmpProxy();

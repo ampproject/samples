@@ -93,27 +93,15 @@ app.get('/login-done', function(req, res) {
 });
 
 
-/* ACCESS RPC */
+/** ACCESS RPC */
 app.get('/access', function(req, res) {
   console.log('Access verification');
   var authToken = req.query.authtoken;
-  if (!authToken) {
-    res.status(400).end();
-    return;
-  }
-
-  if (authToken == '1234567') {
-    res.json({
-      'authToken': authToken,
-      categories: {
-        'default': {}
-      }
-    });
-    return;
-  }
-
-  // Not found.
-  res.status(404).end();
+  res.json({
+    'authToken': authToken,
+    'subscriber': authToken == '1234567',
+    'quotaPerDay': 3,
+  });
 });
 
 
