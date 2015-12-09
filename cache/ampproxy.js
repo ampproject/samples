@@ -59,6 +59,15 @@ class AmpProxy {
       return;
     }
 
+    // Client access control - proxy document as is and let the client deal
+    // with it.
+    if (accessSpec.type == 'client') {
+      console.log('---- proxy with client access');
+      resp.writeHead(200, {'Content-Type': contentType});
+      this.proxyWithClientAccess_(req, html, metadata, accessSpec, resp);
+      return;
+    }
+
     const readerId = readerIdService.getReaderId(req);
     console.log('---- Reader ID: ', readerId);
 
@@ -178,6 +187,34 @@ class AmpProxy {
     }, {decodeEntities: false});
     parser.write(html);
     parser.end();
+    resp.end();
+  }
+
+  /**
+   * @param {!Request} req
+   * @param {string} html
+   * @param {!Metadata} metadata
+   * @param {!AccessSpec} accessSpec
+   * @param {!http.ServerResponse} resp
+   * @private
+   */
+  proxyWithClientAccess_(req, html, metadata, accessSpec, resp) {
+    let index = html.indexOf('</head>');
+    if (index == -1) {
+      index = html.indexOf('</HEAD>');
+    }
+    if (index != -1) {
+      resp.write(html.substring(0, index));
+    } else {
+      resp.write(html);
+    }
+    resp.write('<script async custom-element="amp-login"' +
+        ' src="/client/amp-login.js"></script>');
+    resp.write('<script async' +
+        ' src="/client/amp-access.js"></script>');
+    if (index != -1) {
+      resp.write(html.substring(index));
+    }
     resp.end();
   }
 
