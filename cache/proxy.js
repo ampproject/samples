@@ -167,12 +167,12 @@ class BoringProxy {
 
     // TODO: copy bunch of headers.
     let contentType = proxyResp.headers['content-type'];
-    resp.writeHead(200, {'Content-Type': contentType});
 
     // If not HTML - proxy without interference.
     let isHtml = (contentType && contentType.indexOf('text/html') != -1);
     if (!isHtml) {
       console.log('---- NOT HTML');
+      resp.writeHead(200, {'Content-Type': contentType});
       proxyResp.pipe(resp, {end: true});
       return;
     }
@@ -197,6 +197,7 @@ class BoringProxy {
     let metadata = util.parseMetadata(html);
     if (!metadata.amp) {
       console.log('---- NOT AMP');
+      resp.writeHead(200, {'Content-Type': contentType});
       resp.write(html);
       resp.end();
       return;

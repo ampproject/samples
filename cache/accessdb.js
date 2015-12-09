@@ -51,37 +51,74 @@ class AccessDb {
   }
 
   /**
-   * Returns a promise that yields boolean indicating whether the user
+   * Returns a promise that yields AccessProfile indicating whether the user
    * is allowed to read this story.
    *
    * @param {string} origin
-   * @param {string} cacheToken
+   * @param {!ReaderId} readerId
    * @param {!AccessSpec} accessSpec
-   * @return {!Promise<boolean>}
+   * @return {!Promise<!AccessProfile>}
    */
-  hasAccess(origin, cacheToken, accessSpec) {
-    let key = origin + ':' + cacheToken;
+  getAccessProfile(origin, readerId, accessSpec) {
+    return this.getAccessInfoViaCache_(origin, readerId, accessSpec).
+        then(accessInfo => {
+          console.log('------- access info: ', accessInfo);
+          let hasAccess = false;
+          if (accessInfo.subscriber) {
+            hasAccess = true;
+          } else if (accessInfo.quotaPerDay > 0) {
+            hasAccess = true;
+          }
+          return {hasAccess: hasAccess};
+        });
+  }
+
+  /**
+   *
+   * @param {string} origin
+   * @param {!ReaderId} readerId
+   * @param {!AccessSpec} accessSpec
+   * @param {string} url
+   */
+  pingback(origin, readerId, accessSpec, url) {
+    // TODO(dvoytenko): use URL
+    this.getAccessInfoViaCache_(origin, readerId, accessSpec).
+        then(accessInfo => {
+          console.log('------- access info: ', accessInfo);
+          if (accessInfo.quotaPerDay) {
+            accessInfo.quotaPerDay--;
+            console.log('------- new quota = ', accessInfo.quotaPerDay);
+            this.saveAccessInfo_(origin, readerId, accessInfo);
+          }
+        });
+  }
+
+  /**
+   * @param {string} origin
+   * @param {string} readerId
+   * @param {!AccessSpec} accessSpec
+   * @param {string} authToken
+   * @return {!Promise<!AccessInfo>}
+   * @private
+   */
+  getAccessInfoViaCache_(origin, readerId, accessSpec) {
+    let key = origin + ':' + readerId;
     let accessInfo = this.db_[key];
 
-    if (accessInfo && accessInfo.reverifyAfter < Date.now()) {
+    if (accessInfo && accessInfo.reverifyAfter > Date.now()) {
       // We have access info and it's fresh.
       console.log('------ access info available');
-      // TODOSPEC: even though we optimistically allowing access, we
-      // immediately follow up with a non-blocking verification. Is this
-      // a good idea?
-      this.verifyAccess_(origin, cacheToken, accessSpec,
-                accessInfo.authToken);
-      return Promise.resolve(this.hasAccess_(accessInfo));
+      return Promise.resolve(accessInfo);
     }
 
     if (accessInfo) {
       console.log('------ access info expired');
-      return this.verifyAccess_(origin, cacheToken, accessSpec,
-          accessInfo.authToken);
+      return this.getAccessInfo_(accessSpec, accessInfo.readerId);
     }
 
-    console.log('------ no access info');
-    return Promise.resolve(false);
+    console.log('------ no access info; anonymous request');
+    // TODO(dvoytenko): save anonymous response
+    return this.getAccessInfo_(accessSpec, null);
   }
 
   /**
@@ -90,46 +127,14 @@ class AccessDb {
    * against the target publisher.
    *
    * @param {string} origin
-   * @param {string} cacheToken
+   * @param {!ReaderId} readerId
    * @param {!AccessSpec} accessSpec
    * @param {string} authToken
    * @return {!Promise}
    */
-  verifySaveAuth(origin, cacheToken, accessSpec, authToken) {
-    return this.verifyAccess_(origin, cacheToken, accessSpec, authToken);
-  }
-
-  /**
-   * @param {!AccessInfo} accessInfo
-   * @return {boolean}
-   * @private
-   */
-  hasAccess_(accessInfo) {
-    // TODOSPEC: viewing the same story 10 times should not constitute
-    // more than one "view".
-    if (accessInfo.maxViews !== undefined) {
-      if (!accessInfo.views) {
-        accessInfo.views = 0;
-      }
-      if (accessInfo.views > accessInfo.maxViews) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * @param {string} origin
-   * @param {string} cacheToken
-   * @param {!AccessSpec} accessSpec
-   * @param {string} authToken
-   * @return {!Promise<boolean>}
-   * @private
-   */
-  verifyAccess_(origin, cacheToken, accessSpec, authToken) {
+  verifySaveAuth(origin, readerId, accessSpec, authToken) {
     return this.getAccessInfo_(accessSpec, authToken).then((accessInfo) => {
-      this.saveAccessInfo_(origin, cacheToken, accessInfo);
-      return this.hasAccess_(accessInfo);
+      this.saveAccessInfo_(origin, readerId, accessInfo);
     });
   }
 
@@ -141,6 +146,7 @@ class AccessDb {
    */
   getAccessInfo_(accessSpec, authToken) {
     var url = accessSpec.rpc + '?authtoken=' + encodeURIComponent(authToken);
+    console.log('---- access rpc: ', url);
     return new Promise((resolve, reject) => {
       http.get(url, (res) => {
         console.log('---- RPC response: ', res.statusCode);
@@ -161,16 +167,16 @@ class AccessDb {
 
   /**
    * @param {string} origin
-   * @param {string} cacheToken
+   * @param {!ReaderId} readerId
    * @param {!AccessInfo} accessInfo
    */
-  saveAccessInfo_(origin, cacheToken, accessInfo) {
+  saveAccessInfo_(origin, readerId, accessInfo) {
     if (!accessInfo.reverifyAfter) {
       accessInfo.reverifyAfter = Date.now() + 1000 * 60 * 60;  // 1hr
     }
-    let key = origin + ':' + cacheToken;
+    let key = origin + ':' + readerId;
     this.db_[key] = accessInfo;
-    console.log('------ save access info:', origin, cacheToken, accessInfo);
+    console.log('------ save access info:', origin, readerId, accessInfo);
   }
 }
 
