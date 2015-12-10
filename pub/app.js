@@ -29,6 +29,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var ROOT = __dirname;
 var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 
+var MAX_VIEWS = 3;
+
+var CLIENT_ACCESS = {};
+
+
 app.get('/', function(req, res) {
   res.sendFile('index.html', {root: ROOT});
 });
@@ -101,6 +106,38 @@ app.get('/access', function(req, res) {
     'authToken': authToken,
     'subscriber': authToken == '1234567',
     'quotaPerDay': 3,
+  });
+});
+
+/** ACCESS CORS */
+app.get('/access-client', function(req, res) {
+  console.log('Client access verification');
+  var readerId = req.query.rid;
+  if (!readerId) {
+    res.sendStatus(400);
+    return;
+  }
+
+  // In practice, Origin should be restricted to a few well-known domains.
+  var requestingOrigin = req.header('Origin');
+  console.log('---- requesting origin: ', requestingOrigin);
+  if (requestingOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  var clientAuth = CLIENT_ACCESS[readerId];
+  if (!clientAuth) {
+    clientAuth = {};
+    CLIENT_ACCESS[readerId] = clientAuth;
+  }
+  var views = (clientAuth.views || 0) + 1;
+  clientAuth.views = views;
+
+  res.json({
+    'views': views,
+    'maxViews': MAX_VIEWS,
+    'access': (views <= MAX_VIEWS),
   });
 });
 
