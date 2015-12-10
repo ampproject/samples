@@ -18,9 +18,11 @@
   // TODO(dvoytenko): This is most likely to become the part of the runtime or
   // a separate extension.
 
+  var STORAGE_ID = 'amp-access';
+
   function ClientAuth() {
     var accessStruct;
-    var accessStructVal = window.localStorage.getItem('amp-access');
+    var accessStructVal = window.localStorage.getItem(STORAGE_ID);
     if (accessStructVal) {
       accessStruct = JSON.parse(accessStructVal);
     } else {
@@ -30,7 +32,7 @@
           return r.toString(16);
         })
       };
-      window.localStorage.setItem('amp-access', JSON.stringify(accessStruct));
+      window.localStorage.setItem(STORAGE_ID, JSON.stringify(accessStruct));
     }
     this.accessStruct_ = accessStruct;
     this.readerId_ = accessStruct.readerId;
@@ -58,10 +60,13 @@
     this.pubAccessData_ = accessData;
     var elements = document.querySelectorAll('[amp-access]');
     for (var i = 0; i < elements.length; i++) {
-      if (elements[i].tagName != 'META') {
+      if (elements[i].tagName != 'META' &&
+              elements[i].tagName != 'TEMPLATE') {
         this.applyAccess_(elements[i], accessData);
       }
     }
+
+    this.maybeShowAlert_(accessData);
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
@@ -69,6 +74,45 @@
     // TODO(dvoytenko): Use class instead of direct `display` modification.
     element.style.display = this.checkExpr_(expr, accessData) ?
         'block' : 'none';
+  };
+
+  ClientAuth.prototype.maybeShowAlert_ = function(accessData) {
+    // TODO(dvoytenko): possible to express via the future "alert" element?
+    var alertTemplate = document.querySelector('template[amp-access]');
+    if (!alertTemplate) {
+      return false;
+    }
+
+    // TODO(dvoytenko): should we even check for expression or should we simply
+    // have a predefined expression, e.g. "views < maxViews -> showAlert"?
+    var expr = alertTemplate.getAttribute('amp-access');
+    if (!this.checkExpr_(expr, accessData)) {
+      console.log('alert expression -> false');
+      return false;
+    }
+
+    templates().then(function(templates) {
+      return templates.renderTemplate(alertTemplate, accessData);
+    }).then(this.showAlert_.bind(this));
+    return true;
+  };
+
+  ClientAuth.prototype.showAlert_ = function(element) {
+    console.log('Show alert: ', element);
+
+    var closeButton = element.querySelector('[close]');
+    if (closeButton) {
+      closeButton.onclick = this.closeAlert_.bind(this, element);
+    }
+
+    // TODO(dvoytenko): How do we animate alert? Do we need to?
+
+    document.body.appendChild(element);
+  };
+
+  ClientAuth.prototype.closeAlert_ = function(element) {
+    console.log('Close alert: ', element);
+    document.body.removeChild(element);
   };
 
   ClientAuth.prototype.checkExpr_ = function(expr, accessData) {
@@ -79,6 +123,9 @@
     }
     if (expr == 'access = 0') {
       return !hasAccess;
+    }
+    if (expr == 'views <= maxViews') {
+      return (accessData.views <= accessData.maxViews);
     }
     return false;
   };
@@ -137,6 +184,19 @@
       search: a.search,
       hash: a.hash
     };
+  }
+
+  function templates() {
+    // TODO(dvoytenko): can be removed once the runtime is fixed.
+    var interval;
+    return new Promise(function(resolve, reject) {
+      interval = setInterval(function() {
+        if (window.services.templates) {
+          clearInterval(interval);
+          resolve(window.services.templates.obj);
+        }
+      }, 100);
+    });
   }
 
 
