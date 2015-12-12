@@ -60,59 +60,55 @@
     this.pubAccessData_ = accessData;
     var elements = document.querySelectorAll('[amp-access]');
     for (var i = 0; i < elements.length; i++) {
-      if (elements[i].tagName != 'META' &&
-              elements[i].tagName != 'TEMPLATE') {
-        this.applyAccess_(elements[i], accessData);
+      if (elements[i].tagName == 'META') {
+        continue;
       }
+      this.applyAccess_(elements[i], accessData);
     }
-
-    this.maybeShowAlert_(accessData);
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
     var expr = element.getAttribute('amp-access');
-    // TODO(dvoytenko): Use class instead of direct `display` modification.
-    element.style.display = this.checkExpr_(expr, accessData) ?
-        'block' : 'none';
-  };
+    var on = this.checkExpr_(expr, accessData);
 
-  ClientAuth.prototype.maybeShowAlert_ = function(accessData) {
-    // TODO(dvoytenko): possible to express via the future "alert" element?
-    var alertTemplate = document.querySelector('template[amp-access]');
-    if (!alertTemplate) {
-      return false;
+    var promise = Promise.resolve(element);
+
+    if (on) {
+      // TODO(dvoytenko): this is more of a "alert/dialog/popup" functionality.
+      // Possibly we can reuse something from upcoming live alerts.
+      // Currently the conventions are:
+      // 1. A descendant with a "close" attribute is a closing element: the
+      //    element will be removed if it's clicked.
+      // 2. A descendant "template" element with the "amp-access-template" will
+      //    be rendered using `accessData` response object.
+
+      var closeButton = element.querySelector('[close]');
+      if (closeButton) {
+        closeButton.onclick = function(element) {
+          console.log('Close element: ', element);
+          element.parentElement.removeChild(element);
+        }.bind(this, element);
+      }
+
+      var templateElement = element.querySelector(
+          'template[amp-access-template]');
+      if (templateElement) {
+        promise = this.applyTemplate_(templateElement, accessData);
+      }
     }
 
-    // TODO(dvoytenko): should we even check for expression or should we simply
-    // have a predefined expression, e.g. "views < maxViews -> showAlert"?
-    var expr = alertTemplate.getAttribute('amp-access');
-    if (!this.checkExpr_(expr, accessData)) {
-      console.log('alert expression -> false');
-      return false;
-    }
-
-    templates().then(function(templates) {
-      return templates.renderTemplate(alertTemplate, accessData);
-    }).then(this.showAlert_.bind(this));
-    return true;
+    promise.then(function() {
+      // TODO(dvoytenko): Use class instead of direct `display` modification.
+      element.style.display = on ? 'block' : 'none';
+    });
   };
 
-  ClientAuth.prototype.showAlert_ = function(element) {
-    console.log('Show alert: ', element);
-
-    var closeButton = element.querySelector('[close]');
-    if (closeButton) {
-      closeButton.onclick = this.closeAlert_.bind(this, element);
-    }
-
-    // TODO(dvoytenko): How do we animate alert? Do we need to?
-
-    document.body.appendChild(element);
-  };
-
-  ClientAuth.prototype.closeAlert_ = function(element) {
-    console.log('Close alert: ', element);
-    document.body.removeChild(element);
+  ClientAuth.prototype.applyTemplate_ = function(templateElement, accessData) {
+    return templates().then(function(templates) {
+      return templates.renderTemplate(templateElement, accessData);
+    }).then(function(result) {
+      templateElement.parentElement.replaceChild(result, templateElement);
+    });
   };
 
   ClientAuth.prototype.checkExpr_ = function(expr, accessData) {

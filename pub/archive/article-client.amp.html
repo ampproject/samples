@@ -189,18 +189,18 @@
 </head>
 <body>
 
-  <template amp-access="views &lt;= maxViews" type="amp-mustache">
-    <div class="access-alert">
-      <button close>[X]</button>
-      <div>
+  <div class="access-alert" amp-access="views &lt;= maxViews">
+    <button close>[X]</button>
+    <div>
+      <template amp-access-template type="amp-mustache">
         You are viewing article {{views}} out of {{maxViews}}.
-      </div>
-      <p></p>
-      <div>
-        <amp-login class=my-login href="/login">Become a subscriber now!</amp-login>
-      </div>
+      </template>
     </div>
-  </template>
+    <p></p>
+    <div>
+      <amp-login class=my-login href="/login">Become a subscriber now!</amp-login>
+    </div>
+  </div>
 
   <header>
     <div class="brand-logo">
