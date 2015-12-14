@@ -63,9 +63,11 @@
   }
 
   ClientAuth.prototype.start = function() {
+    document.body.classList.toggle('amp-access-loading', true);
     this.fetchCors_().then(this.makeAccessDecision_.bind(this),
         function(error) {
           console.error('Access request failed: ', error);
+          document.body.classList.toggle('amp-access-loading', false);
         });
   };
 
@@ -80,6 +82,7 @@
       }
       this.applyAccess_(elements[i], accessData);
     }
+    document.body.classList.toggle('amp-access-loading', false);
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
