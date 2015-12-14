@@ -53,28 +53,93 @@
     this.readerId_ = accessStruct.readerId;
     console.log('Reader ID: ', this.readerId_);
 
-    this.pubAccessData_ = null;
-
     this.accessMeta_ = getAccessMeta();
     console.log('access meta:', this.accessMeta_);
 
-    // TODO(dvoytenko): apply access optimistically right away before CORS is
-    // fetched.
+    this.pubAccessData_ = this.getPubAccessData_();
+    console.log('cached access data:', this.pubAccessData_);
   }
+
+  ClientAuth.prototype.getPubId_ = function() {
+    // TODO(dvoytenko): This is likely not a good idea. Instead, we just need
+    // to parse the URL format. Additionally, we can allow customization via
+    // "AMP-Access" meta.
+    return parseUrl(this.accessMeta_.rpc).host;
+  };
+
+  ClientAuth.prototype.getPubAccessData_ = function() {
+    var accessDataStr = window.localStorage.getItem(STORAGE_ID + ':' +
+        this.readerId_ + ':' + this.getPubId_());
+    if (!accessDataStr) {
+        return null;
+    }
+    var accessData;
+    try {
+      accessData = JSON.parse(accessDataStr);
+    } catch (e) {
+      console.error('failed to parse: ', e);
+      window.localStorage.removeItem(STORAGE_ID + ':' +
+        this.readerId_ + ':' + this.getPubId_());
+      return null;
+    }
+    if (!accessData.validUntil) {
+      return null;
+    }
+    if (accessData.validUntil < Date.now()) {
+      return null;
+    }
+    return accessData;
+  };
+
+  ClientAuth.prototype.savePubAccessData_ = function(accessData) {
+    if (accessData.validUntil && accessData.validUntil > Date.now()) {
+      window.localStorage.setItem(STORAGE_ID + ':' +
+          this.readerId_ + ':' + this.getPubId_(),
+          JSON.stringify(accessData));
+    }
+  };
 
   ClientAuth.prototype.start = function() {
     document.body.classList.toggle('amp-access-loading', true);
-    this.fetchCors_().then(this.makeAccessDecision_.bind(this),
-        function(error) {
-          console.error('Access request failed: ', error);
-          document.body.classList.toggle('amp-access-loading', false);
-        });
+
+    // Optimistic processing.
+    if (this.pubAccessData_) {
+      if (this.pubAccessData_.maxViews && this.pubAccessData_.access) {
+        // We can only make a decision in this case when we are under the quota.
+        // Since we are not storing the history of documents viewed, we can't
+        // really know if an impression is equivalent.
+        // But what's also important, is that in this scenario, the access CORS
+        // request has to return new view count. To change if, we'd have to move
+        // this part of the payload to the pingback API.
+        if (this.pubAccessData_.views < this.pubAccessData_.maxViews) {
+          this.pubAccessData_.views = this.pubAccessData_.views + 1;
+          this.pubAccessData_.access = (this.pubAccessData_.views <=
+              this.pubAccessData_.maxViews);
+          this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
+        }
+      } else {
+        this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
+      }
+    }
+
+    // Pessimistic processing.
+    this.fetchCors_().then(function(accessData) {
+      this.makeAccessDecision_(accessData, /* isFinal */ true);
+    }.bind(this), function(error) {
+      console.error('Access request failed: ', error);
+      document.body.classList.toggle('amp-access-loading', false);
+    });
   };
 
 
-  ClientAuth.prototype.makeAccessDecision_ = function(accessData) {
-    console.log('Access data: ', accessData);
-    this.pubAccessData_ = accessData;
+  ClientAuth.prototype.makeAccessDecision_ = function(accessData, isFinal) {
+    // TODO(dvoytenko): make this call callable for both: access RPC and
+    // pingback.
+    console.log('Access data: ', accessData, isFinal);
+    if (isFinal) {
+      this.pubAccessData_ = accessData;
+      this.savePubAccessData_(accessData);
+    }
     var elements = document.querySelectorAll('[amp-access]');
     for (var i = 0; i < elements.length; i++) {
       if (elements[i].tagName == 'META') {
@@ -82,7 +147,9 @@
       }
       this.applyAccess_(elements[i], accessData);
     }
-    document.body.classList.toggle('amp-access-loading', false);
+    if (isFinal) {
+      document.body.classList.toggle('amp-access-loading', false);
+    }
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
@@ -130,7 +197,9 @@
     return templates().then(function(templates) {
       return templates.renderTemplate(templateElement, accessData);
     }).then(function(result) {
-      templateElement.parentElement.replaceChild(result, templateElement);
+      if (templateElement.parentElement) {
+        templateElement.parentElement.replaceChild(result, templateElement);
+      }
     });
   };
 
@@ -150,15 +219,15 @@
   };
 
 
-  ClientAuth.prototype.getPubReaderId_ = function(pubId) {
+  ClientAuth.prototype.getPubReaderId_ = function() {
     // TODO(dvoytenko): hash(readerId,pubId)
-    return 'SHA_' + pubId + ':' + this.readerId_;
+    return 'SHA_' + this.getPubId_() + ':' + this.readerId_;
   };
 
   ClientAuth.prototype.fetchCors_ = function() {
     var url = parseUrl(this.accessMeta_.rpc);
     var urlString = url.href + '?rid=' + encodeURIComponent(
-        this.getPubReaderId_(url.host));
+        this.getPubReaderId_());
     console.log('Access RPC: ', urlString);
     return fetch(urlString, {credentials: 'include'}).then(function(response) {
       return response.json();
