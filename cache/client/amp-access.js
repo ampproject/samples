@@ -18,6 +18,21 @@
   // TODO(dvoytenko): This is most likely to become the part of the runtime or
   // a separate extension.
 
+  // Install styles. Default is that any "amp-access" section that is not
+  // whitelisted using "amp-access-state=true" is set to display:none. This
+  // is equivalent to removing the node from DOM or not sending it over from
+  // cache. The section is shown by setting the same "amp-access-state=true"
+  // attribute.
+  // Notice, that only "display:none" is used. This is important since the
+  // CSS display of the section could be any allowed display value.
+  (function() {
+    var style = document.createElement('style');
+    style.textContent = (
+      '[amp-access]:not([amp-access-state=true]) {display: none};' +
+      '');
+    document.head.appendChild(style);
+  })();
+
   var STORAGE_ID = 'amp-access';
 
   function ClientAuth() {
@@ -98,8 +113,9 @@
     }
 
     promise.then(function() {
-      // TODO(dvoytenko): Use class instead of direct `display` modification.
-      element.style.display = on ? 'block' : 'none';
+      // Sets the correct and final access state. See CSS definitions above
+      // for more details.
+      element.setAttribute('amp-access-state', on);
     });
   };
 
@@ -114,10 +130,10 @@
   ClientAuth.prototype.checkExpr_ = function(expr, accessData) {
     // TODO(dvoytenko): proper expression evaluator
     const hasAccess = accessData.access;
-    if (expr == 'access = 1') {
+    if (expr == 'access = true') {
       return hasAccess;
     }
-    if (expr == 'access = 0') {
+    if (expr == 'access = false') {
       return !hasAccess;
     }
     if (expr == 'views <= maxViews') {
@@ -194,7 +210,6 @@
       }, 100);
     });
   }
-
 
   var clientAuth_ = new ClientAuth();
   clientAuth_.start();
