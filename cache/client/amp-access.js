@@ -18,9 +18,11 @@
   // TODO(dvoytenko): This is most likely to become the part of the runtime or
   // a separate extension.
 
+  var STORAGE_ID = 'amp-access';
+
   function ClientAuth() {
     var accessStruct;
-    var accessStructVal = window.localStorage.getItem('amp-access');
+    var accessStructVal = window.localStorage.getItem(STORAGE_ID);
     if (accessStructVal) {
       accessStruct = JSON.parse(accessStructVal);
     } else {
@@ -30,7 +32,7 @@
           return r.toString(16);
         })
       };
-      window.localStorage.setItem('amp-access', JSON.stringify(accessStruct));
+      window.localStorage.setItem(STORAGE_ID, JSON.stringify(accessStruct));
     }
     this.accessStruct_ = accessStruct;
     this.readerId_ = accessStruct.readerId;
@@ -58,17 +60,55 @@
     this.pubAccessData_ = accessData;
     var elements = document.querySelectorAll('[amp-access]');
     for (var i = 0; i < elements.length; i++) {
-      if (elements[i].tagName != 'META') {
-        this.applyAccess_(elements[i], accessData);
+      if (elements[i].tagName == 'META') {
+        continue;
       }
+      this.applyAccess_(elements[i], accessData);
     }
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
     var expr = element.getAttribute('amp-access');
-    // TODO(dvoytenko): Use class instead of direct `display` modification.
-    element.style.display = this.checkExpr_(expr, accessData) ?
-        'block' : 'none';
+    var on = this.checkExpr_(expr, accessData);
+
+    var promise = Promise.resolve(element);
+
+    if (on) {
+      // TODO(dvoytenko): this is more of a "alert/dialog/popup" functionality.
+      // Possibly we can reuse something from upcoming live alerts.
+      // Currently the conventions are:
+      // 1. A descendant with a "close" attribute is a closing element: the
+      //    element will be removed if it's clicked.
+      // 2. A descendant "template" element with the "amp-access-template" will
+      //    be rendered using `accessData` response object.
+
+      var closeButton = element.querySelector('[close]');
+      if (closeButton) {
+        closeButton.onclick = function(element) {
+          console.log('Close element: ', element);
+          element.parentElement.removeChild(element);
+        }.bind(this, element);
+      }
+
+      var templateElement = element.querySelector(
+          'template[amp-access-template]');
+      if (templateElement) {
+        promise = this.applyTemplate_(templateElement, accessData);
+      }
+    }
+
+    promise.then(function() {
+      // TODO(dvoytenko): Use class instead of direct `display` modification.
+      element.style.display = on ? 'block' : 'none';
+    });
+  };
+
+  ClientAuth.prototype.applyTemplate_ = function(templateElement, accessData) {
+    return templates().then(function(templates) {
+      return templates.renderTemplate(templateElement, accessData);
+    }).then(function(result) {
+      templateElement.parentElement.replaceChild(result, templateElement);
+    });
   };
 
   ClientAuth.prototype.checkExpr_ = function(expr, accessData) {
@@ -79,6 +119,9 @@
     }
     if (expr == 'access = 0') {
       return !hasAccess;
+    }
+    if (expr == 'views <= maxViews') {
+      return (accessData.views <= accessData.maxViews);
     }
     return false;
   };
@@ -137,6 +180,19 @@
       search: a.search,
       hash: a.hash
     };
+  }
+
+  function templates() {
+    // TODO(dvoytenko): can be removed once the runtime is fixed.
+    var interval;
+    return new Promise(function(resolve, reject) {
+      interval = setInterval(function() {
+        if (window.services.templates) {
+          clearInterval(interval);
+          resolve(window.services.templates.obj);
+        }
+      }, 100);
+    });
   }
 
 

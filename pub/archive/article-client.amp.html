@@ -162,12 +162,46 @@
       display: inline-block;
       color: rgb(0, 0, 238);
     }
+
+    .access-alert {
+      position: fixed;
+      z-index: 1000;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      padding: 16px;
+      background: yellow;
+      border-radius: 3px;
+    }
+
+    .access-alert [close] {
+      float: right;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 18px;
+    }
   </style>
   <script async custom-element="amp-lightbox" src="https://cdn.ampproject.org/v0/amp-lightbox-0.1.js"></script>
+  <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
   <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
 </head>
 <body>
+
+  <div class="access-alert" amp-access="views &lt;= maxViews">
+    <button close>[X]</button>
+    <div>
+      <template amp-access-template type="amp-mustache">
+        You are viewing article {{views}} out of {{maxViews}}.
+      </template>
+    </div>
+    <p></p>
+    <div>
+      <amp-login class=my-login href="/login">Become a subscriber now!</amp-login>
+    </div>
+  </div>
+
   <header>
     <div class="brand-logo">
       PublisherLogo
