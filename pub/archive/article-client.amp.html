@@ -189,7 +189,7 @@
 </head>
 <body>
 
-  <div class="access-alert" amp-access="views &lt;= maxViews" amp-access-state=false>
+  <div class="access-alert" amp-access="views &lt;= maxViews">
     <button close>[X]</button>
     <div>
       <template amp-access-template type="amp-mustache">
@@ -260,14 +260,14 @@
           </div>
         </div>
 
-        <section amp-access="access = false" amp-access-state=false class="login-section">
+        <section amp-access="access = false" class="login-section">
           <!--
           <button on="tap1:paywall.login">Login</button>
           -->
           <amp-login class=my-login href="/login">Login to read more!</amp-login>
         </section>
 
-        <section amp-access="access = true" amp-access-state=true class="article-body">
+        <section amp-access="access = true" amp-access-on class="article-body">
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             Curabitur ullamcorper turpis vel commodo scelerisque. Phasellus
