@@ -102,6 +102,13 @@
   ClientAuth.prototype.start = function() {
     document.body.classList.toggle('amp-access-loading', true);
 
+    if (this.accessMeta_.type == 'server') {
+      this.startServer();
+      return;
+    }
+
+    console.log('Client auth');
+
     // Optimistic processing.
     if (this.pubAccessData_) {
       if (this.pubAccessData_.maxViews && this.pubAccessData_.access) {
@@ -131,6 +138,39 @@
     });
   };
 
+  ClientAuth.prototype.startServer = function() {
+    console.log('Server auth');
+
+    // TODO(dvoytenko): apply optimistic data
+    // TODO(dvoytenko): implement autologin
+
+    this.fetchServer_().then(this.mergeServer_.bind(this), function(error) {
+      console.error('Server access request failed: ', error);
+      document.body.classList.toggle('amp-access-loading', false);
+    });
+  };
+
+
+  /**
+   * @param {!{accessData: !JSON, content: !Object<string, string>}} response
+   */
+  ClientAuth.prototype.mergeServer_ = function(response) {
+    console.log('Merge server response: ', response);
+
+    // Merge the content arriving from the server.
+    if (response.sections) {
+      for (var k in response.sections) {
+        var container = document.querySelector('[amp-access-id="' + k + '"]');
+        if (!container) {
+          console.error('Cannot find section: ', k);
+          continue;
+        }
+        container.innerHTML = response.sections[k];
+      }
+    }
+
+    this.makeAccessDecision_(response.accessData, /* isFinal */ true);
+  };
 
   ClientAuth.prototype.makeAccessDecision_ = function(accessData, isFinal) {
     // TODO(dvoytenko): make this call callable for both: access RPC and
@@ -230,6 +270,16 @@
         this.getPubReaderId_());
     console.log('Access RPC: ', urlString);
     return fetch(urlString, {credentials: 'include'}).then(function(response) {
+      return response.json();
+    });
+  };
+
+  ClientAuth.prototype.fetchServer_ = function() {
+    var urlString = '/serveraccess' +
+        '?rid=' + encodeURIComponent(this.getPubReaderId_()) +
+        '&url=' + encodeURIComponent(window.location.href);
+    console.log('Access content: ', urlString);
+    return fetch(urlString).then(function(response) {
       return response.json();
     });
   };

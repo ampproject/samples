@@ -120,6 +120,17 @@ module.exports.httpGet = function httpGet(url) {
 
 
 /**
+ * @param {string} url
+ * @return {!Promise<!JSON>}
+ */
+module.exports.fetchJson = function fetchJson(url) {
+  return module.exports.httpGet(url).then(function(string) {
+    return JSON.parse(string);
+  });
+};
+
+
+/**
  * @typedef {{
  *   rpc: string,
  *   login: string
