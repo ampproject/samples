@@ -138,6 +138,7 @@ app.get('/access-client', function(req, res) {
     'views': views,
     'maxViews': MAX_VIEWS,
     'access': (views <= MAX_VIEWS),
+    'validUntil': new Date().getTime() + 20000,  // Valid for 20 seconds
   });
 });
 
