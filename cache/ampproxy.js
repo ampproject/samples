@@ -84,13 +84,14 @@ class AmpProxy {
   }
 
   /**
-   * Handles AMP "server access" requests.
+   * Handles AMP "server access" requests. The response contains the publisher's
+   * "accessData" and the content of each section enabled by the access
+   * response.
    * @param {!Request} req
    * @parma {!http.ServerResponse} resp
    * @param {string} origin
    * @param {!Metadata} metadata
    * @param {string} html
-   * @return {!{accessData: !JSON, content: !Object<string, string>}}
    */
   serverAccess(req, resp, origin, metadata, html) {
     console.log('Handle AMP server access: ', req.path);
@@ -130,34 +131,6 @@ class AmpProxy {
     }
 
     resp.writeHead(404);
-    resp.end();
-  }
-
-  /**
-   * @param {!Request} req
-   * @param {string} html
-   * @param {!Metadata} metadata
-   * @param {!AccessSpec} accessSpec
-   * @param {!http.ServerResponse} resp
-   * @private
-   */
-  proxyWithClientAccess_(req, html, metadata, accessSpec, resp) {
-    let index = html.indexOf('</head>');
-    if (index == -1) {
-      index = html.indexOf('</HEAD>');
-    }
-    if (index != -1) {
-      resp.write(html.substring(0, index));
-    } else {
-      resp.write(html);
-    }
-    resp.write('<script async custom-element="amp-login"' +
-        ' src="/client/amp-login.js"></script>');
-    resp.write('<script async' +
-        ' src="/client/amp-access.js"></script>');
-    if (index != -1) {
-      resp.write(html.substring(index));
-    }
     resp.end();
   }
 
@@ -357,6 +330,34 @@ class AmpProxy {
     const url = accessSpec.rpc + '?rid=' + encodeURIComponent(pubReaderId);
     console.log('---- access rpc: ', url);
     return util.fetchJson(url);
+  }
+
+  /**
+   * @param {!Request} req
+   * @param {string} html
+   * @param {!Metadata} metadata
+   * @param {!AccessSpec} accessSpec
+   * @param {!http.ServerResponse} resp
+   * @private
+   */
+  proxyWithClientAccess_(req, html, metadata, accessSpec, resp) {
+    let index = html.indexOf('</head>');
+    if (index == -1) {
+      index = html.indexOf('</HEAD>');
+    }
+    if (index != -1) {
+      resp.write(html.substring(0, index));
+    } else {
+      resp.write(html);
+    }
+    resp.write('<script async custom-element="amp-login"' +
+        ' src="/client/amp-login.js"></script>');
+    resp.write('<script async' +
+        ' src="/client/amp-access.js"></script>');
+    if (index != -1) {
+      resp.write(html.substring(index));
+    }
+    resp.end();
   }
 
   /**

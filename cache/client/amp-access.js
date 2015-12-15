@@ -152,7 +152,10 @@
 
 
   /**
-   * @param {!{accessData: !JSON, content: !Object<string, string>}} response
+   * Handlers the access response from AMP Cache. The result contains the
+   * publisher's access data as well as content of sections enabled by this
+   * access data.
+   * @param {!{accessData: !JSON, sections: !Object<string, string>}} response
    */
   ClientAuth.prototype.mergeServer_ = function(response) {
     console.log('Merge server response: ', response);
@@ -169,6 +172,7 @@
       }
     }
 
+    // Common steps to complete access response.
     this.makeAccessDecision_(response.accessData, /* isFinal */ true);
   };
 
