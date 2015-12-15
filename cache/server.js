@@ -69,6 +69,8 @@ class Server {
 
     // Proxy
     this.routes_.push({regexp: /^\/.*\/.*/, handler: proxy.getHandler()});
+    this.routes_.push({regexp: /^\/serveraccess/,
+        handler: proxy.getServerAccessHandler()});
   }
 
   start() {

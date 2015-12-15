@@ -21,6 +21,9 @@ var http = require('http');
 var util = require('./util');
 
 
+// TODO(dvoytenko): remove extra code once Login is redone.
+
+
 /**
  * - authToken - auth token on the publisher's side.
  * - reverifyAfter - the access info is only valid until this time expires.

@@ -19,7 +19,9 @@
 var accessdb = require('./accessdb');
 var consts = require('./consts');
 var htmlparser = require('htmlparser2');
+var http = require('http');
 var readerIdService = require('./readeridservice');
+var urlModule = require('url');
 var util = require('./util');
 
 
@@ -68,39 +70,68 @@ class AmpProxy {
       return;
     }
 
-    const readerId = readerIdService.getReaderId(req);
-    console.log('---- Reader ID: ', readerId);
-
-    // If not done yet - do session redirect.
-    if (!readerId) {
-      if (readerIdService.sessionRedirect(req, resp)) {
-        // Shortcitcuit. The user agent will ask for the document again.
-        return;
-      }
-    }
-
-    // Everything is here: proceed with 200.
-    resp.writeHead(200, {'Content-Type': contentType});
-
-    // We know nothing about this user - assume that there's no access.
-    if (!readerId) {
-      console.log('---- no reader id -> no access');
-      this.proxyWithAccess_(req, html, metadata, accessSpec, null, resp);
+    // Server access control - proxy document while applying the immediate
+    // rules.
+    if (accessSpec.type == 'server') {
+      console.log('---- proxy with server access');
+      resp.writeHead(200, {'Content-Type': contentType});
+      this.proxyWithServerAccess_(req, html, metadata, accessSpec, resp);
       return;
     }
 
-    accessdb.getAccessProfile(origin, readerId, accessSpec).
-        then((accessProfile) => {
-          console.log('---- access profile:', accessProfile);
-          return accessProfile;
-        }, (reason) => {
-          console.log('---- failed: ', reason);
-          this.proxyWithAccess_(req, html, metadata, accessSpec, null, resp);
-          throw reason;
-        }).then((accessProfile) => {
-          this.proxyWithAccess_(req, html, metadata, accessSpec, accessProfile,
-              resp);
-        });
+    resp.writeHead(403);
+    resp.end();
+  }
+
+  /**
+   * Handles AMP "server access" requests. The response contains the publisher's
+   * "accessData" and the content of each section enabled by the access
+   * response.
+   * @param {!Request} req
+   * @parma {!http.ServerResponse} resp
+   * @param {string} origin
+   * @param {!Metadata} metadata
+   * @param {string} html
+   */
+  serverAccess(req, resp, origin, metadata, html) {
+    console.log('Handle AMP server access: ', req.path);
+
+    const readerId = req.query['rid'];
+    console.log('---- reader id: ', readerId);
+    if (!readerId) {
+      console.log('---- NO READER ID');
+      resp.writeHead(400);
+      resp.end();
+      return;
+    }
+
+    const accessSpec = util.getAccessSpec(metadata);
+    console.log('---- access spec: ', accessSpec);
+    if (!accessSpec) {
+      console.log('---- NO ACCESS SPEC');
+      resp.writeHead(404);
+      resp.end();
+      return;
+    }
+
+    // Server access control - proxy document while applying the immediate
+    // rules.
+    if (accessSpec.type == 'server') {
+      console.log('---- query and return server access response');
+      // TODO(dvoytenko): store and use an optimistic response if/when allowed.
+      this.fetchAccessRpc_(accessSpec, req.query['rid']).then(accessData => {
+        this.processServerAccess_(req, html, metadata, accessSpec,
+            accessData, resp);
+      }, error => {
+        console.log('---- Access RPC FAILED: ', error);
+        resp.writeHead(500);
+        resp.end();
+      });
+      return;
+    }
+
+    resp.writeHead(404);
+    resp.end();
   }
 
   /**
@@ -108,30 +139,31 @@ class AmpProxy {
    * @param {string} html
    * @param {!Metadata} metadata
    * @param {!AccessSpec} accessSpec
-   * @param {!AccessProfile} accessProfile
    * @param {!http.ServerResponse} resp
    * @private
    */
-  proxyWithAccess_(req, html, metadata, accessSpec, accessProfile, resp) {
-    // TODOSPEC: In the metered case, how do we display
-    //   "You are reading article 3 of 10."
-    // Do we need to?
-
+  proxyWithServerAccess_(req, html, metadata, accessSpec, resp) {
     const that = this;
-    let blockOutput = 0;
+    let inAccessSection = 0;
+    // TODO(dvoytenko): This is a rather week ID system. We can add some path
+    // information instead or even require publishers to specify one.
+    let accessIdCounter = 0;
     let parser = new htmlparser.Parser({
       onopentag: function(name, attrs) {
-        if (blockOutput) {
-          blockOutput++;
+        if (inAccessSection) {
+          inAccessSection++;
           return;
         }
-        if (attrs && attrs['amp-access'] !== undefined) {
-          if (!that.checkAccess_(attrs['amp-access'], accessProfile)) {
-            blockOutput = 1;
-          }
-        }
-        if (blockOutput) {
-          return;
+        // This code is a server-side analogy of:
+        // `[amp-access]:not([amp-access-on]) {display: none}`
+        // The sections with "amp-access" are not sent to the client by
+        // default, unless there's also "amp-access-on" specified.
+        // The section tag itself is always sent with the calculated ID.
+        let accessId = null;
+        if (attrs && attrs['amp-access'] !== undefined &&
+                attrs['amp-access-on'] === undefined) {
+          accessId = 'A' + (++accessIdCounter);
+          inAccessSection = 1;
         }
         resp.write('<');
         resp.write(name);
@@ -146,38 +178,39 @@ class AmpProxy {
             }
           }
         }
+        if (accessId) {
+          resp.write(' amp-access-id="');
+          resp.write(accessId);
+          resp.write('"');
+        }
         resp.write('>');
       },
       onclosetag: function(name) {
-        if (blockOutput) {
-          blockOutput--;
+        if (inAccessSection) {
+          inAccessSection--;
+        }
+        if (inAccessSection) {
           return;
         }
         if (name == 'head') {
           // Inject amp-login extension.
           resp.write('<script async custom-element="amp-login"' +
               ' src="/client/amp-login.js"></script>');
-        }
-        if (name == 'body') {
-          // TODO(dvoytenko): this belongs in the runtime itself and only on
-          // "visible".
-          resp.write('<script>');
-          resp.write('new Image().src = "/pingback?url=' +
-              encodeURIComponent(req.url.href) + '";');
-          resp.write('</script>');
+          resp.write('<script async' +
+              ' src="/client/amp-access.js"></script>');
         }
         resp.write('</');
         resp.write(name);
         resp.write('>');
       },
       ontext: function(text) {
-        if (blockOutput) {
+        if (inAccessSection) {
           return;
         }
         resp.write(text);
       },
       oncomment: function(text) {
-        if (blockOutput) {
+        if (inAccessSection) {
           return;
         }
         resp.write('<!--');
@@ -188,6 +221,115 @@ class AmpProxy {
     parser.write(html);
     parser.end();
     resp.end();
+  }
+
+  /**
+   * @param {!Request} req
+   * @param {string} html
+   * @param {!Metadata} metadata
+   * @param {!AccessSpec} accessSpec
+   * @param {!JSON} accessData
+   * @param {!http.ServerResponse} resp
+   * @private
+   */
+  processServerAccess_(req, html, metadata, accessSpec, accessData, resp) {
+    console.log('---- return server access response for ', accessData);
+    resp.writeHead(200, {'Content-Type': 'application/json'});
+
+    const result = {};
+    result['accessData'] = accessData;
+    result['sections'] = {};
+
+    // This is symmetric to the processing in the proxyWithServerAccess_. It's
+    // important that the resulting IDs match.
+    const that = this;
+    let accessIdCounter = 0;
+    let inAccessSection = 0;
+    let outputting = false;
+    let buffer = '';
+    let accessId = null;
+    let parser = new htmlparser.Parser({
+      onopentag: function(name, attrs) {
+        if (!inAccessSection) {
+          if (attrs && attrs['amp-access'] !== undefined) {
+            accessId = 'A' + (++accessIdCounter);
+            inAccessSection = 1;
+            console.log('---- section: ', accessId, attrs['amp-access'],
+                that.checkExpr_(attrs['amp-access'], accessData));
+            if (that.checkExpr_(attrs['amp-access'], accessData)) {
+              outputting = true;
+            }
+          }
+        } else {
+          inAccessSection++;
+        }
+        if (inAccessSection <= 1 || !outputting) {
+          // Don't output the node itself - it's already on the client.
+          return;
+        }
+        buffer += '<' + name;
+        if (attrs) {
+          for (let k in attrs) {
+            buffer += ' ' + k;
+            if (attrs[k] !== '') {
+              buffer += '="' + attrs[k] + '"';
+            }
+          }
+        }
+        buffer += '>';
+      },
+      onclosetag: function(name) {
+        if (inAccessSection) {
+          inAccessSection--;
+          if (inAccessSection == 0 && outputting) {
+            result['sections'][accessId] = buffer;
+            outputting = false;
+            buffer = '';
+          }
+        }
+        if (!outputting) {
+          return;
+        }
+        buffer += '</' + name + '>';
+      },
+      ontext: function(text) {
+        if (!outputting) {
+          return;
+        }
+        buffer += text;
+      },
+      oncomment: function(text) {
+        if (!outputting) {
+          return;
+        }
+        buffer += '<!--' + text + '-->';
+      },
+    }, {decodeEntities: false});
+    parser.write(html);
+    parser.end();
+
+    console.log('------ result: ', result.accessData,
+        Object.keys(result.sections));
+    resp.write(JSON.stringify(result));
+    resp.end();
+  }
+
+  /**
+   * @param {!AccessSpec} accessSpec
+   * @param {string} readerId
+   * @return {!Promise<!JSON>}
+   * @private
+   */
+  fetchAccessRpc_(accessSpec, readerId) {
+    // TODO(dvoytenko): Instead of RPC - use the value resolved via origin
+    // of the document.
+    const pubId = urlModule.parse(accessSpec.rpc).host;
+    // TODO(dvoytenko): This is either an exact replica of code in amp-access
+    // or amp-access has to pass the publisher-specific reader ID here.
+    const pubReaderId = 'SHA_' + pubId + ':' + readerId;
+    const url = accessSpec.rpc + '?rid=' + encodeURIComponent(pubReaderId);
+    console.log('---- access rpc: ', url);
+    return util.fetchJson(url);
   }
 
   /**
@@ -220,68 +362,24 @@ class AmpProxy {
 
   /**
    * @param {string} expr
-   * @param {!AccessProfile} accessProfile
+   * @param {!JSON} accessData
    * @return {boolean}
    * @private
    */
-  checkAccess_(expr, accessProfile) {
-    // TODO: proper expression evaluator.
-    const hasAccess = accessProfile && accessProfile.hasAccess;
-    if (expr == 'access = 1') {
+  checkExpr_(expr, accessData) {
+    // TODO(dvoytenko): proper expression evaluator
+    const hasAccess = accessData.access;
+    if (expr == 'access = true') {
       return hasAccess;
     }
-    if (expr == 'access = 0') {
+    if (expr == 'access = false') {
       return !hasAccess;
+    }
+    if (expr == 'views <= maxViews' || expr == 'views &lt;= maxViews') {
+      return (accessData.views <= accessData.maxViews);
     }
     return false;
   }
 }
 
 module.exports = new AmpProxy();
-
-
-
-const PREAMBLE = 'AMP:ACCESS:';
-
-/**
- * @param {string} html
- * @param {number} pos
- */
-function nextMarker(html, pos) {
-  // <!--AMP:ACCESS:NOTOK-->
-  // <!--AMP:ACCESS:OK-->
-  while (pos < html.length) {
-    pos = html.indexOf('<!--', pos);
-    if (pos == -1) {
-      break;
-    }
-    let startPos = pos;
-    pos += 4;
-    if (pos >= html.length) {
-      break;
-    }
-    let open = html[pos] != '/';
-    if (!open) {
-      pos++;
-    }
-    if (pos >= html.length) {
-      break;
-    }
-    if (html.substr(pos, PREAMBLE.length) == PREAMBLE) {
-      pos += PREAMBLE.length;
-    } else {
-      continue;
-    }
-    let endPos = html.indexOf('-->', pos);
-    if (endPos == -1) {
-      break;
-    }
-    let name = html.substring(pos, endPos).trim();
-    if (!name) {
-      break;
-    }
-    endPos += 3;
-    return {name: name, open: open, startPos: startPos, endPos: endPos};
-  }
-  return null;
-}
