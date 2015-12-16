@@ -58,6 +58,12 @@
 
     this.pubAccessData_ = this.getPubAccessData_();
     console.log('cached access data:', this.pubAccessData_);
+
+    /**
+     * A set of sections that have already been downloaded.
+     * @private {!Object<string, boolean>}
+     */
+    this.sectionsLoaded_ = {};
   }
 
   ClientAuth.prototype.getPubId_ = function() {
@@ -122,21 +128,46 @@
           this.pubAccessData_.views = this.pubAccessData_.views + 1;
           this.pubAccessData_.access = (this.pubAccessData_.views <=
               this.pubAccessData_.maxViews);
-          this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
+          this.makeAccessDecision_(this.pubAccessData_, /* isView */ false,
+              /* isFinal */ false);
         }
       } else {
-        this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
+        this.makeAccessDecision_(this.pubAccessData_, /* isView */ false,
+            /* isFinal */ false);
       }
     }
 
     // Pessimistic processing.
-    this.fetchCors_().then(function(accessData) {
-      this.makeAccessDecision_(accessData, /* isFinal */ true);
+    this.fetchCors_(this.accessMeta_.rpc).then(function(accessData) {
+      this.makeAccessDecision_(accessData, /* isView */ false,
+          /* isFinal */ true);
     }.bind(this), function(error) {
       console.error('Access request failed: ', error);
       document.body.classList.toggle('amp-access-loading', false);
     });
   };
+
+
+  ClientAuth.prototype.viewed = function() {
+    console.log('Document has been viewed');
+
+    if (this.accessMeta_.type == 'server') {
+      this.fetchServer_('/serverping').then(this.mergeServer_.bind(this,
+          /* isView */ true),
+          function(error) {
+            console.error('Server ping request failed: ', error);
+          });
+    } else {
+      // Client-side auth issues direct CORS request.
+      this.fetchCors_(this.accessMeta_.ping).then(function(accessData) {
+        this.makeAccessDecision_(accessData, /* isView */ true,
+            /* isFinal */ true);
+      }.bind(this), function(error) {
+        console.error('Ping request failed: ', error);
+      });
+    }
+  };
+
 
   ClientAuth.prototype.startServer = function() {
     console.log('Server auth');
@@ -144,10 +175,12 @@
     // TODO(dvoytenko): apply optimistic data
     // TODO(dvoytenko): implement autologin
 
-    this.fetchServer_().then(this.mergeServer_.bind(this), function(error) {
-      console.error('Server access request failed: ', error);
-      document.body.classList.toggle('amp-access-loading', false);
-    });
+    this.fetchServer_('/serveraccess').then(this.mergeServer_.bind(this,
+        /* isView */ false),
+        function(error) {
+          console.error('Server access request failed: ', error);
+          document.body.classList.toggle('amp-access-loading', false);
+        });
   };
 
 
@@ -155,14 +188,16 @@
    * Handlers the access response from AMP Cache. The result contains the
    * publisher's access data as well as content of sections enabled by this
    * access data.
+   * @param {boolean} isView
    * @param {!{accessData: !JSON, sections: !Object<string, string>}} response
    */
-  ClientAuth.prototype.mergeServer_ = function(response) {
+  ClientAuth.prototype.mergeServer_ = function(isView, response) {
     console.log('Merge server response: ', response);
 
     // Merge the content arriving from the server.
     if (response.sections) {
       for (var k in response.sections) {
+        this.sectionsLoaded_[k] = true;
         var container = document.querySelector('[amp-access-id="' + k + '"]');
         if (!container) {
           console.error('Cannot find section: ', k);
@@ -173,12 +208,13 @@
     }
 
     // Common steps to complete access response.
-    this.makeAccessDecision_(response.accessData, /* isFinal */ true);
+    this.makeAccessDecision_(response.accessData, isView, /* isFinal */ true);
   };
 
-  ClientAuth.prototype.makeAccessDecision_ = function(accessData, isFinal) {
-    // TODO(dvoytenko): make this call callable for both: access RPC and
-    // pingback.
+  ClientAuth.prototype.makeAccessDecision_ = function(accessData, isView,
+      isFinal) {
+    // Enable isView to be used in expressions.
+    accessData['isView'] = isView;
     console.log('Access data: ', accessData, isFinal);
     if (isFinal) {
       this.pubAccessData_ = accessData;
@@ -256,8 +292,8 @@
     if (expr == 'access = false') {
       return !hasAccess;
     }
-    if (expr == 'views <= maxViews') {
-      return (accessData.views <= accessData.maxViews);
+    if (expr == 'isView and views <= maxViews') {
+      return (accessData.isView && accessData.views <= accessData.maxViews);
     }
     return false;
   };
@@ -268,20 +304,22 @@
     return 'SHA_' + this.getPubId_() + ':' + this.readerId_;
   };
 
-  ClientAuth.prototype.fetchCors_ = function() {
-    var url = parseUrl(this.accessMeta_.rpc);
-    var urlString = url.href + '?rid=' + encodeURIComponent(
-        this.getPubReaderId_());
-    console.log('Access RPC: ', urlString);
+  ClientAuth.prototype.fetchCors_ = function(serviceUrl) {
+    var urlString = serviceUrl +
+        '?rid=' + encodeURIComponent(this.getPubReaderId_()) +
+        '&url=' + encodeURIComponent(window.location.href);
+    console.log('RPC: ', urlString);
     return fetch(urlString, {credentials: 'include'}).then(function(response) {
       return response.json();
     });
   };
 
-  ClientAuth.prototype.fetchServer_ = function() {
-    var urlString = '/serveraccess' +
+  ClientAuth.prototype.fetchServer_ = function(serviceUrl) {
+    var urlString = serviceUrl +
         '?rid=' + encodeURIComponent(this.getPubReaderId_()) +
-        '&url=' + encodeURIComponent(window.location.href);
+        '&url=' + encodeURIComponent(window.location.href) +
+        '&sections=' + encodeURIComponent(Object.keys(
+            this.sectionsLoaded_).join(','));
     console.log('Access content: ', urlString);
     return fetch(urlString).then(function(response) {
       return response.json();
@@ -343,4 +381,8 @@
 
   var clientAuth_ = new ClientAuth();
   clientAuth_.start();
+  // Emulate "true view" signal.
+  setTimeout(function() {
+    clientAuth_.viewed();
+  }, 3000);
 });

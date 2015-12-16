@@ -39,6 +39,10 @@ class BoringProxy {
     return this.serverAccess_.bind(this);
   }
 
+  getServerPingHandler() {
+    return this.serverPing_.bind(this);
+  }
+
   /**
    * @param {string} url
    * @return {!Promise<!Metadata>}
@@ -222,7 +226,28 @@ class BoringProxy {
    * @private
    */
   serverAccess_(req, resp) {
-    console.log('Handle server access: ', req.path, req.query);
+    this.serverService_(req, resp, 'rpc');
+  }
+
+  /**
+   * Handles proxy requests.
+   * @param {!Request} req
+   * @parma {!http.ServerResponse} resp
+   * @private
+   */
+  serverPing_(req, resp) {
+    this.serverService_(req, resp, 'ping');
+  }
+
+  /**
+   * Handles proxy requests.
+   * @param {!Request} req
+   * @parma {!http.ServerResponse} resp
+   * @param {string} service
+   * @private
+   */
+  serverService_(req, resp, service) {
+    console.log('Handle server access: ', service, req.path, req.query);
 
     let ampRequest = util.request(req.query['url']);
     ampRequest.serverReq = req.serverReq;
@@ -230,7 +255,9 @@ class BoringProxy {
     // TODO(dvoytenko): ideally these will always be served from cache
     this.proxyRequest_(ampRequest, ampRequest.serverReq).then((res) => {
       ampRequest.query['rid'] = req.query['rid'];
-      this.handleServerAccessResponse_(ampRequest, resp, res.origin, res.resp);
+      ampRequest.query['sections'] = req.query['sections'];
+      this.handleServerServiceResponse_(service, ampRequest, resp, res.origin,
+          res.resp);
     }, (reason) => {
       console.log('-- proxy request failed:', reason);
       resp.writeHead(400, 'Bad request');
@@ -240,13 +267,14 @@ class BoringProxy {
 
   /**
    * Handles server access response.
+   * @param {string} service
    * @param {!Request} req
    * @parma {!http.ServerResponse} resp
    * @param {string} origin
    * @parma {!http.ServerResponse} proxyResp
    * @private
    */
-  handleServerAccessResponse_(req, resp, origin, proxyResp) {
+  handleServerServiceResponse_(service, req, resp, origin, proxyResp) {
     console.log('---- proxy response: ' + proxyResp.statusCode + ' ' +
         proxyResp.statusMessage);
 
@@ -270,7 +298,7 @@ class BoringProxy {
     }
 
     util.consumeString(proxyResp, 'utf8').then(
-        this.proxyServerAccessHtml_.bind(this, req, resp, origin),
+        this.proxyServerServiceHtml_.bind(this, service, req, resp, origin),
         (reason) => {
           console.log('---- failed: ', reason);
           resp.end();
@@ -279,13 +307,14 @@ class BoringProxy {
 
   /**
    * Proxies HTML response.
+   * @param {string} service
    * @param {!Request} req
    * @parma {!http.ServerResponse} resp
    * @param {string} origin
    * @parma {string} html
    * @private
    */
-  proxyServerAccessHtml_(req, resp, origin, html) {
+  proxyServerServiceHtml_(service, req, resp, origin, html) {
     let metadata = util.parseMetadata(html);
     if (!metadata.amp) {
       console.log('---- NOT AMP');
@@ -295,7 +324,7 @@ class BoringProxy {
     }
 
     try {
-      ampProxy.serverAccess(req, resp, origin, metadata, html);
+      ampProxy.serverService(service, req, resp, origin, metadata, html);
     } catch (e) {
       console.log('AMP Server Access failed: ', e);
       resp.end();

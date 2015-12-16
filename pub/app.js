@@ -112,7 +112,17 @@ app.get('/access', function(req, res) {
 /** ACCESS CORS */
 app.get('/access-client', function(req, res) {
   console.log('Client access verification');
-  var readerId = req.query.rid;
+  outputAccessData(req, res, /* isView */ false);
+});
+
+/** PINGBACK CORS */
+app.get('/ping', function(req, res) {
+  console.log('Pingback');
+  outputAccessData(req, res, /* isView */ true);
+});
+
+function outputAccessData(req, res, isView) {
+  var readerId = req.query['rid'];
   if (!readerId) {
     res.sendStatus(400);
     return;
@@ -131,8 +141,11 @@ app.get('/access-client', function(req, res) {
     clientAuth = {};
     CLIENT_ACCESS[readerId] = clientAuth;
   }
-  var views = (clientAuth.views || 0) + 1;
-  clientAuth.views = views;
+  var views = clientAuth.views || 0;
+  if (isView) {
+    views++;
+    clientAuth.views = views;
+  }
 
   res.json({
     'views': views,
@@ -140,7 +153,7 @@ app.get('/access-client', function(req, res) {
     'access': (views <= MAX_VIEWS),
     'validUntil': new Date().getTime() + 20000,  // Valid for 20 seconds
   });
-});
+}
 
 
 var server = app.listen(PORT, function() {

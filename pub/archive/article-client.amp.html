@@ -7,11 +7,8 @@
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <meta name="amp-access" content="type=client;
       rpc=http://localhost:8002/access-client;
+      ping=http://localhost:8002/ping;
       login=http://localhost:8002/login">
-  <!--
-  <link rel="amp-access-rpc" href="http://localhost:8002/access">
-  <link rel="amp-access-login" href="http://localhost:8002/login">
-  -->
   <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
   <style amp-custom>
     body {
@@ -255,7 +252,7 @@
 </head>
 <body>
 
-  <div class="access-alert" amp-access="views &lt;= maxViews">
+  <div class="access-alert" amp-access="isView and views &lt;= maxViews">
     <button close>[X]</button>
     <div>
       <template amp-access-template type="amp-mustache">
