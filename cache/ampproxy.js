@@ -87,13 +87,14 @@ class AmpProxy {
    * Handles AMP "server access" requests. The response contains the publisher's
    * "accessData" and the content of each section enabled by the access
    * response.
+   * @param {string} service
    * @param {!Request} req
    * @parma {!http.ServerResponse} resp
    * @param {string} origin
    * @param {!Metadata} metadata
    * @param {string} html
    */
-  serverAccess(req, resp, origin, metadata, html) {
+  serverService(service, req, resp, origin, metadata, html) {
     console.log('Handle AMP server access: ', req.path);
 
     const readerId = req.query['rid'];
@@ -114,14 +115,23 @@ class AmpProxy {
       return;
     }
 
+    const sectionsLoaded = {};
+    if (req.query['sections']) {
+      req.query['sections'].split(',').forEach(function(section) {
+        sectionsLoaded[section] = true;
+      });
+    }
+
     // Server access control - proxy document while applying the immediate
     // rules.
     if (accessSpec.type == 'server') {
       console.log('---- query and return server access response');
       // TODO(dvoytenko): store and use an optimistic response if/when allowed.
-      this.fetchAccessRpc_(accessSpec, req.query['rid']).then(accessData => {
-        this.processServerAccess_(req, html, metadata, accessSpec,
-            accessData, resp);
+      const serviceUrl = service == 'ping' ? accessSpec.ping : accessSpec.rpc;
+      this.fetchService_(serviceUrl, readerId).then(accessData => {
+        accessData['isView'] = (service == 'ping');
+        this.processServerService_(service, req, html, metadata, accessSpec,
+            accessData, sectionsLoaded, resp);
       }, error => {
         console.log('---- Access RPC FAILED: ', error);
         resp.writeHead(500);
@@ -224,16 +234,20 @@ class AmpProxy {
   }
 
   /**
+   * @param {string} service
    * @param {!Request} req
    * @param {string} html
    * @param {!Metadata} metadata
    * @param {!AccessSpec} accessSpec
    * @param {!JSON} accessData
+   * @param {!Object<string, boolean>} sectionsLoaded
    * @param {!http.ServerResponse} resp
    * @private
    */
-  processServerAccess_(req, html, metadata, accessSpec, accessData, resp) {
-    console.log('---- return server access response for ', accessData);
+  processServerService_(service, req, html, metadata, accessSpec, accessData,
+      sectionsLoaded, resp) {
+    console.log('---- return server access response for ', accessData,
+        sectionsLoaded);
     resp.writeHead(200, {'Content-Type': 'application/json'});
 
     const result = {};
@@ -254,10 +268,14 @@ class AmpProxy {
           if (attrs && attrs['amp-access'] !== undefined) {
             accessId = 'A' + (++accessIdCounter);
             inAccessSection = 1;
-            console.log('---- section: ', accessId, attrs['amp-access'],
-                that.checkExpr_(attrs['amp-access'], accessData));
-            if (that.checkExpr_(attrs['amp-access'], accessData)) {
-              outputting = true;
+            if (sectionsLoaded[accessId]) {
+              console.log('---- section: ', accessId, 'already loaded');
+            } else {
+              console.log('---- section: ', accessId, attrs['amp-access'],
+                  that.checkExpr_(attrs['amp-access'], accessData));
+              if (that.checkExpr_(attrs['amp-access'], accessData)) {
+                outputting = true;
+              }
             }
           }
         } else {
@@ -315,19 +333,19 @@ class AmpProxy {
   }
 
   /**
-   * @param {!AccessSpec} accessSpec
+   * @param {string} serviceUrl
    * @param {string} readerId
    * @return {!Promise<!JSON>}
    * @private
    */
-  fetchAccessRpc_(accessSpec, readerId) {
+  fetchService_(serviceUrl, readerId) {
     // TODO(dvoytenko): Instead of RPC - use the value resolved via origin
     // of the document.
-    const pubId = urlModule.parse(accessSpec.rpc).host;
+    const pubId = urlModule.parse(serviceUrl).host;
     // TODO(dvoytenko): This is either an exact replica of code in amp-access
     // or amp-access has to pass the publisher-specific reader ID here.
     const pubReaderId = 'SHA_' + pubId + ':' + readerId;
-    const url = accessSpec.rpc + '?rid=' + encodeURIComponent(pubReaderId);
+    const url = serviceUrl + '?rid=' + encodeURIComponent(pubReaderId);
     console.log('---- access rpc: ', url);
     return util.fetchJson(url);
   }
@@ -375,8 +393,9 @@ class AmpProxy {
     if (expr == 'access = false') {
       return !hasAccess;
     }
-    if (expr == 'views <= maxViews' || expr == 'views &lt;= maxViews') {
-      return (accessData.views <= accessData.maxViews);
+    if (expr == 'isView and views <= maxViews' ||
+            expr == 'isView and views &lt;= maxViews') {
+      return (accessData.isView && accessData.views <= accessData.maxViews);
     }
     return false;
   }

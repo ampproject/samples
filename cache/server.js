@@ -71,6 +71,8 @@ class Server {
     this.routes_.push({regexp: /^\/.*\/.*/, handler: proxy.getHandler()});
     this.routes_.push({regexp: /^\/serveraccess/,
         handler: proxy.getServerAccessHandler()});
+    this.routes_.push({regexp: /^\/serverping/,
+        handler: proxy.getServerPingHandler()});
   }
 
   start() {
