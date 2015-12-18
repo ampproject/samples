@@ -116,11 +116,11 @@ class AmpProxy {
     if (accessSpec.type == 'server') {
       console.log('---- query and return server access response');
       // TODO(dvoytenko): store and use an optimistic response if/when allowed.
-      this.fetchAccessRpc_(accessSpec, req.query['rid']).then(accessData => {
+      this.fetchAuthorization_(accessSpec, readerId).then(accessData => {
         this.processServerAccess_(req, html, metadata, accessSpec,
             accessData, resp);
       }, error => {
-        console.log('---- Access RPC FAILED: ', error);
+        console.log('---- Authorization FAILED: ', error);
         resp.writeHead(500);
         resp.end();
       });
@@ -315,15 +315,16 @@ class AmpProxy {
    * @return {!Promise<!JSON>}
    * @private
    */
-  fetchAccessRpc_(accessSpec, readerId) {
-    // TODO(dvoytenko): Instead of RPC - use the value resolved via origin
-    // of the document.
-    const pubId = urlModule.parse(accessSpec.rpc).host;
+  fetchAuthorization_(accessSpec, readerId) {
+    // TODO(dvoytenko): Instead of auth endpoint - use the value resolved via
+    // origin of the document.
+    const pubId = urlModule.parse(accessSpec.authorization).host;
     // TODO(dvoytenko): This is either an exact replica of code in amp-access
     // or amp-access has to pass the publisher-specific reader ID here.
     const pubReaderId = 'SHA_' + pubId + ':' + readerId;
-    const url = accessSpec.rpc + '?rid=' + encodeURIComponent(pubReaderId);
-    console.log('---- access rpc: ', url);
+    const url = accessSpec.authorization + '?rid=' +
+        encodeURIComponent(pubReaderId);
+    console.log('---- Authorization URL: ', url);
     return util.fetchJson(url);
   }
 

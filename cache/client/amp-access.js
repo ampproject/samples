@@ -63,7 +63,7 @@
     // TODO(dvoytenko): This is likely not a good idea. Instead, we just need
     // to parse the URL format. Additionally, we can allow customization via
     // "AMP-Access" meta.
-    return parseUrl(this.accessMeta_.rpc).host;
+    return parseUrl(this.accessMeta_.authorization).host;
   };
 
   ClientAuth.prototype.start = function() {
@@ -208,10 +208,10 @@
   };
 
   ClientAuth.prototype.fetchCors_ = function() {
-    var url = parseUrl(this.accessMeta_.rpc);
+    var url = parseUrl(this.accessMeta_.authorization);
     var urlString = url.href + '?rid=' + encodeURIComponent(
         this.getPubReaderId_());
-    console.log('Access RPC: ', urlString);
+    console.log('Authorization URL: ', urlString);
     return fetch(urlString, {credentials: 'include'}).then(function(response) {
       return response.json();
     });
