@@ -16,14 +16,10 @@
  */
 
 
-var consts = require('./consts');
 var fs = require('fs');
 var http = require('http');
 var pathModule = require('path');
-var saveauth = require('./saveauth');
-var pingback = require('./pingback');
 var proxy = require('./proxy');
-var readerIdService = require('./readeridservice');
 var util = require('./util');
 
 var ROOT = __dirname;
@@ -50,14 +46,6 @@ class Server {
      *    handler: function(!Request, !http.ServerResponse)}>}
      */
     this.routes_ = [];
-
-    // AccessDB
-    this.routes_.push({regexp: /^\/saveauth/,
-        handler: saveauth.getHandler()});
-
-    // Pingback
-    this.routes_.push({regexp: /^\/pingback/,
-        handler: pingback.getHandler()});
 
     // Other
     this.routes_.push({regexp: /favicon.*/,
@@ -153,11 +141,6 @@ class Server {
       'Content-Type': contentType,
       'Content-Length': stat.size
     };
-
-    if (filePath.indexOf('amp-login.html') != -1) {
-      // NOTE! This is our one and only chance to set a cookie reliably.
-      readerIdService.ensureReaderIdFirstParty(req, headers);
-    }
 
     resp.writeHead(200, headers);
 

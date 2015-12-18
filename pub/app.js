@@ -76,9 +76,17 @@ app.post('/login-submit', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
   var returnUrl = req.body.returnurl;
-  console.log('POST: ', email, returnUrl);
+  var readerId = req.body.rid;
+  console.log('POST: ', email, returnUrl, readerId);
 
   var authToken = '1234567';
+
+  // Login
+  CLIENT_ACCESS[readerId] = {
+    subscriber: true,
+    authToken: authToken  // Optional. Just for debug.
+  };
+  console.log('Logged in: ', CLIENT_ACCESS[readerId]);
 
   // Set cookies
   res.cookie('Auth', email, {
@@ -89,25 +97,14 @@ app.post('/login-submit', function(req, res) {
   });
 
   // Redirect
-  res.redirect('/login-done?return=' + encodeURIComponent(
-      returnUrl + '#authtoken=' + encodeURIComponent(authToken)));
+  res.redirect('/login-done?return=' + encodeURIComponent(returnUrl +
+      '#success=true'));
 });
 
 app.get('/login-done', function(req, res) {
   res.sendFile('login-done.html', {root: ROOT});
 });
 
-
-/** ACCESS RPC */
-app.get('/access', function(req, res) {
-  console.log('Access verification');
-  var authToken = req.query.authtoken;
-  res.json({
-    'authToken': authToken,
-    'subscriber': authToken == '1234567',
-    'quotaPerDay': 3,
-  });
-});
 
 /** ACCESS CORS */
 app.get('/access-client', function(req, res) {
@@ -131,15 +128,26 @@ app.get('/access-client', function(req, res) {
     clientAuth = {};
     CLIENT_ACCESS[readerId] = clientAuth;
   }
-  var views = (clientAuth.views || 0) + 1;
-  clientAuth.views = views;
 
-  res.json({
-    'views': views,
-    'maxViews': MAX_VIEWS,
-    'access': (views <= MAX_VIEWS),
-    'validUntil': new Date().getTime() + 20000,  // Valid for 20 seconds
-  });
+  var response;
+  if (clientAuth.subscriber) {
+    // Subscriber.
+    response = {
+      'subscriber': true,
+      'access': true
+    };
+  } else {
+    // Metered.
+    var views = (clientAuth.views || 0) + 1;
+    clientAuth.views = views;
+    response = {
+      'views': views,
+      'maxViews': MAX_VIEWS,
+      'access': (views <= MAX_VIEWS)
+    };
+  }
+  console.log('Authorization response:', readerId, response);
+  res.json(response);
 });
 
 

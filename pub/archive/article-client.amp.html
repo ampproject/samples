@@ -8,10 +8,6 @@
   <meta name="amp-access" content="type=client;
       rpc=http://localhost:8002/access-client;
       login=http://localhost:8002/login">
-  <!--
-  <link rel="amp-access-rpc" href="http://localhost:8002/access">
-  <link rel="amp-access-login" href="http://localhost:8002/login">
-  -->
   <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
   <style amp-custom>
     body {
@@ -143,6 +139,10 @@
       background: #f4f4f4;
     }
 
+    a {
+      color: rgb(0, 0, 238);
+    }
+
     hr {
       margin: 0;
     }
@@ -264,7 +264,7 @@
     </div>
     <p></p>
     <div>
-      <amp-login class=my-login href="/login">Become a subscriber now!</amp-login>
+      <a on="tap1:amp-access.login">Become a subscriber now!</a>
     </div>
   </div>
 
@@ -335,10 +335,7 @@
         </section>
 
         <section amp-access="access = false" class="login-section">
-          <!--
-          <button on="tap1:paywall.login">Login</button>
-          -->
-          <amp-login class=my-login href="/login">Login to read more!</amp-login>
+          <a on="tap1:amp-access.login">Login to read more!</a>
         </section>
 
         <section amp-access="access = true" amp-access-on class="article-body">

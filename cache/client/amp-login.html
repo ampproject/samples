@@ -42,12 +42,14 @@
     function proceed() {
       document.getElementById('proceed').disabled = true;
       var redirectUrl = parseQueryString(location.search)['redirect'];
+      var readerId = parseQueryString(location.search)['rid'];
       var returnUrl = location.href;
       if (returnUrl.indexOf('?') != -1) {
         returnUrl = returnUrl.substring(0, returnUrl.indexOf('?'));
       }
       returnUrl = returnUrl.replace('login.html', 'login-result.html');
       redirectUrl += '?return=' + encodeURIComponent(returnUrl);
+      redirectUrl += '&rid=' + encodeURIComponent(readerId);
       document.getElementById('info').textContent = 'Redirecting now to ' +
           redirectUrl;
       setTimeout(function() {

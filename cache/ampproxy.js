@@ -16,11 +16,8 @@
  */
 
 
-var accessdb = require('./accessdb');
-var consts = require('./consts');
 var htmlparser = require('htmlparser2');
 var http = require('http');
-var readerIdService = require('./readeridservice');
 var urlModule = require('url');
 var util = require('./util');
 
@@ -193,9 +190,7 @@ class AmpProxy {
           return;
         }
         if (name == 'head') {
-          // Inject amp-login extension.
-          resp.write('<script async custom-element="amp-login"' +
-              ' src="/client/amp-login.js"></script>');
+          // Inject access script.
           resp.write('<script async' +
               ' src="/client/amp-access.js"></script>');
         }
@@ -350,8 +345,6 @@ class AmpProxy {
     } else {
       resp.write(html);
     }
-    resp.write('<script async custom-element="amp-login"' +
-        ' src="/client/amp-login.js"></script>');
     resp.write('<script async' +
         ' src="/client/amp-access.js"></script>');
     if (index != -1) {
