@@ -132,7 +132,9 @@ module.exports.fetchJson = function fetchJson(url) {
 
 /**
  * @typedef {{
- *   rpc: string,
+ *   type: string,
+ *   authorization: string,
+ *   pingback: string,
  *   login: string
  * }}
  */
@@ -148,13 +150,9 @@ const AccessSpec = {};
 module.exports.getAccessSpec = function getAccessSpec(metadata) {
   /* Ex:
     <meta name="amp-access" content="
-          rpc=http://localhost:8002/access;
+          authorization=http://localhost:8002/access;
           login=http://localhost:8002/login">
   */
-  // TODOSPEC: Does it make sense that the same `rpc` and `login` will
-  // be in all documents? What if this is misunderstood and a publisher
-  // will try to provide a different RPC request for every URL hoping to
-  // do a URL-level control?
   let meta = metadata.meta['amp-access'];
   if (!meta) {
     return null;

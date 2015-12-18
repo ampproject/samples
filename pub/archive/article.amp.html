@@ -5,13 +5,6 @@
   <title>Lorem Ipsum | PublisherName</title>
   <link rel="canonical" href="amps.html" >
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <meta name="amp-access" content="category=default;
-      rpc=http://localhost:8002/access;
-      login=http://localhost:8002/login">
-  <!--
-  <link rel="amp-access-rpc" href="http://localhost:8002/access">
-  <link rel="amp-access-login" href="http://localhost:8002/login">
-  -->
   <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
   <style amp-custom>
     body {
@@ -226,14 +219,7 @@
           </div>
         </div>
 
-        <section amp-access="access = 0" class="login-section">
-          <!--
-          <button on="tap1:paywall.login">Login</button>
-          -->
-          <amp-login class=my-login href="/login">Login to read more!</amp-login>
-        </section>
-
-        <section amp-access="access = 1" class="article-body" itemprop="articleBody">
+        <section class="article-body" itemprop="articleBody">
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
             Curabitur ullamcorper turpis vel commodo scelerisque. Phasellus
