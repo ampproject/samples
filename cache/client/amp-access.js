@@ -56,8 +56,7 @@
     this.accessMeta_ = getAccessMeta();
     console.log('access meta:', this.accessMeta_);
 
-    this.pubAccessData_ = this.getPubAccessData_();
-    console.log('cached access data:', this.pubAccessData_);
+    this.setupLoginLinks_();
   }
 
   ClientAuth.prototype.getPubId_ = function() {
@@ -65,38 +64,6 @@
     // to parse the URL format. Additionally, we can allow customization via
     // "AMP-Access" meta.
     return parseUrl(this.accessMeta_.rpc).host;
-  };
-
-  ClientAuth.prototype.getPubAccessData_ = function() {
-    var accessDataStr = window.localStorage.getItem(STORAGE_ID + ':' +
-        this.readerId_ + ':' + this.getPubId_());
-    if (!accessDataStr) {
-        return null;
-    }
-    var accessData;
-    try {
-      accessData = JSON.parse(accessDataStr);
-    } catch (e) {
-      console.error('failed to parse: ', e);
-      window.localStorage.removeItem(STORAGE_ID + ':' +
-        this.readerId_ + ':' + this.getPubId_());
-      return null;
-    }
-    if (!accessData.validUntil) {
-      return null;
-    }
-    if (accessData.validUntil < Date.now()) {
-      return null;
-    }
-    return accessData;
-  };
-
-  ClientAuth.prototype.savePubAccessData_ = function(accessData) {
-    if (accessData.validUntil && accessData.validUntil > Date.now()) {
-      window.localStorage.setItem(STORAGE_ID + ':' +
-          this.readerId_ + ':' + this.getPubId_(),
-          JSON.stringify(accessData));
-    }
   };
 
   ClientAuth.prototype.start = function() {
@@ -109,29 +76,8 @@
 
     console.log('Client auth');
 
-    // Optimistic processing.
-    if (this.pubAccessData_) {
-      if (this.pubAccessData_.maxViews && this.pubAccessData_.access) {
-        // We can only make a decision in this case when we are under the quota.
-        // Since we are not storing the history of documents viewed, we can't
-        // really know if an impression is equivalent.
-        // But what's also important, is that in this scenario, the access CORS
-        // request has to return new view count. To change if, we'd have to move
-        // this part of the payload to the pingback API.
-        if (this.pubAccessData_.views < this.pubAccessData_.maxViews) {
-          this.pubAccessData_.views = this.pubAccessData_.views + 1;
-          this.pubAccessData_.access = (this.pubAccessData_.views <=
-              this.pubAccessData_.maxViews);
-          this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
-        }
-      } else {
-        this.makeAccessDecision_(this.pubAccessData_, /* isFinal */ false);
-      }
-    }
-
-    // Pessimistic processing.
     this.fetchCors_().then(function(accessData) {
-      this.makeAccessDecision_(accessData, /* isFinal */ true);
+      this.makeAccessDecision_(accessData);
     }.bind(this), function(error) {
       console.error('Access request failed: ', error);
       document.body.classList.toggle('amp-access-loading', false);
@@ -173,17 +119,12 @@
     }
 
     // Common steps to complete access response.
-    this.makeAccessDecision_(response.accessData, /* isFinal */ true);
+    this.makeAccessDecision_(response.accessData);
+    this.setupLoginLinks_();
   };
 
-  ClientAuth.prototype.makeAccessDecision_ = function(accessData, isFinal) {
-    // TODO(dvoytenko): make this call callable for both: access RPC and
-    // pingback.
-    console.log('Access data: ', accessData, isFinal);
-    if (isFinal) {
-      this.pubAccessData_ = accessData;
-      this.savePubAccessData_(accessData);
-    }
+  ClientAuth.prototype.makeAccessDecision_ = function(accessData) {
+    console.log('Access data: ', accessData);
     var elements = document.querySelectorAll('[amp-access]');
     for (var i = 0; i < elements.length; i++) {
       if (elements[i].tagName == 'META') {
@@ -191,9 +132,7 @@
       }
       this.applyAccess_(elements[i], accessData);
     }
-    if (isFinal) {
-      document.body.classList.toggle('amp-access-loading', false);
-    }
+    document.body.classList.toggle('amp-access-loading', false);
   };
 
   ClientAuth.prototype.applyAccess_ = function(element, accessData) {
@@ -280,12 +219,120 @@
 
   ClientAuth.prototype.fetchServer_ = function() {
     var urlString = '/serveraccess' +
-        '?rid=' + encodeURIComponent(this.getPubReaderId_()) +
+        '?rid=' + encodeURIComponent(this.readerId_) +
         '&url=' + encodeURIComponent(window.location.href);
     console.log('Access content: ', urlString);
     return fetch(urlString).then(function(response) {
       return response.json();
     });
+  };
+
+  ClientAuth.prototype.setupLoginLinks_ = function() {
+    var links = document.querySelectorAll('a[on="tap1:amp-access.login"]');
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].onclick) {
+        continue;
+      }
+      console.log('- instrument link:', links[i]);
+      links[i].onclick = this.lauchLoginDialog_.bind(this);
+    }
+  };
+
+  ClientAuth.prototype.lauchLoginDialog_ = function() {
+    this.loginFlow_ = new LoginFlow(this.getPubReaderId_(), this.accessMeta_);
+    this.loginFlow_.start();
+  };
+
+
+  var LoginFlow = function(readerId, meta) {
+    /** @private {string} */
+    this.readerId = readerId;
+    /** @private {!{login: string}} */
+    this.meta = meta;
+    /** @private {?Window} */
+    this.loginDialog = null;
+    /** @private {?number} */
+    this.heartbeatInterval = null;
+    /** @private {boolean} */
+    this.complete = false;
+  }
+
+  LoginFlow.prototype.start = function() {
+    console.log('Open login dialog');
+    var w = Math.floor(Math.min(700, screen.width * 0.9));
+    var h = Math.floor(Math.min(450, screen.height * 0.9));
+    var x = Math.floor((screen.width - w) / 2);
+    var y = Math.floor((screen.height - h) / 2);
+    console.log('w = ' + w + ', h = ' + h + ', x = ' + x + ', y = ' + y);
+
+    var loginUrl = '/client/amp-login.html';
+
+    var targetUrl = this.meta.login;
+    loginUrl += '?redirect=' + encodeURIComponent(targetUrl);
+    loginUrl += '&rid=' + encodeURIComponent(this.readerId);
+    console.log('Login URL: ' + loginUrl);
+
+    try {
+      this.loginDialog = window.open(loginUrl,
+        '_blank',
+        'height=' + h + ',width=' + w +
+        ',left=' + x + ',top=' + y);
+      console.log('Login dialog: ' + this.loginDialog + '; ' +
+          (this.loginDialog == window));
+    } catch (e) {
+      console.log('Failed to open login dialog: ' + e);
+      return;
+    }
+
+    this.loginDialog.onbeforeunload = function() {
+      console.log('Login dialog window unloaded!');
+      // console.log('- href: ' + this.loginDialog.location.hash);
+    }
+
+    var origin = location.protocol + '//' + location.host;
+
+    this.heartbeatInterval = setInterval(function() {
+      console.log('Heartbeat: ' + this.loginDialog.closed);
+      if (this.loginDialog.closed) {
+        this.loginDone_(false);
+      } else {
+        this.loginDialog.postMessage({type: 'heartbeat'}, origin);
+      }
+    }.bind(this), 3000);
+
+    window.addEventListener('message', function(e) {
+      if (e.origin != origin) {
+        return;
+      }
+      console.log('Got window message from ' + e.origin + ': ' +
+          JSON.stringify(e.data));
+      if (e.data && e.data.type == 'login-ok') {
+        this.loginDone_(true, e.data.response);
+      }
+    }.bind(this));
+  };
+
+  LoginFlow.prototype.loginDone_ = function(complete, response) {
+    console.log('Login done: ', complete, response);
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+    if (this.loginDialog) {
+      try {
+        this.loginDialog.close();
+      } catch (e) {
+        console.error('Failed to close dialog: ', e);
+      }
+      this.loginDialog = null;
+    }
+
+    if (complete && !this.complete) {
+      this.complete = true;
+
+      // TODO(dvoytenko): reload is not necessary - simply re-apply access.
+      console.log('Save auth successfull! Reload!');
+      window.location.reload(true);
+    }
   };
 
 

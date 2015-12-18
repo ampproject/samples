@@ -42,10 +42,10 @@
     function proceed() {
       document.getElementById('proceed').disabled = true;
 
-      // amp-login-result.html#authtoken=1234567
-      var authToken = parseQueryString(location.hash)['authtoken'];
+      // amp-login-result.html#success=true
+      var response = location.hash;
       document.getElementById('info').textContent =
-          'Sending message to runtime with ' + authToken;
+          'Sending message to runtime with [' + response + ']';
 
       var origin = location.protocol + '//' + location.host;
       window.addEventListener('message', function(e) {
@@ -54,7 +54,7 @@
           setTimeout(function() {
             e.source.postMessage({
               type: 'login-ok',
-              authToken: authToken
+              response: response
             }, origin);
           }, 2000);
         }

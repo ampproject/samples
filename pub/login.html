@@ -59,6 +59,7 @@
       <input type=submit value=Login>
     </div>
     <input name=returnurl type=hidden>
+    <input name=rid type=hidden>
   </form>
 
   <script>
@@ -78,6 +79,9 @@
     }
     if (queryMap['return']) {
       document.querySelector('[name=returnurl]').value = queryMap['return'];
+    }
+    if (queryMap['rid']) {
+      document.querySelector('[name=rid]').value = queryMap['rid'];
     }
   </script>
 </body>
