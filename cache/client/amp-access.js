@@ -28,7 +28,22 @@
   (function() {
     var style = document.createElement('style');
     style.textContent = (
-      '[amp-access]:not([amp-access-on]) {display: none};' +
+      '[amp-access]:not([amp-access-on]):not([amp-access-style=elide]) {' +
+      'display: none' +
+      '}\n' +
+      '[amp-access][amp-access-style=elide]:not([amp-access-on]) {' +
+      'color: transparent !important;' +
+      'text-shadow: 0 0 1em rgba(0, 0, 0, 0.5) !important;' +
+      'user-select: none !important;' +
+      '-webkit-user-select: none !important;' +
+      '}\n' +
+      '[amp-access][amp-access-style=elide]:not([amp-access-on]) .-amp-element {' +
+      'background: rgba(0, 0, 0, 0.05) !important;' +
+      'border: none !important;' +
+      '}\n' +
+      '[amp-access][amp-access-style=elide]:not([amp-access-on]) .-amp-element > .-amp-fill-content {' +
+      'display: none !important;' +
+      '}\n' +
       '');
     document.head.appendChild(style);
   })();
