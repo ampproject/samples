@@ -106,7 +106,7 @@ app.get('/login-done', function(req, res) {
 });
 
 
-/** ACCESS CORS */
+/** ACCESS CORS. TODO(dvoytenko): remove in pref to authorization.json */
 app.get('/access-client', function(req, res) {
   console.log('Client access verification');
   var readerId = req.query.rid;
@@ -140,6 +140,50 @@ app.get('/access-client', function(req, res) {
     // Metered.
     var views = (clientAuth.views || 0) + 1;
     clientAuth.views = views;
+    response = {
+      'views': views,
+      'maxViews': MAX_VIEWS,
+      'access': (views <= MAX_VIEWS)
+    };
+  }
+  console.log('Authorization response:', readerId, response);
+  res.json(response);
+});
+
+
+/** ACCESS CORS */
+app.get('/amp-authorization.json', function(req, res) {
+  console.log('Client access verification');
+  var readerId = req.query.rid;
+  if (!readerId) {
+    res.sendStatus(400);
+    return;
+  }
+
+  // In practice, Origin should be restricted to a few well-known domains.
+  var requestingOrigin = req.header('Origin');
+  console.log('---- requesting origin: ', requestingOrigin);
+  if (requestingOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  var clientAuth = CLIENT_ACCESS[readerId];
+  if (!clientAuth) {
+    clientAuth = {};
+    CLIENT_ACCESS[readerId] = clientAuth;
+  }
+
+  var response;
+  if (clientAuth.subscriber) {
+    // Subscriber.
+    response = {
+      'subscriber': true,
+      'access': true
+    };
+  } else {
+    // Metered.
+    var views = (clientAuth.views || 0);
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
