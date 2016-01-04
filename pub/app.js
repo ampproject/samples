@@ -107,7 +107,7 @@ app.get('/login-done', function(req, res) {
 
 
 /** ACCESS CORS */
-app.get('/access-client', function(req, res) {
+app.get('/amp-authorization.json', function(req, res) {
   console.log('Client access verification');
   var readerId = req.query.rid;
   if (!readerId) {
@@ -138,8 +138,7 @@ app.get('/access-client', function(req, res) {
     };
   } else {
     // Metered.
-    var views = (clientAuth.views || 0) + 1;
-    clientAuth.views = views;
+    var views = (clientAuth.views || 0);
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
