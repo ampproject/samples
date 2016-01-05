@@ -68,8 +68,14 @@ app.get('/archive/*', function(req, res) {
 });
 
 
-/* LOGIN SUPPORT */
+/* LOGIN SUPPORT: TODO(dvoytenko): remove in pref to /amp-login */
 app.get('/login', function(req, res) {
+  res.sendFile('login.html', {root: ROOT});
+});
+
+/* LOGIN ENDPOINT */
+app.get('/amp-login', function(req, res) {
+  console.log('Serve /amp-login');
   res.sendFile('login.html', {root: ROOT});
 });
 
