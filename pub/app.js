@@ -19,6 +19,7 @@ var app = express();
 var path = require('path');
 var http = require('http');
 var urlModule = require('url');
+var consts = require('../common/consts');
 
 var PORT = 8002;
 
@@ -97,8 +98,12 @@ app.post('/login-submit', function(req, res) {
   });
 
   // Redirect
-  res.redirect('/login-done?return=' + encodeURIComponent(returnUrl +
-      '#success=true'));
+  if (consts.LOGIN_TRANSITIVES) {
+    res.redirect('/login-done?return=' +
+        encodeURIComponent(returnUrl + '#success=true'));
+  } else {
+    res.redirect(returnUrl + '#success=true');
+  }
 });
 
 app.get('/login-done', function(req, res) {
