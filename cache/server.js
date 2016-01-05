@@ -21,6 +21,7 @@ var http = require('http');
 var pathModule = require('path');
 var proxy = require('./proxy');
 var util = require('./util');
+var consts = require('../common/consts');
 
 var ROOT = __dirname;
 var CLIENT_ROOT = pathModule.join(ROOT, 'client');
@@ -120,10 +121,24 @@ class Server {
    * @private
    */
   client_(req, resp) {
-    console.log('Local client request: ', req.path);
+    console.log('Local client request: ', req.path, req.query, req.host);
 
     if (!req.path || req.path == '/' || req.path == '/client/') {
       this.notfound_(req, resp);
+      return;
+    }
+
+    if (!consts.LOGIN_TRANSITIVES && req.path == '/client/amp-login.html') {
+      let redirectUrl = req.query['redirect'];
+      let readerId = req.query['rid'];
+      let returnUrl = 'http://' + req.host +
+          '/client/amp-login-result-immediate.html';
+      redirectUrl += '?return=' + encodeURIComponent(returnUrl);
+      redirectUrl += '&rid=' + encodeURIComponent(readerId);
+      resp.writeHead(302, {
+        'Location': redirectUrl
+      });
+      resp.end();
       return;
     }
 
