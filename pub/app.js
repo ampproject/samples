@@ -156,7 +156,7 @@ app.get('/access-client', function(req, res) {
 });
 
 
-/** ACCESS CORS */
+/** AUTHORIZATION CORS */
 app.get('/amp-authorization.json', function(req, res) {
   console.log('Client access verification');
   var readerId = req.query.rid;
@@ -197,6 +197,39 @@ app.get('/amp-authorization.json', function(req, res) {
   }
   console.log('Authorization response:', readerId, response);
   res.json(response);
+});
+
+
+/** PINGBACK CORS */
+app.post('/amp-pingback', function(req, res) {
+  console.log('Client access pingback');
+  var readerId = req.query.rid;
+  if (!readerId) {
+    res.sendStatus(400);
+    return;
+  }
+
+  // In practice, Origin should be restricted to a few well-known domains.
+  var requestingOrigin = req.header('Origin');
+  console.log('---- requesting origin: ', requestingOrigin);
+  if (requestingOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  var clientAuth = CLIENT_ACCESS[readerId];
+  if (!clientAuth) {
+    clientAuth = {};
+    CLIENT_ACCESS[readerId] = clientAuth;
+  }
+
+  if (!clientAuth.subscriber) {
+    // Metered.
+    var views = (clientAuth.views || 0) + 1;
+    clientAuth.views = views;
+  }
+  console.log('Pingback response:', readerId, {}, clientAuth);
+  res.json({});
 });
 
 
