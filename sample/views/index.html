@@ -1,0 +1,113 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>Lorem Ipsum | PublisherName</title>
+  <link rel="canonical" href="amps.html" >
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <script id="amp-access" type="application/json">
+    {
+      "authorization": "http://localhost:8002/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&_=RANDOM",
+      "pingback": "http://localhost:8002/amp-pingback?rid=READER_ID&url=CANONICAL_URL",
+      "login": "http://localhost:8002/amp-login?rid=READER_ID&url=CANONICAL_URL"
+    }
+  </script>
+  <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
+  <style amp-custom>
+    body {
+      margin: 0;
+      font-family: 'Georgia', Serif;
+    }
+
+    .content-container p {
+      line-height: 24px;
+    }
+
+    header,
+    .article-body {
+      padding: 15px;
+    }
+
+    .full-bleed {
+      margin: 0 -15px;
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-weight: normal;
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 226px;
+      background: #f4f4f4;
+    }
+
+    hr {
+      margin: 0;
+    }
+
+    .login-section {
+      margin: 16px;
+      margin-top: 24px;
+      padding: 16px;
+      background: #ffc;
+    }
+
+    .meter-section {
+      margin: 16px;
+      margin-top: 24px;
+      padding: 16px;
+      background: #ffa;
+    }
+
+  </style>
+
+  <!--
+  <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+  <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
+  <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
+  <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  -->
+
+  <script async custom-element="amp-analytics" src="http://localhost:8000/dist/v0/amp-analytics-0.1.max.js"></script>
+  <script async custom-element="amp-access" src="http://localhost:8000/dist/v0/amp-access-0.1.max.js"></script>
+  <script async custom-template="amp-mustache" src="http://localhost:8000/dist/v0/amp-mustache-0.1.max.js"></script>
+  <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+  <script async src="http://localhost:8000/dist/amp.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand-logo">
+      PublisherLogo
+    </div>
+  </header>
+  <main role="main">
+    <article>
+
+        <section amp-access="views > 0" amp-access-hide class="meter-section">
+          <template amp-access-template type="amp-mustache">
+            You are viewing article {{views}} of {{maxViews}}!
+          </template>
+        </section>
+
+        <section amp-access="NOT access" amp-access-hide class="login-section">
+          <a on="tap:amp-access.login">Login to read more!</a>
+        </section>
+
+      <div amp-access="access" >
+        <p>
+        Logged in! Here is your content: "content".
+        </p>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="brand-logo">PublisherLogo</div>
+  </footer>
+</body>
+</html>

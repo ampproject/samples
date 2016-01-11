@@ -1,0 +1,20 @@
+{
+  "name": "amp-publisher",
+  "version": "0.0.1",
+  "description": "A sample implementation for an AMP Publisher",
+  "main": "app.js",
+  "engines": {
+    "node": "^4.0.0"
+  },
+  "author": "The AMP HTML Authors",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "4.13.3",
+    "body-parser": "1.14.1",
+    "mustache": "2.2.1",
+    "consolidate": "0.13.1"
+  }
+}
