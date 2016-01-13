@@ -41,7 +41,8 @@ var MAX_VIEWS = 3;
 var CLIENT_ACCESS = {};
 
 app.get('/c/test.html', function(req, res) {
-  res.locals = { 'host': req.protocol + '://' + req.get('host') } 
+  protocol = req.secure ? 'https' : 'http'
+  res.locals = { 'host': protocol + '://' + req.get('host') } 
   res.render('index', {
   });
 });
