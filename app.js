@@ -170,7 +170,8 @@ app.post('/amp-pingback', function(req, res) {
   res.json({});
 });
 
-var server = app.listen(PORT, function() {
+port = process.env.PORT || PORT;
+var server = app.listen(port, function() {
   var host = server.address().address;
   var port = server.address().port;
 
