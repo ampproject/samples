@@ -19,7 +19,7 @@ var app = express();
 var path = require('path');
 var http = require('http');
 var urlModule = require('url');
-var consts = require('../common/consts');
+var consts = require('./common/consts');
 
 var PORT = 8002;
 
@@ -48,10 +48,52 @@ app.get('/c/test.html', function(req, res) {
 
 // Logging middleware
 app.use(function(request, response, next) {
-  console.log("In comes a " + request.method + " to " + request.url);
+  console.log(request.method + ":" + request.url);
   next();
 });
 
+/* LOGIN ENDPOINT */
+app.get('/amp-login', function(req, res) {
+  console.log('Serve /amp-login');
+  res.sendFile('login.html', {root: ROOT});
+});
+
+app.post('/login-submit', function(req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
+  var returnUrl = req.body.returnurl;
+  var readerId = req.body.rid;
+  console.log('POST: ', email, returnUrl, readerId);
+
+  var authToken = '1234567';
+
+  // Login
+  CLIENT_ACCESS[readerId] = {
+    subscriber: true,
+    authToken: authToken  // Optional. Just for debug.
+  };
+  console.log('Logged in: ', CLIENT_ACCESS[readerId]);
+
+  // Set cookies
+  res.cookie('Auth', email, {
+    maxAge: 1000 * 60 * 60 * 2  // 2hr
+  });
+  res.cookie('AuthToken', authToken, {
+    maxAge: 1000 * 60 * 60 * 2  // 2hr
+  });
+
+  // Redirect
+  if (consts.LOGIN_TRANSITIVES) {
+    res.redirect('/login-done?return=' +
+        encodeURIComponent(returnUrl + '#success=true'));
+  } else {
+    res.redirect(returnUrl + '#success=true');
+  }
+});
+
+app.get('/login-done', function(req, res) {
+  res.sendFile('login-done.html', {root: ROOT});
+});
 /** AUTHORIZATION CORS */
 app.get('/amp-authorization.json', function(req, res) {
   console.log('Client access verification');

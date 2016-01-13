@@ -14,5 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# AMP Access Prototyping
+## AMP Publisher Prototype
 
+
+```
+npm i
+npm start
+```
+
+Optionally, `edit /etc/hosts`:
+<pre>
+  127.0.0.1               pub.localhost
+</pre>
