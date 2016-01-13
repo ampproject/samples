@@ -28,11 +28,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var cons = require('consolidate');
-app.engine('html', cons.mustache);
 
-// set .html as the default extension
-app.set('view engine', 'html');
-app.set('views', __dirname + '/views');
+app.set('view engine', 'html')
+app.enable('view cache')
+app.engine('html', require('hogan-express'));
+app.locals.delimiters = '<% %>';
 
 var ROOT = __dirname;
 var ARCHIVE_ROOT = path.join(ROOT, 'archive');
@@ -42,6 +42,7 @@ var MAX_VIEWS = 3;
 var CLIENT_ACCESS = {};
 
 app.get('/c/test.html', function(req, res) {
+  res.locals = { 'host': req.protocol + '://' + req.get('host') } 
   res.render('index', {
   });
 });

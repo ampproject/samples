@@ -16,7 +16,7 @@
     "consolidate": "0.13.1",
     "express": "4.13.3",
     "gcloud": "^0.27.0",
-    "mustache": "2.2.1"
+    "hogan-express": "0.5.2"
   },
   "devDependencies": {
     "jshint": "^2.8.0"
