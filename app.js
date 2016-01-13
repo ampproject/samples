@@ -96,6 +96,7 @@ app.post('/login-submit', function(req, res) {
 app.get('/login-done', function(req, res) {
   res.sendFile('login-done.html', {root: ROOT});
 });
+
 /** AUTHORIZATION CORS */
 app.get('/amp-authorization.json', function(req, res) {
   console.log('Client access verification');
