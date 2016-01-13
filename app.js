@@ -18,6 +18,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var http = require('http');
+var https = require('https');
 var urlModule = require('url');
 var consts = require('./common/consts');
 
@@ -26,8 +27,6 @@ var PORT = 8002;
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-var cons = require('consolidate');
 
 app.set('view engine', 'html')
 app.enable('view cache')

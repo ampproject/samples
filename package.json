@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "body-parser": "1.14.1",
-    "consolidate": "0.13.1",
     "express": "4.13.3",
     "gcloud": "^0.27.0",
     "hogan-express": "0.5.2"
