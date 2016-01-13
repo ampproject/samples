@@ -29,11 +29,15 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 app.set('view engine', 'html')
 app.enable('view cache')
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
+var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 var ROOT = __dirname;
 var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 
@@ -45,6 +49,33 @@ for (var i = 0; i <= 10; i++) {
 }
 
 var CLIENT_ACCESS = {};
+var USERS = {};
+
+USERS['subscriber@example.com'] = {
+  email: 'subscriber@example.com',
+  password: '123456',
+  subscriber: true
+};
+
+function cookieJoin(req, clientAuth) {
+  //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
+  var email = req.cookies.email;
+  console.log("email: " + email);
+  if (email && USERS[email]) {
+    clientAuth.user = USERS[email];
+  }
+}
+
+function getOrCreateClientAuth(readerId) {
+  var clientAuth = CLIENT_ACCESS[readerId];
+  if (!clientAuth) {
+    clientAuth = {
+      viewedUrls: {}            
+    };
+    CLIENT_ACCESS[readerId] = clientAuth;
+  }
+  return clientAuth;
+}
 
 /** Logging middleware */
 app.use(function(request, response, next) {
@@ -104,21 +135,21 @@ app.post('/login-submit', function(req, res) {
   var readerId = req.body.rid;
   console.log('POST: ', email, returnUrl, readerId);
 
-  var authToken = '1234567';
+  var user = USERS[email];
+  if (!user || user.password != password) {
+    res.redirect('/login?rid=' + readerId + "&return=" + returnUrl);
+    return;    
+  }
 
   // Login
-  CLIENT_ACCESS[readerId] = {
-    subscriber: true,
-    authToken: authToken  // Optional. Just for debug.
-  };
+  var clientAuth = getOrCreateClientAuth(readerId);
+  clientAuth.user = user;  
+
   console.log('Logged in: ', CLIENT_ACCESS[readerId]);
 
   // Set cookies
-  res.cookie('Auth', email, {
-    maxAge: 1000 * 60 * 60 * 2  // 2hr
-  });
-  res.cookie('AuthToken', authToken, {
-    maxAge: 1000 * 60 * 60 * 2  // 2hr
+  res.cookie('email', user.email, {
+    maxAge: AUTH_COOKIE_MAX_AGE  // 2hr
   });
 
   // Redirect
@@ -142,25 +173,29 @@ app.get('/amp-authorization.json', function(req, res) {
     res.sendStatus(400);
     return;
   }
+  var viewedUrl = req.query.url;
 
+  var clientAuth = getOrCreateClientAuth(readerId);
+  console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
 
-  var clientAuth = CLIENT_ACCESS[readerId];
-  if (!clientAuth) {
-    clientAuth = {};
-    CLIENT_ACCESS[readerId] = clientAuth;
-  }
+  cookieJoin(req, clientAuth);
 
   var response;
-  console.log('client auth', clientAuth.subscriber);
-  if (clientAuth.subscriber) {
+  console.log('client auth', clientAuth.user);
+  if (clientAuth.user) {
     // Subscriber.
     response = {
-      'subscriber': true,
       'access': true
     };
   } else {
     // Metered.
-    var views = (clientAuth.views || 0);
+    var views = Object.keys(clientAuth.viewedUrls).length;
+
+    // Count view if user hasn't already seen the url.
+    if (!(viewedUrl in clientAuth.viewedUrls)) {
+      views += 1;
+    }
+
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
@@ -180,16 +215,18 @@ app.post('/amp-pingback', function(req, res) {
     return;
   }
 
-  var clientAuth = CLIENT_ACCESS[readerId];
-  if (!clientAuth) {
-    clientAuth = {};
-    CLIENT_ACCESS[readerId] = clientAuth;
+  var viewedUrl = req.query.url;
+  if (!viewedUrl) {
+    res.sendStatus(400);
+    return;
   }
 
-  if (!clientAuth.subscriber) {
+  var clientAuth = getOrCreateClientAuth(readerId);
+  cookieJoin(req, clientAuth);
+
+  if (!clientAuth.user) {
     // Metered.
-    var views = (clientAuth.views || 0) + 1;
-    clientAuth.views = views;
+    clientAuth.viewedUrls[viewedUrl] = true;
   }
   console.log('Pingback response:', readerId, {}, clientAuth);
   res.json({});
