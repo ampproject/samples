@@ -48,15 +48,29 @@ app.get('/c/test.html', function(req, res) {
   });
 });
 
-// Logging middleware
+/** Logging middleware */
 app.use(function(request, response, next) {
   console.log(request.method + ":" + request.url);
   next();
 });
 
-/* LOGIN ENDPOINT */
-app.get('/amp-login', function(req, res) {
-  console.log('Serve /amp-login');
+/** CORS middleware for AMP callbacks */
+app.use(function(req, res, next) {
+  if (req.url.startsWith('/amp-')) {
+    // In practice, Origin should be restricted to a few well-known domains.
+    var requestingOrigin = req.header('Origin');
+    console.log('---- requesting origin: ', requestingOrigin);
+    if (requestingOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  next();
+});
+
+/** LOGIN ENDPOINT */
+app.get('/login', function(req, res) {
+  console.log('Serve /login');
   res.sendFile('login.html', {root: ROOT});
 });
 
@@ -106,13 +120,6 @@ app.get('/amp-authorization.json', function(req, res) {
     return;
   }
 
-  // In practice, Origin should be restricted to a few well-known domains.
-  var requestingOrigin = req.header('Origin');
-  console.log('---- requesting origin: ', requestingOrigin);
-  if (requestingOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
-  }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   var clientAuth = CLIENT_ACCESS[readerId];
   if (!clientAuth) {
@@ -149,14 +156,6 @@ app.post('/amp-pingback', function(req, res) {
     res.sendStatus(400);
     return;
   }
-
-  // In practice, Origin should be restricted to a few well-known domains.
-  var requestingOrigin = req.header('Origin');
-  console.log('---- requesting origin: ', requestingOrigin);
-  if (requestingOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
-  }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   var clientAuth = CLIENT_ACCESS[readerId];
   if (!clientAuth) {
