@@ -234,6 +234,17 @@ app.post('/amp-pingback', function(req, res) {
   res.json({});
 });
 
+app.get('/logout', function(req, res) {
+  var readerId = req.query.rid;
+  if (!readerId) {
+    res.sendStatus(400);
+    return;
+  }
+  res.clearCookie('email');
+  delete CLIENT_ACCESS[readerId];
+  res.redirect("/");
+});
+
 port = process.env.PORT || PORT;
 var server = app.listen(port, function() {
   var host = server.address().address;
