@@ -10,6 +10,16 @@
     body {
       margin: 0;
       font-family: 'Georgia', Serif;
+      padding: 15px;
+    }
+
+    .content-container p {
+      line-height: 24px;
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-weight: normal;
     }
   </style>
 
@@ -18,13 +28,13 @@
 
 </head>
 <body>
-  <main role="main">
-  <h1>Articles</h1>
-  <ul>
-    <%#articles%>
-    <li><a href="c/<% id %>.html"><% title %></a></li>
-    <%/articles%>
-  </ul>
+  <main role="main" class="content-container">
+    <h1>Articles</h1>
+    <ul>
+      <%#articles%>
+      <li><a href="<% id %>.html"><% title %></a></li>
+      <%/articles%>
+    </ul>
   </main>
 </body>
 </html>

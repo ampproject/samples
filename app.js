@@ -106,7 +106,7 @@ app.get('/', function(req, res) {
 });
 
 /** Sample Article */
-app.get('/c/:id.html', function(req, res) {
+app.get('/:id.html', function(req, res) {
   id = req.params.id;
   if (!id) {
     res.sendStatus(404);
