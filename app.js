@@ -52,10 +52,8 @@ USERS['subscriber@example.com'] = {
   subscriber: true
 };
 
-
-
 function cookieJoin(req, clientAuth) {
-  //retrieve the cookie, it it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
+  //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
   console.log("email: " + email);
   if (email && USERS[email]) {
@@ -63,13 +61,15 @@ function cookieJoin(req, clientAuth) {
   }
 }
 
-function getClientAuth(readerId) {
-  if (!CLIENT_ACCESS[readerId]) {
-    CLIENT_ACCESS[readerId] = {
+function getOrCreateClientAuth(readerId) {
+  var clientAuth = CLIENT_ACCESS[readerId];
+  if (!clientAuth) {
+    clientAuth = {
       viewedUrls: {}            
-    }
+    };
+    CLIENT_ACCESS[readerId] = clientAuth;
   }
-  return CLIENT_ACCESS[readerId];
+  return clientAuth;
 }
 
 app.get('/c/test.html', function(req, res) {
@@ -115,12 +115,12 @@ app.post('/login-submit', function(req, res) {
 
   var user = USERS[email];
   if (!user || user.password != password) {
-    res.redirect('/login-fail');
+    res.redirect('/login?rid=' + readerId + "&return=" + returnUrl);
     return;    
   }
 
   // Login
-  var clientAuth = getClientAuth(readerId);
+  var clientAuth = getOrCreateClientAuth(readerId);
   clientAuth.user = user;  
 
   console.log('Logged in: ', CLIENT_ACCESS[readerId]);
@@ -153,7 +153,7 @@ app.get('/amp-authorization.json', function(req, res) {
   }
   var viewedUrl = req.query.url;
 
-  var clientAuth = getClientAuth(readerId);
+  var clientAuth = getOrCreateClientAuth(readerId);
   console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
 
   cookieJoin(req, clientAuth);
@@ -167,8 +167,13 @@ app.get('/amp-authorization.json', function(req, res) {
     };
   } else {
     // Metered.
-    var views = clientAuth.viewedUrls[viewedUrl] ? 
-        Object.keys(clientAuth.viewedUrls).length : Object.keys(clientAuth.viewedUrls).length + 1;
+    var views = Object.keys(clientAuth.viewedUrls).length;
+
+    // Count view if user hasn't already seen the url.
+    if (!(viewedUrl in clientAuth.viewedUrls)) {
+      views += 1;
+    }
+
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
@@ -194,7 +199,7 @@ app.post('/amp-pingback', function(req, res) {
     return;
   }
 
-  var clientAuth = getClientAuth(readerId);
+  var clientAuth = getOrCreateClientAuth(readerId);
   cookieJoin(req, clientAuth);
 
   if (!clientAuth.user) {
