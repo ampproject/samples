@@ -20,6 +20,8 @@ var path = require('path');
 var http = require('http');
 var https = require('https');
 var urlModule = require('url');
+var cookieParser = require('cookie-parser');
+app.use(cookieParser())
 var consts = require('./common/consts');
 
 var PORT = 8002;
@@ -39,6 +41,34 @@ var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 var MAX_VIEWS = 3;
 
 var CLIENT_ACCESS = {};
+
+var USERS = {};
+
+USERS['subscriber@example.com'] = {
+  email: 'subscriber@example.com',
+  password: '123456',
+  subscriber: true
+};
+
+
+
+function cookieJoin(req, clientAuth) {
+  //retrieve the cookie, it it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
+  var email = req.cookies.email;
+  console.log("email: " + email);
+  if (email && USERS[email]) {
+    clientAuth.user = USERS[email];
+  }
+}
+
+function getClientAuth(readerId) {
+  if (!CLIENT_ACCESS[readerId]) {
+    CLIENT_ACCESS[readerId] = {
+      viewedUrls: {}            
+    }
+  }
+  return CLIENT_ACCESS[readerId];
+}
 
 app.get('/c/test.html', function(req, res) {
   host = req.get('host')
@@ -81,20 +111,20 @@ app.post('/login-submit', function(req, res) {
   var readerId = req.body.rid;
   console.log('POST: ', email, returnUrl, readerId);
 
-  var authToken = '1234567';
+  var user = USERS[email];
+  if (!user || user.password != password) {
+    res.redirect('/login-fail');
+    return;    
+  }
 
   // Login
-  CLIENT_ACCESS[readerId] = {
-    subscriber: true,
-    authToken: authToken  // Optional. Just for debug.
-  };
+  var clientAuth = getClientAuth(readerId);
+  clientAuth.user = user;  
+
   console.log('Logged in: ', CLIENT_ACCESS[readerId]);
 
   // Set cookies
-  res.cookie('Auth', email, {
-    maxAge: 1000 * 60 * 60 * 2  // 2hr
-  });
-  res.cookie('AuthToken', authToken, {
+  res.cookie('email', user.email, {
     maxAge: 1000 * 60 * 60 * 2  // 2hr
   });
 
@@ -119,25 +149,24 @@ app.get('/amp-authorization.json', function(req, res) {
     res.sendStatus(400);
     return;
   }
+  var viewedUrl = req.query.url;
 
+  var clientAuth = getClientAuth(readerId);
+  console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
 
-  var clientAuth = CLIENT_ACCESS[readerId];
-  if (!clientAuth) {
-    clientAuth = {};
-    CLIENT_ACCESS[readerId] = clientAuth;
-  }
+  cookieJoin(req, clientAuth);
 
   var response;
-  console.log('client auth', clientAuth.subscriber);
-  if (clientAuth.subscriber) {
+  console.log('client auth', clientAuth.user);
+  if (clientAuth.user) {
     // Subscriber.
     response = {
-      'subscriber': true,
       'access': true
     };
   } else {
     // Metered.
-    var views = (clientAuth.views || 0);
+    var views = clientAuth.viewedUrls[viewedUrl] ? 
+        Object.keys(clientAuth.viewedUrls).length : Object.keys(clientAuth.viewedUrls).length + 1;
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
@@ -157,16 +186,18 @@ app.post('/amp-pingback', function(req, res) {
     return;
   }
 
-  var clientAuth = CLIENT_ACCESS[readerId];
-  if (!clientAuth) {
-    clientAuth = {};
-    CLIENT_ACCESS[readerId] = clientAuth;
+  var viewedUrl = req.query.url;
+  if (!viewedUrl) {
+    res.sendStatus(400);
+    return;
   }
 
-  if (!clientAuth.subscriber) {
+  var clientAuth = getClientAuth(readerId);
+  cookieJoin(req, clientAuth);
+
+  if (!clientAuth.user) {
     // Metered.
-    var views = (clientAuth.views || 0) + 1;
-    clientAuth.views = views;
+    clientAuth.viewedUrls[viewedUrl] = true;
   }
   console.log('Pingback response:', readerId, {}, clientAuth);
   res.json({});
