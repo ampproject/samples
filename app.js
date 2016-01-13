@@ -42,9 +42,8 @@ var CLIENT_ACCESS = {};
 
 app.get('/c/test.html', function(req, res) {
   host = req.get('host')
-    console.log("host: " + host + "->" + host.startsWith('localhost'))
-  protocol = host.startsWith('localhost') ? 'http' : 'https'
-  res.locals = { 'host': req.protocol + '://' + req.get('host') } 
+  protocol = host.startsWith('localhost') ? 'http' : 'https';
+  res.locals = { 'host': protocol + '://' + req.get('host') } 
   res.render('index', {
   });
 });
