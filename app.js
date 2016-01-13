@@ -124,7 +124,7 @@ app.get('/:id.html', function(req, res) {
 });
 
 /** Sample Article */
-app.get('/c/:id', function(req, res) {
+app.get('/:id', function(req, res) {
   id = req.params.id;
   if (!id || !ARTICLES[id]) {
     res.sendStatus(404);
