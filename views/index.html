@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Lorem Ipsum | PublisherName</title>
-  <link rel="canonical" href="amps.html" >
+  <link rel="canonical" href="c/<% id %>" >
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <script id="amp-access" type="application/json">
     {
@@ -68,26 +68,17 @@
   <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
   <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
   <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
+  <script async custom-element="amp-instagram" src="https://cdn.ampproject.org/v0/amp-instagram-0.1.js"></script>
   <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
 
-  <!--
-  <script async custom-element="amp-analytics" src="http://localhost:8000/dist/v0/amp-analytics-0.1.max.js"></script>
-  <script async custom-element="amp-access" src="http://localhost:8000/dist/v0/amp-access-0.1.max.js"></script>
-  <script async custom-template="amp-mustache" src="http://localhost:8000/dist/v0/amp-mustache-0.1.max.js"></script>
-  <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
-  <script async src="http://localhost:8000/dist/amp.js"></script>
-  -->
 </head>
 <body>
   <header>
-    <div class="brand-logo">
-      PublisherLogo
-    </div>
+    <h1><% title %></h1>
   </header>
   <main role="main">
-    <article>
-
+    <article class='article-body'>
         <section amp-access="views > 0" amp-access-hide class="meter-section">
           <template amp-access-template type="amp-mustache">
             You are viewing article {{views}} of {{maxViews}}!
@@ -98,9 +89,15 @@
           <a on="tap:amp-access.login">Login to read more!</a>
         </section>
 
-      <div amp-access="access" >
-        <p>
-        Content restricted by the paywall.
+        <div amp-access="access" >
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+          <p>
+          <amp-instagram
+              data-shortcode="8aiD5Kj6NV"
+              width="400"
+              height="400"
+              layout="responsive">
+          </amp-instagram>
         </p>
       </div>
     </article>

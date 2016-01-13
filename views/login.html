@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <title>Publisher Login</title>
   <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="938907761992-tfmrbqv8unvkgjje5ce6ka25h1tsc536.apps.googleusercontent.com">
   <style>
     body {
       margin: 0;
@@ -46,6 +48,7 @@
     </div>
   </header>
 
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
   <form method=post action="login-submit">
     <div class=form-line>
       <div class=label>Email:</div>
@@ -63,6 +66,16 @@
   </form>
 
   <script>
+    function onSignIn(googleUser) {
+      var id_token = googleUser.getAuthResponse().id_token;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://yourbackend.example.com/tokensignin');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+          console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send('idtoken=' + id_token);
+    }
     var queryMap = {};
     var query = window.location.search;
     if (query && query[0] == '?') {

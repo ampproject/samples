@@ -18,7 +18,8 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var http = require('http');
-var https = require('https');
+var _ = require('underscore');
+var urlModule = require('url');
 var urlModule = require('url');
 var consts = require('./common/consts');
 
@@ -38,15 +39,12 @@ var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 
 var MAX_VIEWS = 3;
 
-var CLIENT_ACCESS = {};
+var ARTICLES = [];
+for (var i = 0; i <= 10; i++) {
+  ARTICLES.push({id: i, title: 'Article ' + i});
+}
 
-app.get('/c/test.html', function(req, res) {
-  host = req.get('host')
-  protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.locals = { 'host': protocol + '://' + req.get('host') } 
-  res.render('index', {
-  });
-});
+var CLIENT_ACCESS = {};
 
 /** Logging middleware */
 app.use(function(request, response, next) {
@@ -68,10 +66,35 @@ app.use(function(req, res, next) {
   next();
 });
 
+/** Sample Article */
+app.get('/', function(req, res) {
+  res.locals = { articles: ARTICLES } 
+  res.render('list', {
+  });
+});
+
+/** Sample Article */
+app.get('/c/:id.html', function(req, res) {
+  id = req.params.id
+  if (!id) {
+    res.sendStatus(404);
+    return;
+  }
+
+  host = req.get('host')
+  protocol = host.startsWith('localhost') ? 'http' : 'https';
+  res.locals = { 
+    'host': protocol + '://' + req.get('host'),
+    'id': id,
+    'title': ARTICLES[id].title
+  } 
+  res.render('index', {});
+});
+
 /** LOGIN ENDPOINT */
 app.get('/login', function(req, res) {
   console.log('Serve /login');
-  res.sendFile('login.html', {root: ROOT});
+  res.render('login', {root: ROOT});
 });
 
 app.post('/login-submit', function(req, res) {
@@ -108,7 +131,7 @@ app.post('/login-submit', function(req, res) {
 });
 
 app.get('/login-done', function(req, res) {
-  res.sendFile('login-done.html', {root: ROOT});
+  res.render('login-done', {root: ROOT});
 });
 
 /** AUTHORIZATION CORS */

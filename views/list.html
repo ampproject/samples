@@ -1,0 +1,37 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>Lorem Ipsum | PublisherName</title>
+  <link rel="canonical" href="amps.html" >
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <script id="amp-access" type="application/json">
+    {
+      "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&_=RANDOM",
+      "pingback": "<% host %>/amp-pingback?rid=READER_ID&url=CANONICAL_URL",
+      "login": "<% host %>/login?rid=READER_ID&url=CANONICAL_URL"
+    }
+  </script>
+  <link href='https://fonts.googleapis.com/css?family=Georgia|Open+Sans|Roboto' rel='stylesheet' type='text/css'>
+  <style amp-custom>
+    body {
+      margin: 0;
+      font-family: 'Georgia', Serif;
+    }
+  </style>
+
+  <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+</head>
+<body>
+  <main role="main">
+  <h1>Articles</h1>
+  <ul>
+    <%#articles%>
+    <li><a href="c/<% id %>.html"><% title %></a></li>
+    <%/articles%>
+  </ul>
+  </main>
+</body>
+</html>
