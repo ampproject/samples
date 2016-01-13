@@ -20,8 +20,6 @@ var path = require('path');
 var http = require('http');
 var https = require('https');
 var urlModule = require('url');
-var cookieParser = require('cookie-parser');
-app.use(cookieParser())
 var consts = require('./common/consts');
 
 var PORT = 8002;
@@ -30,11 +28,15 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 app.set('view engine', 'html')
 app.enable('view cache')
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
+var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 var ROOT = __dirname;
 var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 
@@ -125,7 +127,7 @@ app.post('/login-submit', function(req, res) {
 
   // Set cookies
   res.cookie('email', user.email, {
-    maxAge: 1000 * 60 * 60 * 2  // 2hr
+    maxAge: AUTH_COOKIE_MAX_AGE  // 2hr
   });
 
   // Redirect
