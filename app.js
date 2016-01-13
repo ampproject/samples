@@ -32,8 +32,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-app.set('view engine', 'html')
-app.enable('view cache')
+app.set('view engine', 'html');
+app.enable('view cache');
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
@@ -67,6 +67,7 @@ function cookieJoin(req, clientAuth) {
 }
 
 function getOrCreateClientAuth(readerId) {
+  console.log("getOrCreateClientAuth");
   var clientAuth = CLIENT_ACCESS[readerId];
   if (!clientAuth) {
     clientAuth = {
@@ -99,26 +100,26 @@ app.use(function(req, res, next) {
 
 /** Sample Article */
 app.get('/', function(req, res) {
-  res.locals = { articles: ARTICLES } 
+  res.locals = { articles: ARTICLES } ;
   res.render('list', {
   });
 });
 
 /** Sample Article */
 app.get('/c/:id.html', function(req, res) {
-  id = req.params.id
+  id = req.params.id;
   if (!id) {
     res.sendStatus(404);
     return;
   }
 
-  host = req.get('host')
+  host = req.get('host');
   protocol = host.startsWith('localhost') ? 'http' : 'https';
   res.locals = { 
     'host': protocol + '://' + req.get('host'),
     'id': id,
     'title': ARTICLES[id].title
-  } 
+  };
   res.render('index', {});
 });
 
@@ -223,6 +224,7 @@ app.post('/amp-pingback', function(req, res) {
 
   var clientAuth = getOrCreateClientAuth(readerId);
   cookieJoin(req, clientAuth);
+
 
   if (!clientAuth.user) {
     // Metered.
