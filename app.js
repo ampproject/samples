@@ -106,24 +106,6 @@ app.get('/', function(req, res) {
 });
 
 /** Sample Article */
-app.get('/((\\d+)).html', function(req, res) {
-  id = req.params[0];
-  if (!id || !ARTICLES[id]) {
-    res.sendStatus(404);
-    return;
-  }
-
-  host = req.get('host');
-  protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.locals = { 
-    'host': protocol + '://' + req.get('host'),
-    'id': id,
-    'title': ARTICLES[id].title
-  };
-  res.render('index', {});
-});
-
-/** Sample Article */
 app.get('/((\\d+))', function(req, res) {
   id = req.params[0];
   if (!id || !ARTICLES[id]) {
