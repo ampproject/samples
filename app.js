@@ -106,8 +106,8 @@ app.get('/', function(req, res) {
 });
 
 /** Sample Article */
-app.get('/:id.html', function(req, res) {
-  id = req.params.id;
+app.get('/((\\d+)).html', function(req, res) {
+  id = req.params[0];
   if (!id || !ARTICLES[id]) {
     res.sendStatus(404);
     return;
@@ -124,8 +124,8 @@ app.get('/:id.html', function(req, res) {
 });
 
 /** Sample Article */
-app.get('/:id', function(req, res) {
-  id = req.params.id;
+app.get('/((\\d+))', function(req, res) {
+  id = req.params[0];
   if (!id || !ARTICLES[id]) {
     res.sendStatus(404);
     return;
@@ -252,7 +252,7 @@ app.post('/amp-pingback', function(req, res) {
   res.json({});
 });
 
-app.get('/logout', function(req, res) {
+app.get('/reset', function(req, res) {
   var readerId = req.query.rid;
   if (!readerId) {
     res.sendStatus(400);
@@ -261,6 +261,11 @@ app.get('/logout', function(req, res) {
   res.clearCookie('email');
   delete CLIENT_ACCESS[readerId];
   res.redirect("/");
+});
+
+app.get('/logout', function(req, res) {
+  res.clearCookie('email');
+  res.redirect("/");  
 });
 
 port = process.env.PORT || PORT;
