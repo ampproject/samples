@@ -28,6 +28,7 @@ var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 app.set('view engine', 'html');
+app.set('partials', {styles: 'styles'});
 app.enable('view cache');
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';

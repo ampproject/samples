@@ -30,8 +30,9 @@ for (var i = 0; i <= 10; i++) {
  * List all Articles 
  **/
 router.get('/', function(req, res) {
-  res.locals = { articles: ARTICLES } ;
-  res.render('list', {});
+  res.render('list', {
+    articles: ARTICLES
+  });
 });
 
 /**
@@ -46,14 +47,13 @@ router.get('/((\\d+))', function(req, res) {
   var host = req.get('host');
   // http works only on localhost
   var protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.locals = { 
+  res.render('index', {
     host: protocol + '://' + host,
     id: id,
     title: ARTICLES[id].title,
     next: nextArticleId(id),
     prev: prevArticleId(id)
-  };
-  res.render('index', {});
+  });
 });
 
 function prevArticleId(id) {

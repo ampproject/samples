@@ -15,7 +15,6 @@
  */
 "use strict";
 
-/* All routes related to amp-access */
 var express = require('express');
 var router = express.Router();
 
@@ -37,7 +36,7 @@ router.get('/amp-authorization.json', function(req, res) {
   var referrer = req.query.ref;
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  console.log("viewedUrls: " + Object.keys(paywallAccess.viewedUrls).length);
+  console.log("viewedUrls: " + paywallAccess.viewedUrls);
 
   cookieJoin(req, paywallAccess);
 
@@ -48,7 +47,7 @@ router.get('/amp-authorization.json', function(req, res) {
     // Subscriber.
     response = {
       'access': true,
-      'subscriber': paywallAccess.subscriber
+      'subscriber': paywallAccess.user.subscriber
     };
   } else {
     // Metered.
