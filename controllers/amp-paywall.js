@@ -109,23 +109,10 @@ function registerView(clientAuth, referrer, url) {
 }
 
 function isAuthorized(clientAuth, referrer, url) {
-  if (clientAuth.user) {
-    return true;
-  }
-
-  if (clientAuth.viewedUrls[url]) {
-    return true;
-  }
-
-  if (isFirstClickFree(clientAuth, referrer, url)) {
-    return true;
-  }
-
-  if (clientAuth.numViews < MAX_VIEWS) {
-    return true;
-  }
-
-  return false;
+  return clientAuth.user 
+      || clientAuth.viewedUrls[url] 
+      || isFirstClickFree(clientAuth, referrer, url) 
+      || clientAuth.numViews < MAX_VIEWS);
 }
 
 function cookieJoin(req, clientAuth) {
