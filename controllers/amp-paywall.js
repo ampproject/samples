@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
 /* All routes related to amp-access */
 var express = require('express');
 var router = express.Router();
 
-var MAX_VIEWS = 3;
-var MAX_FIRST_CLICK_FREE_VIEWS = 3;
-
-var ClientAuth = require('../models/client-access');
+var PaywallAccess = require('../models/paywall-access');
 var User = require('../models/user');
 
 /** 
@@ -38,33 +36,33 @@ router.get('/amp-authorization.json', function(req, res) {
 
   var referrer = req.query.ref;
 
-  var clientAuth = ClientAuth.getOrCreate(readerId);
-  console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
+  var paywallAccess = PaywallAccess.getOrCreate(readerId);
+  console.log("viewedUrls: " + Object.keys(paywallAccess.viewedUrls).length);
 
-  cookieJoin(req, clientAuth);
+  cookieJoin(req, paywallAccess);
 
   var response;
-  console.log('client auth', clientAuth.user);
+  console.log('client auth', paywallAccess.user);
 
-  if (clientAuth.user) {
+  if (paywallAccess.user) {
     // Subscriber.
     response = {
       'access': true,
-      'subscriber': true
+      'subscriber': paywallAccess.subscriber
     };
   } else {
     // Metered.
-    var hasAccess = isAuthorized(clientAuth, referrer, viewedUrl);
+    var hasAccess = paywallAccess.isAuthorized(referrer, viewedUrl);
 
-    var views = clientAuth.numViews;
     // Count view if user hasn't already seen the url.
-    if (hasAccess && !clientAuth.viewedUrls[viewedUrl]) {
+    var views = paywallAccess.numViews;
+    if (hasAccess && !paywallAccess.viewedUrls[viewedUrl]) {
       views += 1;
     }
 
     response = {
       'views': views,
-      'maxViews': MAX_VIEWS,
+      'maxViews': PaywallAccess.MAX_VIEWS,
       'access': hasAccess
     };
   }
@@ -91,63 +89,23 @@ router.post('/amp-pingback', function(req, res) {
 
   var referrer = req.query.ref;
 
-  var clientAuth = ClientAuth.getOrCreate(readerId);
-  cookieJoin(req, clientAuth);
+  var paywallAccess = PaywallAccess.getOrCreate(readerId);
+  cookieJoin(req, paywallAccess);
 
-  registerView(clientAuth, referrer, viewedUrl);
+  paywallAccess.registerView(referrer, viewedUrl);
 
-  console.log('Pingback response:', readerId, {}, clientAuth);
-  console.log("clientAuth: " + clientAuth.numViews);
-  console.log("FCF: ", referrer, clientAuth.viewedUrlsByReferrer[referrer]);
+  console.log('Pingback response:', readerId, {}, paywallAccess);
+  console.log("paywallAccess: " + paywallAccess.numViews);
+  console.log("FCF: ", referrer, paywallAccess.viewedUrlsByReferrer[referrer]);
   res.json({});
 });
 
-
-function isFirstClickFree(clientAuth, referrer, url) {
-  if (!referrer) {
-    return false;
-  }  
-
-  // if (!(referrer in FCF_REFERRERS()) {
-  //   return false
-  // }
-
-  return !clientAuth.viewedUrlsByReferrer[referrer] 
-      || clientAuth.viewedUrlsByReferrer[referrer] < MAX_FIRST_CLICK_FREE_VIEWS;
-}
-
-function registerView(clientAuth, referrer, url) {
-  if (!isAuthorized(clientAuth, referrer, url)) {
-    return;
-  }
-
-  clientAuth.viewedUrls[url] = true;
-
-  if (isFirstClickFree(clientAuth, referrer, url)) {
-    if (clientAuth.viewedUrlsByReferrer[referrer]) {
-      clientAuth.viewedUrlsByReferrer[referrer]++;
-    } else {
-      clientAuth.viewedUrlsByReferrer[referrer] = 1;      
-    }
-  } else if (!clientAuth.user) {
-    clientAuth.numViews++;
-  }
-
-}
-
-function isAuthorized(clientAuth, referrer, url) {
-  return clientAuth.user 
-      || clientAuth.viewedUrls[url] 
-      || isFirstClickFree(clientAuth, referrer, url) 
-      || clientAuth.numViews < MAX_VIEWS;
-}
-
-function cookieJoin(req, clientAuth) {
+function cookieJoin(req, paywallAccess) {
   //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
   var user = User.findByEmail(email);
   if (email && user) {
-    clientAuth.user = user;
+    paywallAccess.user = user;
   }
 }
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
 /* All routes related to content requests */
 var express = require('express');
@@ -37,14 +38,14 @@ router.get('/', function(req, res) {
  * View a single Article 
  **/
 router.get('/((\\d+))', function(req, res) {
-  id = parseInt(req.params[0]);
+  var id = parseInt(req.params[0]);
   if (!ARTICLES[id]) {
     res.sendStatus(404);
     return;
   }
-  host = req.get('host');
+  var host = req.get('host');
   // http works only on localhost
-  protocol = host.startsWith('localhost') ? 'http' : 'https';
+  var protocol = host.startsWith('localhost') ? 'http' : 'https';
   res.locals = { 
     host: protocol + '://' + host,
     id: id,
@@ -56,12 +57,12 @@ router.get('/((\\d+))', function(req, res) {
 });
 
 function prevArticleId(id) {
-  prevId = id - 1;
-  return nextId >= 0 ? prevId : false;
+  var prevId = id - 1;
+  return prevId >= 0 ? prevId : false;
 }
 
 function nextArticleId(id) {
-  nextId = id + 1;
+  var nextId = id + 1;
   return nextId < ARTICLES.length ? nextId : false;
 }
 
