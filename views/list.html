@@ -17,6 +17,12 @@
       line-height: 24px;
     }
 
+    .help-section {
+      margin-top: 24px;
+      padding: 16px;
+      background: #90EE90;
+    }
+
     h1 {
       margin: 5px 0;
       font-weight: normal;
@@ -24,7 +30,7 @@
     </style>
 
     <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
-      <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
 
   </head>
   <body>
@@ -35,6 +41,13 @@
       <li><a href="<% id %>"><% title %></a></li>
       <%/articles%>
     </ul>
+    <section class="help-section">
+      This is an AMP Paywall demo. To run this demo:
+      <ul>
+        <li>Turn on <b>dev-channel</b> and <b>amp-access</b> experiments in the <a href="https://cdn.ampproject.org/experiments.html">AMP CDN Experiments</a>.</li>
+        <li>Turn on <b>amp-access</b> experiment in Chrome DevTools: <code>AMP.toggleExperiment(“amp-access”)</code>.</li>
+      </ul>
+    </section>
     </main>
   </body>
 </html>
