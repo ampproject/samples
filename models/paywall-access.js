@@ -18,7 +18,7 @@
 var MAX_FIRST_CLICK_FREE_VIEWS = 3;
 var MAX_VIEWS = 3;
 
-var CLIENT_ACCESS = {};
+var READER_ID_TO_MAPPING = {};
 
 class PaywallAccess {
 
@@ -72,18 +72,18 @@ class PaywallAccess {
 exports.MAX_VIEWS = MAX_VIEWS;
 
 exports.getOrCreate = function(readerId) {
-  var clientAuth = CLIENT_ACCESS[readerId];
+  var clientAuth = READER_ID_TO_MAPPING[readerId];
   if (!clientAuth) {
     clientAuth = new PaywallAccess();
-    CLIENT_ACCESS[readerId] = clientAuth;
+    READER_ID_TO_MAPPING[readerId] = clientAuth;
   }
   return clientAuth;
 };
 
 exports.findByReaderId = function(readerId) {
-  return CLIENT_ACCESS[readerId];
+  return READER_ID_TO_MAPPING[readerId];
 };
 
 exports.deleteByReaderId = function(readerId) {
-  delete CLIENT_ACCESS[readerId];
+  delete READER_ID_TO_MAPPING[readerId];
 };
