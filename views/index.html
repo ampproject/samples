@@ -23,7 +23,6 @@
       line-height: 24px;
     }
 
-    header,
     .article-body {
       padding: 15px;
     }
@@ -35,14 +34,6 @@
     h1 {
       margin: 5px 0;
       font-weight: normal;
-    }
-
-    footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 226px;
-      background: #f4f4f4;
     }
 
     hr {
@@ -63,6 +54,24 @@
       background: #ffa;
     }
 
+    footer {
+      background: #f4f4f4;
+    }
+
+    footer ul {
+      list-style-type: none;
+      overflow: hidden;
+    }
+
+    footer li {
+      float: left;
+    }
+
+    footer li a {
+      display: inline-block;
+      text-align: center;
+      padding: 14px 16px;
+    }
   </style>
 
   <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
@@ -94,13 +103,24 @@
           <p>
           <amp-instagram
               data-shortcode="8aiD5Kj6NV"
-              width="400"
-              height="400"
+              width="100"
+              height="100"
               layout="responsive">
           </amp-instagram>
         </p>
       </div>
     </article>
   </main>
+    <footer>
+      <ul>
+        <%#prev%>
+        <li><a href="/<% prev %>">Previous</a></li>
+        <%/prev%>        
+        <li><a href="/">Home</a></li>
+        <%#next%>        
+        <li><a href="/<% next %>">Next</a></li>
+        <%/next%>                
+      </ul>
+    </footer> 
 </body>
 </html>
