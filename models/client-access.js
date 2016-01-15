@@ -5,7 +5,9 @@ exports.getOrCreate = function(readerId) {
   var clientAuth = CLIENT_ACCESS[readerId];
   if (!clientAuth) {
     clientAuth = {
-      viewedUrls: {}            
+      numViews: 0,
+      viewedUrls: {},
+      viewedUrlsByReferrer: {}            
     };
     CLIENT_ACCESS[readerId] = clientAuth;
   }

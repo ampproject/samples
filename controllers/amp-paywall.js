@@ -2,6 +2,7 @@ var express = require('express')
   , router = express.Router()
 
 var MAX_VIEWS = 3;
+var MAX_FIRST_CLICK_FREE_VIEWS = 3;
 
 ClientAuth = require('../models/client-access');
 User = require('../models/user');
@@ -16,6 +17,8 @@ router.get('/amp-authorization.json', function(req, res) {
   }
   var viewedUrl = req.query.url;
 
+  var referrer = req.query.ref;
+
   var clientAuth = ClientAuth.getOrCreate(readerId);
   console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
 
@@ -23,24 +26,27 @@ router.get('/amp-authorization.json', function(req, res) {
 
   var response;
   console.log('client auth', clientAuth.user);
+
   if (clientAuth.user) {
     // Subscriber.
     response = {
-      'access': true
+      'access': true,
+      'subscriber': true
     };
   } else {
     // Metered.
-    var views = Object.keys(clientAuth.viewedUrls).length;
+    var access = isAuthorized(clientAuth, referrer, viewedUrl);
 
+    var views = clientAuth.numViews;
     // Count view if user hasn't already seen the url.
-    if (!(viewedUrl in clientAuth.viewedUrls)) {
+    if (access && !clientAuth.viewedUrls[viewedUrl]) {
       views += 1;
     }
 
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
-      'access': (views <= MAX_VIEWS)
+      'access': isAuthorized(clientAuth, referrer, viewedUrl)
     };
   }
   console.log('Authorization response:', readerId, response);
@@ -62,17 +68,65 @@ router.post('/amp-pingback', function(req, res) {
     return;
   }
 
+  var referrer = req.query.ref;
+
   var clientAuth = ClientAuth.getOrCreate(readerId);
   cookieJoin(req, clientAuth);
 
-  var views = Object.keys(clientAuth.viewedUrls).length;
-  if (!clientAuth.user && views <= MAX_VIEWS) {
-    // Metered.
-    clientAuth.viewedUrls[viewedUrl] = true;
-  }
+  registerView(clientAuth, referrer, viewedUrl);
+
   console.log('Pingback response:', readerId, {}, clientAuth);
+  console.log("clientAuth: " + clientAuth.numViews);
   res.json({});
 });
+
+
+function isFirstClickFree(clientAuth, referrer, url) {
+  if (!referrer) {
+    return false;
+  }  
+
+  // if (!(referrer in FCF_REFERRERS()) {
+  //   return false
+  // }
+
+  return clientAuth.viewedUrlsByReferrer[referrer] < 3 ;
+}
+
+function registerView(clientAuth, referrer, url) {
+  if (!isAuthorized(clientAuth, referrer, url)) {
+    return;
+  }
+
+  clientAuth.viewedUrls[url] = true;
+
+  if (isFirstClickFree(clientAuth, referrer, url)) {
+    clientAuth.viewedUrlsByReferrer[referrer]++;
+  } else if (!clientAuth.user) {
+    clientAuth.numViews++;
+  }
+
+}
+
+function isAuthorized(clientAuth, referrer, url) {
+  if (clientAuth.user) {
+    return true;
+  }
+
+  if (clientAuth.viewedUrls[url]) {
+    return true;
+  }
+
+  if (isFirstClickFree(clientAuth, referrer, url)) {
+    return true;
+  }
+
+  if (clientAuth.numViews < MAX_VIEWS) {
+    return true;
+  }
+
+  return false;
+}
 
 function cookieJoin(req, clientAuth) {
   //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
