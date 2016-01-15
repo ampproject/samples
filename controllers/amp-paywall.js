@@ -112,7 +112,7 @@ function isAuthorized(clientAuth, referrer, url) {
   return clientAuth.user 
       || clientAuth.viewedUrls[url] 
       || isFirstClickFree(clientAuth, referrer, url) 
-      || clientAuth.numViews < MAX_VIEWS);
+      || clientAuth.numViews < MAX_VIEWS;
 }
 
 function cookieJoin(req, clientAuth) {
