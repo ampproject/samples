@@ -37,6 +37,8 @@ app.enable('view cache');
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
+app.use(require('./middlewares/amp-paywall-cors'))
+
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 var ROOT = __dirname;
 var ARCHIVE_ROOT = path.join(ROOT, 'archive');
@@ -89,20 +91,6 @@ function nextArticleId(id) {
 /** Logging middleware */
 app.use(function(request, response, next) {
   console.log(request.method + ":" + request.url);
-  next();
-});
-
-/** CORS middleware for AMP callbacks */
-app.use(function(req, res, next) {
-  if (req.url.startsWith('/amp-')) {
-    // In practice, Origin should be restricted to a few well-known domains.
-    var requestingOrigin = req.header('Origin');
-    console.log('---- requesting origin: ', requestingOrigin);
-    if (requestingOrigin) {
-      res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
-    }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
   next();
 });
 
