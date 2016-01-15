@@ -1,13 +1,32 @@
-var express = require('express')
-  , router = express.Router()
+/**
+ * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* All routes related to amp-access */
+var express = require('express');
+var router = express.Router();
 
 var MAX_VIEWS = 3;
 var MAX_FIRST_CLICK_FREE_VIEWS = 3;
 
-ClientAuth = require('../models/client-access');
-User = require('../models/user');
+var ClientAuth = require('../models/client-access');
+var User = require('../models/user');
 
-/** AUTHORIZATION CORS */
+/** 
+ * AUTHORIZATION CORS 
+ */
 router.get('/amp-authorization.json', function(req, res) {
   console.log('Client access verification');
   var readerId = req.query.rid;
@@ -53,7 +72,9 @@ router.get('/amp-authorization.json', function(req, res) {
   res.json(response);
 });
 
-/** PINGBACK CORS */
+/** 
+ * PINGBACK CORS 
+ */
 router.post('/amp-pingback', function(req, res) {
   console.log('Client access pingback');
   var readerId = req.query.rid;
@@ -124,10 +145,10 @@ function isAuthorized(clientAuth, referrer, url) {
 function cookieJoin(req, clientAuth) {
   //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
-  var user = User.findByEmail(email)
+  var user = User.findByEmail(email);
   if (email && user) {
     clientAuth.user = user;
   }
 }
 
-module.exports = router
+module.exports = router;

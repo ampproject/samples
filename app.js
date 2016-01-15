@@ -43,7 +43,7 @@ app.use(require('./controllers/article'));
 app.use(require('./controllers/login'));
 app.use(require('./controllers/amp-paywall'));
 
-port = process.env.PORT || PORT;
+var port = process.env.PORT || PORT;
 var server = app.listen(port, function() {
   var host = server.address().address;
   var port = server.address().port;
