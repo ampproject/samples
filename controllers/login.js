@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
 /* All routes realated to login/logout */
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
-var ClientAuth = require('../models/client-access');
+var PaywallAccess = require('../models/paywall-access');
 
 var LOGIN_TRANSITIVES = false;
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
@@ -43,10 +44,10 @@ router.post('/login-submit', function(req, res) {
   }
 
   // Login
-  var clientAuth = ClientAuth.getOrCreate(readerId);
+  var clientAuth = PaywallAccess.getOrCreate(readerId);
   clientAuth.user = user;  
 
-  console.log('Logged in: ', ClientAuth.findByReaderId[readerId]);
+  console.log('Logged in: ', PaywallAccess.findByReaderId[readerId]);
 
   // Set cookies
   res.cookie('email', user.email, {
@@ -72,7 +73,7 @@ router.get('/reset', function(req, res) {
     return;
   }
   res.clearCookie('email');
-  ClientAuth.deleteByReaderId(readerId);
+  PaywallAccess.deleteByReaderId(readerId);
   res.redirect("/");
 });
 
