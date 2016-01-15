@@ -21,7 +21,6 @@ var http = require('http');
 var _ = require('underscore');
 var urlModule = require('url');
 var urlModule = require('url');
-var consts = require('./common/consts');
 
 var PORT = 8002;
 
@@ -37,8 +36,14 @@ app.enable('view cache');
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
-app.use(require('./middlewares/amp-paywall-cors'))
-app.use(require('./middlewares/logging'))
+app.use(require('./middlewares/amp-paywall-cors'));
+app.use(require('./middlewares/logging'));
+
+app.use(require('./controllers/article'));
+app.use(require('./controllers/login'));
+
+ClientAuth = require('./models/client-access');
+User = require('./models/user');
 
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 var ROOT = __dirname;
@@ -46,119 +51,14 @@ var ARCHIVE_ROOT = path.join(ROOT, 'archive');
 
 var MAX_VIEWS = 3;
 
-var ARTICLES = [];
-for (var i = 0; i <= 10; i++) {
-  ARTICLES.push({id: i, title: 'Article ' + (i + 1)});
-}
-
-var CLIENT_ACCESS = {};
-var USERS = {};
-
-USERS['subscriber@example.com'] = {
-  email: 'subscriber@example.com',
-  password: '123456',
-  subscriber: true
-};
-
 function cookieJoin(req, clientAuth) {
   //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
-  if (email && USERS[email]) {
-    clientAuth.user = USERS[email];
+  var user = User.findByEmail(email)
+  if (email && user) {
+    clientAuth.user = user;
   }
 }
-
-function getOrCreateClientAuth(readerId) {
-  var clientAuth = CLIENT_ACCESS[readerId];
-  if (!clientAuth) {
-    clientAuth = {
-      viewedUrls: {}            
-    };
-    CLIENT_ACCESS[readerId] = clientAuth;
-  }
-  return clientAuth;
-}
-
-function prevArticleId(id) {
-  prevId = id - 1;
-  return nextId >= 0 ? prevId : false;
-}
-
-function nextArticleId(id) {
-  nextId = id + 1;
-  return nextId < ARTICLES.length ? nextId : false;
-}
-
-/** List all Articles */
-app.get('/', function(req, res) {
-  res.locals = { articles: ARTICLES } ;
-  res.render('list', {
-  });
-});
-
-/** View a single Article */
-app.get('/((\\d+))', function(req, res) {
-  id = parseInt(req.params[0]);
-  if (!ARTICLES[id]) {
-    res.sendStatus(404);
-    return;
-  }
-
-  host = req.get('host');
-  // http works only on localhost
-  protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.locals = { 
-    host: protocol + '://' + host,
-    id: id,
-    title: ARTICLES[id].title,
-    next: nextArticleId(id),
-    prev: prevArticleId(id)
-  };
-  res.render('index', {});
-});
-
-/** LOGIN ENDPOINT */
-app.get('/login', function(req, res) {
-  console.log('Serve /login');
-  res.render('login', {root: ROOT});
-});
-
-app.post('/login-submit', function(req, res) {
-  var email = req.body.email;
-  var password = req.body.password;
-  var returnUrl = req.body.returnurl;
-  var readerId = req.body.rid;
-  console.log('POST: ', email, returnUrl, readerId);
-
-  var user = USERS[email];
-  if (!user || user.password != password) {
-    res.redirect('/login?rid=' + readerId + "&return=" + returnUrl);
-    return;    
-  }
-
-  // Login
-  var clientAuth = getOrCreateClientAuth(readerId);
-  clientAuth.user = user;  
-
-  console.log('Logged in: ', CLIENT_ACCESS[readerId]);
-
-  // Set cookies
-  res.cookie('email', user.email, {
-    maxAge: AUTH_COOKIE_MAX_AGE  // 2hr
-  });
-
-  // Redirect
-  if (consts.LOGIN_TRANSITIVES) {
-    res.redirect('/login-done?return=' +
-        encodeURIComponent(returnUrl + '#success=true'));
-  } else {
-    res.redirect(returnUrl + '#success=true');
-  }
-});
-
-app.get('/login-done', function(req, res) {
-  res.render('login-done', {root: ROOT});
-});
 
 /** AUTHORIZATION CORS */
 app.get('/amp-authorization.json', function(req, res) {
@@ -170,7 +70,7 @@ app.get('/amp-authorization.json', function(req, res) {
   }
   var viewedUrl = req.query.url;
 
-  var clientAuth = getOrCreateClientAuth(readerId);
+  var clientAuth = ClientAuth.getOrCreate(readerId);
   console.log("viewedUrls: " + Object.keys(clientAuth.viewedUrls).length);
 
   cookieJoin(req, clientAuth);
@@ -216,7 +116,7 @@ app.post('/amp-pingback', function(req, res) {
     return;
   }
 
-  var clientAuth = getOrCreateClientAuth(readerId);
+  var clientAuth = ClientAuth.getOrCreate(readerId);
   cookieJoin(req, clientAuth);
 
   var views = Object.keys(clientAuth.viewedUrls).length;
@@ -226,22 +126,6 @@ app.post('/amp-pingback', function(req, res) {
   }
   console.log('Pingback response:', readerId, {}, clientAuth);
   res.json({});
-});
-
-app.get('/reset', function(req, res) {
-  var readerId = req.query.rid;
-  if (!readerId) {
-    res.sendStatus(400);
-    return;
-  }
-  res.clearCookie('email');
-  delete CLIENT_ACCESS[readerId];
-  res.redirect("/");
-});
-
-app.get('/logout', function(req, res) {
-  res.clearCookie('email');
-  res.redirect("/");  
 });
 
 port = process.env.PORT || PORT;

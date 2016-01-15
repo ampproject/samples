@@ -1,3 +1,4 @@
+/* Enable CORS for all AMP Paywall API requests */
 module.exports = function(req, res, next) {
   if (req.url.startsWith('/amp-')) {
     // In practice, Origin should be restricted to a few well-known domains.
