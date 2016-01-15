@@ -92,7 +92,7 @@ function isFirstClickFree(clientAuth, referrer, url) {
   // }
 
   return !clientAuth.viewedUrlsByReferrer[referrer] 
-      || clientAuth.viewedUrlsByReferrer[referrer] < 3;
+      || clientAuth.viewedUrlsByReferrer[referrer] < MAX_FIRST_CLICK_FREE_VIEWS;
 }
 
 function registerView(clientAuth, referrer, url) {
