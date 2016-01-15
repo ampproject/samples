@@ -76,6 +76,16 @@ function getOrCreateClientAuth(readerId) {
   return clientAuth;
 }
 
+function prevArticleId(id) {
+  prevId = id - 1;
+  return nextId >= 0 ? prevId : false;
+}
+
+function nextArticleId(id) {
+  nextId = id + 1;
+  return nextId < ARTICLES.length ? nextId : false;
+}
+
 /** Logging middleware */
 app.use(function(request, response, next) {
   console.log(request.method + ":" + request.url);
@@ -114,14 +124,12 @@ app.get('/((\\d+))', function(req, res) {
   host = req.get('host');
   // http works only on localhost
   protocol = host.startsWith('localhost') ? 'http' : 'https';
-  prevId = id - 1
-  nextId = id + 1
   res.locals = { 
     host: protocol + '://' + host,
     id: id,
     title: ARTICLES[id].title,
-    next: nextId < ARTICLES.length ? nextId : false,
-    prev: prevId >= 0 ? prevId : false
+    next: nextArticleId(id),
+    prev: prevArticleId(id)
   };
   res.render('index', {});
 });
