@@ -1,10 +1,26 @@
-var express = require('express')
-  , router = express.Router()
-  , User = require('../models/user')
-  , ClientAuth = require('../models/client-access')
+/**
+ * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-var consts = require('../common/consts');
+/* All routes realated to login/logout */
+var express = require('express');
+var router = express.Router();
+var User = require('../models/user');
+var ClientAuth = require('../models/client-access');
 
+var LOGIN_TRANSITIVES = false;
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 
 router.get('/login', function(req, res) {
@@ -38,9 +54,8 @@ router.post('/login-submit', function(req, res) {
   });
 
   // Redirect
-  if (consts.LOGIN_TRANSITIVES) {
-    res.redirect('/login-done?return=' +
-        encodeURIComponent(returnUrl + '#success=true'));
+  if (LOGIN_TRANSITIVES) {
+    res.redirect('/login-done?return=' + encodeURIComponent(returnUrl + '#success=true'));
   } else {
     res.redirect(returnUrl + '#success=true');
   }
@@ -66,4 +81,4 @@ router.get('/logout', function(req, res) {
   res.redirect("/");  
 });
 
-module.exports = router
+module.exports = router;
