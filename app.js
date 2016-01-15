@@ -45,7 +45,7 @@ var MAX_VIEWS = 3;
 
 var ARTICLES = [];
 for (var i = 0; i <= 10; i++) {
-  ARTICLES.push({id: i, title: 'Article ' + i});
+  ARTICLES.push({id: i, title: 'Article ' + (i + 1)});
 }
 
 var CLIENT_ACCESS = {};
@@ -60,14 +60,12 @@ USERS['subscriber@example.com'] = {
 function cookieJoin(req, clientAuth) {
   //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
-  console.log("email: " + email);
   if (email && USERS[email]) {
     clientAuth.user = USERS[email];
   }
 }
 
 function getOrCreateClientAuth(readerId) {
-  console.log("getOrCreateClientAuth");
   var clientAuth = CLIENT_ACCESS[readerId];
   if (!clientAuth) {
     clientAuth = {
@@ -98,27 +96,32 @@ app.use(function(req, res, next) {
   next();
 });
 
-/** Sample Article */
+/** List all Articles */
 app.get('/', function(req, res) {
   res.locals = { articles: ARTICLES } ;
   res.render('list', {
   });
 });
 
-/** Sample Article */
+/** View a single Article */
 app.get('/((\\d+))', function(req, res) {
-  id = req.params[0];
-  if (!id || !ARTICLES[id]) {
+  id = parseInt(req.params[0]);
+  if (!ARTICLES[id]) {
     res.sendStatus(404);
     return;
   }
 
   host = req.get('host');
+  // http works only on localhost
   protocol = host.startsWith('localhost') ? 'http' : 'https';
+  prevId = id - 1
+  nextId = id + 1
   res.locals = { 
-    'host': protocol + '://' + req.get('host'),
-    'id': id,
-    'title': ARTICLES[id].title
+    host: protocol + '://' + host,
+    id: id,
+    title: ARTICLES[id].title,
+    next: nextId < ARTICLES.length ? nextId : false,
+    prev: prevId >= 0 ? prevId : false
   };
   res.render('index', {});
 });
@@ -225,8 +228,8 @@ app.post('/amp-pingback', function(req, res) {
   var clientAuth = getOrCreateClientAuth(readerId);
   cookieJoin(req, clientAuth);
 
-
-  if (!clientAuth.user) {
+  var views = Object.keys(clientAuth.viewedUrls).length;
+  if (!clientAuth.user && views <= MAX_VIEWS) {
     // Metered.
     clientAuth.viewedUrls[viewedUrl] = true;
   }
