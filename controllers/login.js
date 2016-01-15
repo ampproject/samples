@@ -44,8 +44,8 @@ router.post('/login-submit', function(req, res) {
   }
 
   // Login
-  var clientAuth = PaywallAccess.getOrCreate(readerId);
-  clientAuth.user = user;  
+  var paywallAccess = PaywallAccess.getOrCreate(readerId);
+  paywallAccess.user = user;  
 
   console.log('Logged in: ', PaywallAccess.findByReaderId[readerId]);
 
