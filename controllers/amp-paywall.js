@@ -35,18 +35,18 @@ router.get('/amp-authorization.json', function(req, res) {
     };
   } else {
     // Metered.
-    var access = isAuthorized(clientAuth, referrer, viewedUrl);
+    var hasAccess = isAuthorized(clientAuth, referrer, viewedUrl);
 
     var views = clientAuth.numViews;
     // Count view if user hasn't already seen the url.
-    if (access && !clientAuth.viewedUrls[viewedUrl]) {
+    if (hasAccess && !clientAuth.viewedUrls[viewedUrl]) {
       views += 1;
     }
 
     response = {
       'views': views,
       'maxViews': MAX_VIEWS,
-      'access': isAuthorized(clientAuth, referrer, viewedUrl)
+      'access': hasAccess
     };
   }
   console.log('Authorization response:', readerId, response);
@@ -77,6 +77,7 @@ router.post('/amp-pingback', function(req, res) {
 
   console.log('Pingback response:', readerId, {}, clientAuth);
   console.log("clientAuth: " + clientAuth.numViews);
+  console.log("FCF: ", referrer, clientAuth.viewedUrlsByReferrer[referrer]);
   res.json({});
 });
 
@@ -90,7 +91,8 @@ function isFirstClickFree(clientAuth, referrer, url) {
   //   return false
   // }
 
-  return clientAuth.viewedUrlsByReferrer[referrer] < 3 ;
+  return !clientAuth.viewedUrlsByReferrer[referrer] 
+      || clientAuth.viewedUrlsByReferrer[referrer] < 3;
 }
 
 function registerView(clientAuth, referrer, url) {
@@ -101,7 +103,11 @@ function registerView(clientAuth, referrer, url) {
   clientAuth.viewedUrls[url] = true;
 
   if (isFirstClickFree(clientAuth, referrer, url)) {
-    clientAuth.viewedUrlsByReferrer[referrer]++;
+    if (clientAuth.viewedUrlsByReferrer[referrer]) {
+      clientAuth.viewedUrlsByReferrer[referrer]++;
+    } else {
+      clientAuth.viewedUrlsByReferrer[referrer] = 1;      
+    }
   } else if (!clientAuth.user) {
     clientAuth.numViews++;
   }
