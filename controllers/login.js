@@ -81,8 +81,8 @@ router.get('/logout', function(req, res) {
   var email = req.cookies.email;
   if (email) {
 	PaywallAccess.deleteByEmail(email);
+  	res.clearCookie('email');	
   }
-  res.clearCookie('email');
   res.redirect("/");  
 });
 
