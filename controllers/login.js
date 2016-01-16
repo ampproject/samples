@@ -78,7 +78,11 @@ router.get('/reset', function(req, res) {
 });
 
 router.get('/logout', function(req, res) {
-  res.clearCookie('email');
+  var email = req.cookies.email;
+  if (email) {
+	PaywallAccess.deleteByEmail(email);
+  	res.clearCookie('email');	
+  }
   res.redirect("/");  
 });
 

@@ -88,3 +88,12 @@ exports.findByReaderId = function(readerId) {
 exports.deleteByReaderId = function(readerId) {
   delete READER_ID_TO_MAPPING[readerId];
 };
+
+exports.deleteByEmail = function(email) {
+  for (var readerId in READER_ID_TO_MAPPING) {
+    var user = READER_ID_TO_MAPPING[readerId].user;
+    if (user && user.email == email) {
+      this.deleteByReaderId(readerId); 
+    }
+  }
+};
