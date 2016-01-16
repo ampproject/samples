@@ -34,6 +34,7 @@ router.get('/amp-authorization.json', function(req, res) {
   var viewedUrl = req.query.url;
 
   var referrer = req.query.ref;
+  console.log('referrer: ' + referrer);
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
   console.log("viewedUrls: " + paywallAccess.viewedUrls);
@@ -49,10 +50,19 @@ router.get('/amp-authorization.json', function(req, res) {
       'access': true,
       'subscriber': paywallAccess.user.subscriber
     };
+  } else if (paywallAccess.viewedUrls[viewedUrl]) {
+    response = {
+      'return': true,
+      'access': true
+    };
+  } else if (paywallAccess.isFirstClickFree(referrer)) {
+    response = {
+      'fcs': true,
+      'access': true
+    };
   } else {
     // Metered.
     var hasAccess = paywallAccess.isAuthorized(referrer, viewedUrl);
-
     // Count view if user hasn't already seen the url.
     var views = paywallAccess.numViews;
     if (hasAccess && !paywallAccess.viewedUrls[viewedUrl]) {

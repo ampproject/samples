@@ -15,10 +15,13 @@
  */
 "use strict";
 
+var url = require('url');
 var MAX_FIRST_CLICK_FREE_VIEWS = 3;
 var MAX_VIEWS = 3;
 
 var READER_ID_TO_MAPPING = {};
+var FIRST_CLICK_FREE_DOMAINS = ['google.com']
+var FIRST_CLICK_FREE_TEST_PATH = 'fcf'
 
 class PaywallAccess {
 
@@ -29,31 +32,29 @@ class PaywallAccess {
       this.user = null;
   }
 
-  isFirstClickFree(referrer, url) {
-    if (!referrer) {
-      return false;
-    }  
-
-    // if (!(referrer in FCF_REFERRERS()) {
-    //   return false
-    // }
-
-    return !this.viewedUrlsByReferrer[referrer] 
-      || this.viewedUrlsByReferrer[referrer] < MAX_FIRST_CLICK_FREE_VIEWS;
+  isFirstClickFree(referrer) {
+    var host = url.parse(referrer);
+    if(FIRST_CLICK_FREE_DOMAINS.indexOf(host) == -1 &&
+      // for testing
+      referrer.indexOf(FIRST_CLICK_FREE_TEST_PATH) == -1) {
+        return false;
+    }
+    return !this.viewedUrlsByReferrer[host] 
+      || this.viewedUrlsByReferrer[host] < MAX_FIRST_CLICK_FREE_VIEWS;
   }
 
-  registerView(referrer, url) {
-    if (!this.isAuthorized(referrer, url)) {
+  registerView(referrer, viewedUrl) {
+    if (!this.isAuthorized(referrer, viewedUrl)) {
       return;
     }
 
-    this.viewedUrls[url] = true;
-
-    if (this.isFirstClickFree(referrer, url)) {
-      if (this.viewedUrlsByReferrer[referrer]) {
-        this.viewedUrlsByReferrer[referrer]++;
+    this.viewedUrls[viewedUrl] = true;
+    if (this.isFirstClickFree(referrer)) {
+      var host = url.parse(referrer);
+      if (this.viewedUrlsByReferrer[host]) {
+        this.viewedUrlsByReferrer[host]++;
       } else {
-        this.viewedUrlsByReferrer[referrer] = 1;      
+        this.viewedUrlsByReferrer[host] = 1;      
       }
     } else if (!this.user) {
       this.numViews++;
@@ -63,7 +64,7 @@ class PaywallAccess {
   isAuthorized(referrer, url) {
     return this.user 
       || this.viewedUrls[url] 
-      || this.isFirstClickFree(referrer, url) 
+      || this.isFirstClickFree(referrer) 
       || this.numViews < MAX_VIEWS;
   }
 

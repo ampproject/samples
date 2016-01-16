@@ -36,6 +36,15 @@ router.get('/', function(req, res) {
 });
 
 /**
+ * Test page for frist-click-free
+ **/
+router.get('/fcf', function(req, res) {
+  res.render('fcf', {
+    articles: ARTICLES
+  });
+});
+
+/**
  * View a single Article 
  **/
 router.get('/((\\d+))', function(req, res) {

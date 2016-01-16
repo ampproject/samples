@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <script id="amp-access" type="application/json">
     {
-      "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&_=RANDOM",
-      "pingback": "<% host %>/amp-pingback?rid=READER_ID&url=CANONICAL_URL",
+      "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&_=RANDOM&ref=DOCUMENT_REFERRER",
+      "pingback": "<% host %>/amp-pingback?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER",
       "login": "<% host %>/login?rid=READER_ID&url=CANONICAL_URL"
     }
   </script>
@@ -34,10 +34,18 @@
           This section shows the number of article the user has left. It's only shown if the
           user she's allowd to see the content and is not a subscriver 
          -->
-        <section amp-access="access AND NOT subscriber" amp-access-hide class="meter-section">
+        <section amp-access="access AND views" amp-access-hide class="meter-section">
           <template amp-access-template type="amp-mustache">
             You are viewing article {{views}} of {{maxViews}} free articles this month!
           </template>
+        </section>
+
+        <section amp-access="access AND return" amp-access-hide class="meter-section">
+          Welcome back! You've read this article already.
+        </section>
+
+        <section amp-access="access AND fcs" amp-access-hide class="meter-section">
+          Yay! The first click is free.
         </section>
 
         <section amp-access="access AND subscriber" amp-access-hide class="meter-section">
