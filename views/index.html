@@ -26,7 +26,14 @@
   <header>
     <div class="brand-logo">
         ⚡ Instant Times
+      <span amp-access="subscriber" amp-access-hide class="login-header">
+        <a href="<% host %>/logout">Logout</a>
+      </span>            
+      <span amp-access="NOT subscriber" amp-access-hide class="login-header">
+        <a on="tap:amp-access.login">Login</a>  
+      </span>                  
     </div>  
+
   </header>
   <main role="main">
     <article>
