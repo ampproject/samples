@@ -60,14 +60,15 @@ router.get('/((\\d+))', function(req, res) {
     host: protocol + '://' + host,
     id: id,
     title: ARTICLES[id].title,
-    next: nextArticleId(id),
-    prev: prevArticleId(id)
+    prev: prevArticleId(id),
+    next: nextArticleId(id)
   });
 });
 
 function prevArticleId(id) {
   var prevId = id - 1;
-  return prevId >= 0 ? prevId : false;
+  console.log('prev ' + id + '<' + prevId);
+  return prevId >= 0 ? String(prevId) : false;
 }
 
 function nextArticleId(id) {

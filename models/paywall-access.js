@@ -48,7 +48,6 @@ class PaywallAccess {
       return;
     }
 
-    this.viewedUrls[viewedUrl] = true;
     if (this.isFirstClickFree(referrer)) {
       var host = url.parse(referrer);
       if (this.viewedUrlsByReferrer[host]) {
@@ -56,9 +55,10 @@ class PaywallAccess {
       } else {
         this.viewedUrlsByReferrer[host] = 1;      
       }
-    } else if (!this.user) {
+    } else if (!this.user && !this.viewedUrls[viewedUrl]) {
       this.numViews++;
     }
+    this.viewedUrls[viewedUrl] = true;
   }
 
   isAuthorized(referrer, url) {

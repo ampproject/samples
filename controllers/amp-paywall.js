@@ -48,7 +48,7 @@ router.get('/amp-authorization.json', function(req, res) {
     // Subscriber.
     response = {
       'access': true,
-      'subscriber': paywallAccess.user.subscriber
+      'subscriber': true
     };
   } else if (paywallAccess.viewedUrls[viewedUrl]) {
     response = {
