@@ -25,25 +25,18 @@ var User = require('../models/user');
  * AUTHORIZATION CORS 
  */
 router.get('/amp-authorization.json', function(req, res) {
-  console.log('Client access verification');
   var readerId = req.query.rid;
   if (!readerId) {
     res.sendStatus(400);
     return;
   }
   var viewedUrl = req.query.url;
-
   var referrer = req.query.ref;
-  console.log('referrer: ' + referrer);
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  console.log("viewedUrls: " + paywallAccess.viewedUrls);
-
   cookieJoin(req, paywallAccess);
 
   var response;
-  console.log('client auth', paywallAccess.user);
-
   if (paywallAccess.user) {
     // Subscriber.
     response = {
@@ -51,11 +44,13 @@ router.get('/amp-authorization.json', function(req, res) {
       'subscriber': true
     };
   } else if (paywallAccess.viewedUrls[viewedUrl]) {
+    // User has seen the article already
     response = {
       'return': true,
       'access': true
     };
   } else if (paywallAccess.isFirstClickFree(referrer)) {
+    // First-Click is free
     response = {
       'fcs': true,
       'access': true
@@ -96,11 +91,10 @@ router.post('/amp-pingback', function(req, res) {
     return;
   }
 
-  var referrer = req.query.ref;
-
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
   cookieJoin(req, paywallAccess);
 
+  var referrer = req.query.ref;
   paywallAccess.registerView(referrer, viewedUrl);
 
   console.log('Pingback response:', readerId, {}, paywallAccess);
@@ -110,7 +104,8 @@ router.post('/amp-pingback', function(req, res) {
 });
 
 function cookieJoin(req, paywallAccess) {
-  //retrieve the cookie. If it's not null, add a reference to the user on CLIENT_ACCESS[readerId]
+  //retrieve the cookie. If it's not null, add a reference to the user on 
+  //CLIENT_ACCESS[readerId]
   var email = req.cookies.email;
   var user = User.findByEmail(email);
   if (email && user) {
