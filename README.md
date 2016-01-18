@@ -16,7 +16,6 @@ limitations under the License.
 
 ## AMP Publisher Prototype
 
-
 ```
 npm i
 npm start
