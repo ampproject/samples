@@ -18,6 +18,8 @@ limitations under the License.
 
 This is a demo application for the [AMP Access](https://github.com/ampproject/amphtml/blob/master/extensions/amp-access/amp-access.md) component. AMP Access or “AMP paywall and subscription support” provides control to publishers over what content can be accessed by a reader and with what restrictions. You can try the demo [here](https://rocky-sierra-1919.herokuapp.com).
 
+![](public/img/amp-access-screenshot.png)
+
 ## Walkthrough
 
 This is a quick walk through the source code to get you started with AMP Access. Integrating AMP Access includes two steps:
