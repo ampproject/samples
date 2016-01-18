@@ -27,33 +27,10 @@
       <div class=form-line>
         <input type=submit value=Login>
       </div>
-      <input name=returnurl type=hidden>
-      <input name=rid type=hidden>
+      <input name=returnurl type=hidden value="<% returnUrl %>">
+      <input name=rid type=hidden value="<% readerId %>">
     </form>
     </main>
-
-    <script>
-      var queryMap = {};
-      var query = window.location.search;
-      if (query && query[0] == '?') {
-        query = query.substring(1);
-      }
-      if (query) {
-        var params = query.split('&');
-        params.forEach(function(param) {
-          var eq = param.indexOf('=');
-          var name = decodeURIComponent((eq != -1 ? param.substring(0, eq) : param).trim());
-          var value = decodeURIComponent((eq != -1 ? param.substring(eq + 1) : '').trim());
-          queryMap[name] = value;
-        });
-      }
-      if (queryMap['return']) {
-        document.querySelector('[name=returnurl]').value = queryMap['return'];
-      }
-      if (queryMap['rid']) {
-        document.querySelector('[name=rid]').value = queryMap['rid'];
-      }
-    </script>
   </body>
 </html>
 

@@ -31,7 +31,10 @@ var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
  */
 router.get('/login', function(req, res) {
   console.log('Serve /login');
-  res.render('login', {});
+  res.render('login', {
+    returnUrl: req.query.return,
+    readerId: req.query.rid
+  });
 });
 
 /**
