@@ -20,8 +20,8 @@ var MAX_FIRST_CLICK_FREE_VIEWS = 3;
 var MAX_VIEWS = 3;
 
 var READER_ID_TO_MAPPING = {};
-var FIRST_CLICK_FREE_DOMAINS = ['google.com']
-var FIRST_CLICK_FREE_TEST_PATH = 'fcf'
+var FIRST_CLICK_FREE_DOMAINS = ['google.com'];
+var FIRST_CLICK_FREE_TEST_PATH = 'fcf';
 
 /**
  * A simple paywall implementation. It understands AMP Reader Ids
@@ -62,8 +62,8 @@ class PaywallAccess {
       referrer.indexOf(FIRST_CLICK_FREE_TEST_PATH) == -1) {
         return false;
     }
-    return !this.viewedUrlsByReferrer[host] 
-      || this.viewedUrlsByReferrer[host] < MAX_FIRST_CLICK_FREE_VIEWS;
+    return !this.viewedUrlsByReferrer[host] || 
+      this.viewedUrlsByReferrer[host] < MAX_FIRST_CLICK_FREE_VIEWS;
   }
 
   /**
@@ -91,10 +91,10 @@ class PaywallAccess {
    * Returns true if the user has access to the given URL.
    */
   hasAccess(referrer, url) {
-    return this.isSubscriber() 
-      || this.hasAlreadyVisisted(url)
-      || this.isFirstClickFree(referrer) 
-      || this.numViews < MAX_VIEWS;
+    return this.isSubscriber() || 
+      this.hasAlreadyVisisted(url) || 
+      this.isFirstClickFree(referrer) || 
+      this.numViews < MAX_VIEWS;
   }
 
   /**

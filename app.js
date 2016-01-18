@@ -34,7 +34,7 @@ app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
 
 // Static Content
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/public'));
 
 // Middleware 
 app.use(require('./middlewares/amp-paywall-cors'));
