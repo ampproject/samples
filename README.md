@@ -27,7 +27,7 @@ This is a quick walk through the source code to get you started with AMP Access.
 1. AMP Access Endpoint implementation: integrate publisher paywall via AMP Access callbacks.
 2. AMP HTML Configuration: configure the publisher AMP Access endpoints and define content access rules.
 
-### AMP Access Endpoint implementation
+#### AMP Access Endpoint implementation
 
 The first step is to implement the AMP Access callbacks in the publisher backend. The endpoint  URLs must be configured in each AMP HTML file using AMP Access (previous step):
 
@@ -35,7 +35,7 @@ The first step is to implement the AMP Access callbacks in the publisher backend
 * **pingback** ([amp-paywall.js](controllers/amp-paywall.js#L89)): the main purposes for pingback is to count down meter when it is used. As a credentialed CORS endpoint it may contain publisher cookies. Thus it can be used to map AMP Reader ID to the reader's identity if they are logged in.
 * **login** ([login.html](views/login.html)): Login Page is simply a normal Web page with no special constraints, other than it should function well as a browser dialog. 
 
-### AMP HTML Configuration
+#### AMP HTML Configuration
 
 The second step is to integrate AMP Access into the AMP HTML files:
 
