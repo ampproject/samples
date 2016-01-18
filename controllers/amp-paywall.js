@@ -22,7 +22,11 @@ var PaywallAccess = require('../models/paywall-access');
 var User = require('../models/user');
 
 /** 
- * AUTHORIZATION CORS 
+ # Authorization is configured via authorization property in the AMP Access 
+ # Configuration section. It is a credentialed CORS endpoint. 
+ # 
+ # This endpoint produces the authorization response that can be used in the 
+ # content markup expressions to show/hide different parts of content.
  */
 router.get('/amp-authorization.json', function(req, res) {
   var readerId = req.query.rid;
@@ -34,16 +38,16 @@ router.get('/amp-authorization.json', function(req, res) {
   var referrer = req.query.ref;
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  cookieJoin(req, paywallAccess);
+  matchUserToReaderId(req, paywallAccess);
 
   var response;
-  if (paywallAccess.user) {
+  if (paywallAccess.isSubscriber()) {
     // Subscriber.
     response = {
-      'access': true,
-      'subscriber': true
+      'subscriber': true,
+      'access': true
     };
-  } else if (paywallAccess.viewedUrls[viewedUrl]) {
+  } else if (paywallAccess.hasAlreadyVisisted(viewedUrl)) {
     // User has seen the article already
     response = {
       'return': true,
@@ -57,13 +61,12 @@ router.get('/amp-authorization.json', function(req, res) {
     };
   } else {
     // Metered.
-    var hasAccess = paywallAccess.isAuthorized(referrer, viewedUrl);
+    var hasAccess = paywallAccess.hasAccess(referrer, viewedUrl);
     // Count view if user hasn't already seen the url.
     var views = paywallAccess.numViews;
-    if (hasAccess && !paywallAccess.viewedUrls[viewedUrl]) {
-      views += 1;
+    if (hasAccess && !paywallAccess.hasAlreadyVisisted()) {
+      views++;
     }
-
     response = {
       'views': views,
       'maxViews': PaywallAccess.MAX_VIEWS,
@@ -75,7 +78,13 @@ router.get('/amp-authorization.json', function(req, res) {
 });
 
 /** 
- * PINGBACK CORS 
+ * Pingback is configured via pingback property in the AMP Access Configuration section. 
+ * It must be a credentialed CORS endpoint. Pingback must not produce a response.
+ *
+ * Use the pingback to:
+ *
+ * - count down meter when it is used.
+ * - map AMP Reader ID to the user's identity via cookie.
  */
 router.post('/amp-pingback', function(req, res) {
   console.log('Client access pingback');
@@ -86,13 +95,9 @@ router.post('/amp-pingback', function(req, res) {
   }
 
   var viewedUrl = req.query.url;
-  if (!viewedUrl) {
-    res.sendStatus(400);
-    return;
-  }
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  cookieJoin(req, paywallAccess);
+  matchUserToReaderId(req, paywallAccess);
 
   var referrer = req.query.ref;
   paywallAccess.registerView(referrer, viewedUrl);
@@ -103,12 +108,17 @@ router.post('/amp-pingback', function(req, res) {
   res.json({});
 });
 
-function cookieJoin(req, paywallAccess) {
-  //retrieve the cookie. If it's not null, add a reference to the user on 
-  //CLIENT_ACCESS[readerId]
+/**
+ * Retrieves a logged in user via cookie. If it exists it will store the
+ * user with the Reader ID. This makes it possible to automatically 
+ * login paywall users if they are already logged into your site. 
+ */
+function matchUserToReaderId(req, paywallAccess) {
+  //retrieve the login cookie. 
   var email = req.cookies.email;
   var user = User.findByEmail(email);
-  if (email && user) {
+  if (user) {
+    // map Reader ID to user
     paywallAccess.user = user;
   }
 }

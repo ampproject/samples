@@ -15,7 +15,6 @@
  */
 "use strict";
 
-/* All routes related to content requests */
 var express = require('express');
 var router = express.Router();
 
@@ -36,7 +35,7 @@ router.get('/', function(req, res) {
 });
 
 /**
- * Test page for frist-click-free
+ * Test page for first-click-free
  **/
 router.get('/fcf', function(req, res) {
   res.render('fcf', {
@@ -56,7 +55,7 @@ router.get('/((\\d+))', function(req, res) {
   var host = req.get('host');
   // http works only on localhost
   var protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.render('index', {
+  res.render('article', {
     host: protocol + '://' + host,
     id: id,
     title: ARTICLES[id].title,

@@ -1,0 +1,135 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+   <title>Lorem Ipsum | PublisherName</title>
+    <link rel="canonical" href="<% id %>" >
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <!--
+      Configures the AMP Access endpoints. These must be provided by the publisher.
+
+      When configuring the URLs for various endpoints, these substitution 
+      variables are available: 
+
+      * READER_ID: The AMP Reader ID.
+      * AMPDOC_URL: The URL of this AMP Document.
+      * CANONICAL_URL: The canonical URL of this AMP Document.
+      * DOCUMENT_REFERRER: The Referrer URL.
+      * VIEWER: The origin of the AMP Viewer.
+      * RANDOM: A random number. Helpful to avoid browser cache.
+    -->
+    <script id="amp-access" type="application/json">
+    {
+      "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "pingback": "<% host %>/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
+      "login": "<% host %>/login?rid=READER_ID&url=CANONICAL_URL"
+    }
+    </script>
+    <%> styles %>
+    <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+    <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+      <script async src="https://cdn.ampproject.org/v0.js"></script>
+
+  </head>
+  <body>
+    <header>
+      <div class="brand-logo">
+        ⚡ Instant Times
+        <span amp-access="subscriber" amp-access-hide class="login-header">
+          <a href="<% host %>/logout" class="logout">Logout</a>
+        </span>            
+        <span amp-access="NOT subscriber" amp-access-hide class="login-header">
+          <a on="tap:amp-access.login" class="logout">Login</a>  
+        </span>                  
+      </div>  
+
+    </header>
+    <main role="main">
+    <article>
+      <!-- 
+        This section is only visible by subscribers. The subscriber variable is 
+        defined in the authentification response data.
+      -->
+      <section amp-access="access AND subscriber" amp-access-hide class="meter-section">
+        Thanks for being a subscriber. You rock!
+      </section>
+
+      <section amp-access="access AND views" amp-access-hide class="meter-section">
+        <template amp-access-template type="amp-mustache">
+          You are viewing article {{views}} of {{maxViews}} free articles this month!
+        </template>
+      </section>
+
+      <section amp-access="access AND return" amp-access-hide class="meter-section">
+        Welcome back! You've read this article already.
+      </section>
+
+      <section amp-access="access AND fcs" amp-access-hide class="meter-section">
+        Yay! The first click is free.
+      </section>
+
+      <!--
+        This section will only be shown to users who do not have access to the article and
+        have reached the maximum number of articles for that month.
+      -->
+      <section amp-access="NOT access AND maxViews" amp-access-hide class="meter-section">
+        <template amp-access-template type="amp-mustache">
+          You have reached your {{maxViews}} free articles this month!
+        </template>
+        <p><a on="tap:amp-access.login">Login to read more!</a></p>
+      </section>
+
+      <!--
+        This section is visible to all users.
+      -->  
+      <section>
+        <h1 class="title"><% title %></h1>    
+        <amp-img
+            src="img/hero@1x.jpg"
+            srcset="img/hero@1x.jpg 1x, img/hero@2x.jpg 2x"
+            layout="responsive" width="360" placeholder
+                                alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
+                                height="216" on="tap:headline-img-lightbox">
+        </amp-img>
+        <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent congue arcu non interdum varius. Vestibulum quis quam eget massa condimentum feugiat. Nullam eu efficitur nulla. Sed egestas sagittis lacus. Integer efficitur placerat urna, at euismod justo molestie in. In ullamcorper leo sit amet erat vehicula varius. Cras venenatis suscipit mollis. Suspendisse non ipsum finibus, blandit nibh vitae, vestibulum eros. In at placerat massa. Vestibulum maximus sagittis eros quis lacinia. Suspendisse elementum, nibh tempor gravida pretium, quam neque ornare ante, in elementum tellus lacus vel arcu.
+        </p>
+      </section>
+
+      <!--
+        This section will be shown to users who have access to the article. 
+        Either because it follows First Click Free rules, the user is a subscriber 
+        or has not yet reached the maximum number of free articles.
+      -->
+      <div amp-access="access" >
+        <figure>
+          <amp-img class="full-bleed" placeholder
+                   src="img/sea@1x.jpg"
+                   srcset="img/sea@1x.jpg 1x, img/sea@2x.jpg 2x"
+                   layout="responsive" width="360"
+                                       alt="Fusce pretium tempor justo, vitae consequat dolor maximus eget."
+                                       height="216">
+          </amp-img>
+        <figcaption>
+        Fusce pretium tempor justo, vitae consequat dolor maximus eget.
+        </figcaption>
+        </figure>
+        <p>Sed bibendum urna ac turpis placerat, eu pellentesque massa congue. Aliquam porta, dui eget cursus aliquam, est orci consequat ex, vel auctor justo leo nec dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla pellentesque eu nisi et dictum. Praesent viverra scelerisque libero et pretium. Sed accumsan quis lectus id ornare. Cras venenatis odio tellus, sed pretium dolor fermentum vel. Praesent luctus sem at sapien elementum, eu congue ipsum cursus. Etiam bibendum sapien nec dui maximus, et bibendum est fermentum. Duis vel sollicitudin libero, non eleifend enim. Nunc malesuada lectus sit amet justo mollis egestas. Duis sed egestas nisi, vulputate volutpat augue. Vivamus tincidunt ultricies neque, ut dapibus mauris pretium id. Ut nisi mauris, sollicitudin et egestas vel, laoreet ut mi. In at tincidunt turpis, a volutpat massa. Cras bibendum lorem sit amet est feugiat finibus.
+        </p>
+      </div>
+    </article>
+    </main>
+    <footer>
+      <ul>
+        <%#prev%>
+        <li><a href="/<% prev %>">Previous</a></li>
+        <%/prev%>        
+        <li><a href="/">Home</a></li>
+        <%#next%>        
+        <li><a href="/<% next %>">Next</a></li>
+        <%/next%>                
+      </ul>
+    </footer> 
+  </body>
+</html>

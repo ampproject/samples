@@ -15,20 +15,29 @@
  */
 "use strict";
 
-/* All routes realated to login/logout */
 var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
 var PaywallAccess = require('../models/paywall-access');
 
-var LOGIN_TRANSITIVES = false;
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 
+/**
+ * The link to the Login Page is configured via the login property in the 
+ * AMP Access Configuration section. 
+ *
+ * Login Page is simply a normal Web page with no special constraints, other 
+ * than it should function well as a browser dialog. 
+ */
 router.get('/login', function(req, res) {
   console.log('Serve /login');
   res.render('login', {});
 });
 
+/**
+ * A simple login flow. The important thing is to map the user 
+ * to it's AMP Reader ID.
+ */
 router.post('/login-submit', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
@@ -42,28 +51,18 @@ router.post('/login-submit', function(req, res) {
     res.redirect('/login?rid=' + readerId + "&return=" + returnUrl);
     return;    
   }
+  console.log('Login success: ', user);
 
-  // Login
+  // map the user to the AMP Reader ID
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
   paywallAccess.user = user;  
 
-  console.log('Logged in: ', PaywallAccess.findByReaderId[readerId]);
-
-  // Set cookies
+  // set user as logged in via cookie
   res.cookie('email', user.email, {
     maxAge: AUTH_COOKIE_MAX_AGE  // 2hr
   });
 
-  // Redirect
-  if (LOGIN_TRANSITIVES) {
-    res.redirect('/login-done?return=' + encodeURIComponent(returnUrl + '#success=true'));
-  } else {
-    res.redirect(returnUrl + '#success=true');
-  }
-});
-
-router.get('/login-done', function(req, res) {
-  res.render('login-done', {});
+  res.redirect(returnUrl + '#success=true');
 });
 
 router.get('/reset', function(req, res) {
@@ -77,10 +76,13 @@ router.get('/reset', function(req, res) {
   res.redirect("/");
 });
 
+/**
+ * Simple user logout. 
+ */
 router.get('/logout', function(req, res) {
   var email = req.cookies.email;
   if (email) {
-	PaywallAccess.deleteByEmail(email);
+  	PaywallAccess.deleteByEmail(email);
   	res.clearCookie('email');	
   }
   res.redirect("/");  
