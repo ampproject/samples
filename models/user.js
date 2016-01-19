@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
  *
@@ -14,9 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
+var USERS = {};
 
-/**
- * @const
- */
-module.exports.LOGIN_TRANSITIVES = false;
+// add a sample user
+USERS['subscriber@example.com'] = {
+  email: 'subscriber@example.com',
+  password: '123456',
+  subscriber: true
+};
+
+// Find user by email
+exports.findByEmail = function(email) {
+  return USERS[email];
+};

@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
  *
@@ -14,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
-
-const PORT = 8001;
-
-require('./server').start(PORT);
+/* Log all incoming requests */
+module.exports = function(request, response, next) {
+  console.log(request.method + ":" + request.url);
+  next();
+};

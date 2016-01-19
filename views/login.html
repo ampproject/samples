@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Publisher Login</title>
+    <%> styles %>
+  </head>
+  <body>
+    <header>
+      <div class="brand-logo">
+        ⚡ Instant Times
+      </div>
+    </header>
+    <main>
+    <div class="title">
+      Login
+    </div>
+    <form method=post action="login-submit">
+      <div class=form-line>
+        <div class=label>Email:</div>
+        <input type=email name=email value="subscriber@example.com">
+      </div>
+      <div class=form-line>
+        <div class=label>Password:</div>
+        <input type=password name=password value="123456">
+      </div>
+      <div class=form-line>
+        <input type=submit value=Login>
+      </div>
+      <input name=returnurl type=hidden value="<% returnUrl %>">
+      <input name=rid type=hidden value="<% readerId %>">
+    </form>
+    </main>
+  </body>
+</html>
+

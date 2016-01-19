@@ -1,0 +1,38 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+    <title>Lorem Ipsum | PublisherName</title>
+    <link rel="canonical" href="index.html" >
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <%> styles %>
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+      <script async src="https://cdn.ampproject.org/v0.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand-logo">
+        ⚡ Instant Times
+      </div>  
+    </header>
+    <main role="main">
+    <h1 class="title">Articles</h1>    
+    <ul>
+      <%#articles%>
+      <li><a href="<% id %>"><% title %></a></li>
+      <%/articles%>
+    </ul>
+    <section class="help-section">
+      This is an AMP Paywall demo. To run this demo:
+      <ul>
+        <li>Turn on <b>dev-channel</b> and <b>amp-access</b> experiments under <a href="https://cdn.ampproject.org/experiments.html">
+            AMP CDN Experiments</a>.</li>
+        <li>Turn on <b>amp-access</b> experiment via <code>AMP.toggleExperiment("amp-access")</code> in the <a href="https://developer.chrome.com/devtools/docs/console#evaluating-expressions">
+            Chrome DevTools Console</a> (View -> Developer -> Javascript Console).</li>
+        <li>For testing First-Click-Free go to the <a href="fcf">
+            First-Click-Free test page</a>.</li>
+      </ul>
+    </section>
+    </main>
+  </body>
+</html>
