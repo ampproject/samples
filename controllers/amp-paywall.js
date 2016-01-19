@@ -97,7 +97,6 @@ router.post('/amp-pingback', function(req, res) {
   var viewedUrl = req.query.url;
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  matchUserToReaderId(req, paywallAccess);
 
   var referrer = req.query.ref;
   paywallAccess.registerView(referrer, viewedUrl);
