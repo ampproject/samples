@@ -39,7 +39,7 @@ The first step is to implement the AMP Access callbacks in the publisher backend
 
 The second step is to integrate AMP Access into the AMP HTML files:
 
-1. Configure the AMP Access endpoints ([article.html](https://github.com/ampproject/amp-access-prototyping/blob/master/views/index.html#21)).
+1. Configure the AMP Access endpoints ([article.html](views/article.html#21)).
 
     ```html
     <script id="AMP Access" type="application/json">
@@ -51,13 +51,13 @@ The second step is to integrate AMP Access into the AMP HTML files:
     </script>
     ```
 
-2. Include the AMP Access  component ([article.html](https://github.com/ampproject/amp-access-prototyping/blob/master/views/index.html#L30)):
+2. Include the AMP Access  component ([article.html](views/article.html#L30)):
 
     ```html
     <script async custom-element="AMP Access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
     ```
 
-3. Define which parts of the AMP HTML file are visible to subscribers and non-subscribers ([article.html](https://github.com/ampproject/amp-access-prototyping/blob/master/views/index.html#L51)):
+3. Define which parts of the AMP HTML file are visible to subscribers and non-subscribers ([article.html](views/article.html#L51)):
 
     ```html
     <section AMP Access="access AND subscriber" amp-access-hide>
@@ -65,14 +65,16 @@ The second step is to integrate AMP Access into the AMP HTML files:
     </section>
     ```
     
-That's it.
+That's it.¹
+
+¹Almost. The middleware in [amp-paywall-cors.js](middleware/amp-paywall-cors.js)) configures CORS access for the AMP Access endpoints.
 
 ## Installation
 
 Clone the repository via:
 
 ```none
-$ git clone https://github.com/ampproject/AMP Access-prototyping.git
+$ git clone https://github.com/ampproject/amp-access-prototyping.git
 ```
 
 Install [NodeJS](https://nodejs.org/) and run in the project dir:
