@@ -20,7 +20,7 @@ This is a demo application for the [AMP Access](https://github.com/ampproject/am
 
 ![](public/img/amp-access-screenshot.png)
 
-## Walkthrough
+## Getting Started
 
 This is a quick walk through the source code to get you started with AMP Access. Integrating AMP Access includes two steps:
 
@@ -29,11 +29,13 @@ This is a quick walk through the source code to get you started with AMP Access.
 
 #### AMP Access Endpoint implementation
 
-The first step is to implement the AMP Access callbacks in the publisher backend. The endpoint  URLs must be configured in each AMP HTML file using AMP Access (previous step):
+The first step is to implement the AMP Access callbacks in the publisher backend. The endpoint  URLs must be configured in each AMP HTML file using AMP Access:
 
 * **authorization** ([amp-paywall.js](controllers/amp-paywall.js#L31)): this credentialed CORS endpoint produces the authorization response that can be used in the content markup expressions to show/hide different parts of content (e.g. *subscriber*). The response is a free-form JSON object: it can contain any properties and values. 
 * **pingback** ([amp-paywall.js](controllers/amp-paywall.js#L89)): the main purposes for pingback is to count down meter when it is used. As a credentialed CORS endpoint it may contain publisher cookies. Thus it can be used to map AMP Reader ID to the reader's identity if they are logged in.
 * **login** ([login.html](views/login.html)): is a normal Web page with no special constraints, other than it should function well as a browser dialog. 
+ 
+Both endpoints, authorization and pingback, must be credentialed CORS endpoints. This is configured in [amp-paywall-cors.js](middleware/amp-paywall-cors.js).
 
 #### AMP HTML Configuration
 
@@ -65,9 +67,7 @@ The second step is to integrate AMP Access into the AMP HTML files:
     </section>
     ```
     
-That's it.¹
-
-¹Almost. The middleware in [amp-paywall-cors.js](middleware/amp-paywall-cors.js)) configures CORS access for the AMP Access endpoints.
+That's it.
 
 ## Installation
 
