@@ -34,35 +34,39 @@ router.get('/amp-authorization.json', function(req, res) {
     res.sendStatus(400);
     return;
   }
-  var viewedUrl = req.query.url;
-  var referrer = req.query.ref;
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
+  // check if there is a logged in user
   matchUserToReaderId(req, paywallAccess);
 
+  // create the response based on the user
+  var viewedUrl = req.query.url;
+  var referrer = req.query.ref;
+  // response can contain arbitrary json data
   var response;
   if (paywallAccess.isSubscriber()) {
-    // Subscriber.
+    // all subscribers have access
     response = {
       'subscriber': true,
       'access': true
     };
   } else if (paywallAccess.hasAlreadyVisisted(viewedUrl)) {
-    // User has seen the article already
+    // user has seen the article already
     response = {
       'return': true,
       'access': true
     };
   } else if (paywallAccess.isFirstClickFree(referrer)) {
-    // First-Click is free
+    // first-Click is free
     response = {
       'fcs': true,
       'access': true
     };
   } else {
-    // Metered.
+    // metered access
     var hasAccess = paywallAccess.hasAccess(referrer, viewedUrl);
-    // Count view if user hasn't already seen the url.
+    // send an increased view count if user hasn't already seen the url 
+    // the actual view is counted in the pingback
     var views = paywallAccess.numViews;
     if (hasAccess && !paywallAccess.hasAlreadyVisisted()) {
       views++;
@@ -87,24 +91,20 @@ router.get('/amp-authorization.json', function(req, res) {
  * - map AMP Reader ID to the user's identity via cookie.
  */
 router.post('/amp-pingback', function(req, res) {
-  console.log('Client access pingback');
   var readerId = req.query.rid;
   if (!readerId) {
     res.sendStatus(400);
     return;
   }
 
-  var viewedUrl = req.query.url;
-
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-
+  var viewedUrl = req.query.url;
   var referrer = req.query.ref;
+  // count the view in case of metering
   paywallAccess.registerView(referrer, viewedUrl);
-
-  console.log('Pingback response:', readerId, {}, paywallAccess);
-  console.log("paywallAccess: " + paywallAccess.numViews);
+  console.log("paywallAccess views: " + paywallAccess.numViews);
   console.log("FCF: ", referrer, paywallAccess.viewedUrlsByReferrer[referrer]);
-  res.json({});
+  res.status(200).end();
 });
 
 /**
