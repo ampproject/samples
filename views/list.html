@@ -16,13 +16,7 @@
       </div>  
     </header>
     <main role="main">
-    <h1 class="title">Articles</h1>    
-    <ul>
-      <%#articles%>
-      <li><a href="<% id %>"><% title %></a></li>
-      <%/articles%>
-    </ul>
-    <section class="help-section">
+    <section class="help-section" data-z-depth="2">
       This is an AMP Paywall demo. To run this demo:
       <ul>
         <li>Turn on <b>dev-channel</b> and <b>amp-access</b> experiments under <a href="https://cdn.ampproject.org/experiments.html">
@@ -33,6 +27,12 @@
             First-Click-Free test page</a>.</li>
       </ul>
     </section>
+    <h1>Articles</h1>    
+    <ul>
+      <%#articles%>
+      <li><a href="<% id %>"><% title %></a></li>
+      <%/articles%>
+    </ul>
     </main>
   </body>
 </html>

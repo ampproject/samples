@@ -74,7 +74,7 @@ That's it.
 Clone the repository via:
 
 ```none
-$ git clone https://github.com/ampproject/amp-access-prototyping.git
+$ git clone https://github.com/ampproject/amp-publisher-sample.git
 ```
 
 Install [NodeJS](https://nodejs.org/) and run in the project dir:
