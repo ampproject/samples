@@ -10,22 +10,24 @@
       <script async src="https://cdn.ampproject.org/v0.js"></script>
   </head>
   <body>
-    <header>
-      <div class="brand-logo">
-        ⚡ Instant Times
-      </div>  
-    </header>
-    <main role="main">
-    <h1 class="title">Articles with FCF</h1>    
-    <ul>
-      <%#articles%>
-      <li><a href="<% id %>"><% title %></a></li>
-      <%/articles%>
-    </ul>
-    <section class="help-section">
-      This is a test page for First-Click-Free. All links opened from this page will be treated 
-      as an First-Click-Free referral (the limit is 3).
-    </section>
-    </main>
+    <div class="main-body">
+      <header>
+        <div class="brand-logo">
+          ⚡ Instant Times
+        </div>  
+      </header>
+      <main role="main">
+      <h1>First-Click-Free Test Links</h1>    
+      <ul>
+        <%#articles%>
+        <li><a href="<% id %>"><% title %></a></li>
+        <%/articles%>
+      </ul>
+      <section class="help-section">
+        This is a test page for <a href="https://support.google.com/news/publisher/answer/40543?hl=en-GB">First-Click-Free</a>. All links opened from this page will be treated 
+        as a First-Click-Free referral (the limit is 3).
+      </section>
+      </main>
+      </div>
   </body>
 </html>

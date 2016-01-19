@@ -1,45 +1,102 @@
 <style amp-custom>
+
   body {
     margin: 0;
-    font-family: 'Georgia', Serif;
+    font-family: 'Roboto', 'Georgia', Serif;
+    background: #eee;
+    margin: 0 auto;
+    overflow-x: hidden;
+    display: block;
+  }
+
+  .main-body {
+    background: #fff;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  [data-z-depth="2"] {
+    -webkit-filter: drop-shadow(0 1.8px 1.8px rgba(0, 0, 0, 0.16)) drop-shadow(0 1.8px 1.8px rgba(0, 0, 0, 0.23));
+    filter: drop-shadow(0 1.8px 1.8px rgba(0, 0, 0, 0.16)) drop-shadow(0 1.8px 1.8px rgba(0, 0, 0, 0.23));
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 44px;
+    margin: 8px 0;
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 25px;
+  }
+
+  header {
+    color: #fff;
+  }
+
+  .navigation {
+    background: #3F51B5;
+    list-style-type: none;
+    overflow: hidden;
+    margin: 0;
+    padding: 8px;
+  }
+
+  .navigation .prev {
+    float: left;
+    background-image: url(img/chevron-left.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+    padding-left: 24px;
+  }
+
+  .navigation .next {
+    float: right;
+    background-image: url(img/chevron-right.png);
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 24px;
+  }
+
+  .navigation a {
+    display: inline-block;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 32px; 
   }
 
   .brand-logo {
-    font-family: 'Open Sans';
-    background: #eee;
-    margin: 0 0 8px 0;
-    padding: 15px;
+    background: #303F9F;
+    padding: 8px;
     overflow: hidden;
+  }
+
+  .brand-logo a{
+    color: #fff;
+    text-decoration: none;
   }
 
   .logout {
     float: right;
-    font-family: 'Open Sans';
-    font-size: smaller;
-    margin: 0 0 8px 0;
     text-decoration: none;
-  }
-
-  .title {
-    margin: 8px 0;
-    font-size: larger;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 32px; 
   }
 
   main {
-    padding: 15px;
+    padding: 0 16px 48px;
   }
 
   main p {
     line-height: 24px;
-  }
-
-  .full-bleed {
-    margin: 0 -15px;
-  }
-
-  h1 {
-    margin: 5px 0;
-    font-weight: normal;
   }
 
   hr {
@@ -47,36 +104,20 @@
   }
 
   .meter-section {
-    margin-top: 24px;
-    margin-bottom: 24px;
-    padding: 16px;
+    margin-top: 16px;
+    padding: 8px;
     background: #ffa;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 25px;
   }
 
-  .help-section {
-    margin-top: 24px;
-    padding: 16px;
-    background: #c0f2ba;
+  .form-line {
+    margin-bottom: 8px;
   }
 
-  footer {
-    background: #f4f4f4;
-  }
-
-  footer ul {
-    list-style-type: none;
-    overflow: hidden;
-    margin: 0px;
-  }
-
-  footer li {
-    float: left;
-  }
-
-  footer li a {
-    display: inline-block;
-    text-align: center;
-    padding: 14px 16px;
+  .label {
+    margin-bottom: 8px;
   }
 
   #info {

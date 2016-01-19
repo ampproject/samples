@@ -10,29 +10,31 @@
       <script async src="https://cdn.ampproject.org/v0.js"></script>
   </head>
   <body>
-    <header>
-      <div class="brand-logo">
-        ⚡ Instant Times
-      </div>  
-    </header>
-    <main role="main">
-    <h1 class="title">Articles</h1>    
-    <ul>
-      <%#articles%>
-      <li><a href="<% id %>"><% title %></a></li>
-      <%/articles%>
-    </ul>
-    <section class="help-section">
-      This is an AMP Paywall demo. To run this demo:
+    <div class="main-body">
+      <header>
+        <div class="brand-logo">
+          ⚡ Instant Times
+        </div>  
+      </header>
+      <main role="main">
+      <section class="meter-section" data-z-depth="2">
+        This is an AMP Paywall demo. To run this demo:
+        <ul>
+          <li>Turn on <b>dev-channel</b> and <b>amp-access</b> experiments under <a href="https://cdn.ampproject.org/experiments.html">
+              AMP CDN Experiments</a>.</li>
+          <li>Turn on <b>amp-access</b> experiment via <code>AMP.toggleExperiment("amp-access")</code> in the <a href="https://developer.chrome.com/devtools/docs/console#evaluating-expressions">
+              Chrome DevTools Console</a> (View -> Developer -> Javascript Console).</li>
+          <li>For testing First-Click-Free go to the <a href="fcf">
+              First-Click-Free test page</a>.</li>
+        </ul>
+      </section>
+      <h1>Select an article to get started</h1>    
       <ul>
-        <li>Turn on <b>dev-channel</b> and <b>amp-access</b> experiments under <a href="https://cdn.ampproject.org/experiments.html">
-            AMP CDN Experiments</a>.</li>
-        <li>Turn on <b>amp-access</b> experiment via <code>AMP.toggleExperiment("amp-access")</code> in the <a href="https://developer.chrome.com/devtools/docs/console#evaluating-expressions">
-            Chrome DevTools Console</a> (View -> Developer -> Javascript Console).</li>
-        <li>For testing First-Click-Free go to the <a href="fcf">
-            First-Click-Free test page</a>.</li>
+        <%#articles%>
+        <li><a href="<% id %>"><% title %></a></li>
+        <%/articles%>
       </ul>
-    </section>
-    </main>
+      </main>
+    </div>
   </body>
 </html>
