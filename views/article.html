@@ -2,7 +2,7 @@
 <html ⚡>
   <head>
     <meta charset="utf-8">
-   <title>Lorem Ipsum | PublisherName</title>
+    <title>AMP Times</title>
     <link rel="canonical" href="<% id %>" >
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <!--
@@ -35,9 +35,27 @@
 
   </head>
   <body>
+    <amp-analytics type="googleanalytics" id="analytics">
+      <script type="application/json">
+        {
+          "vars": {
+            "account": "UA-72665224-1"
+          },
+          "triggers": {
+            "default pageview": {
+              "on": "visible",
+              "request": "pageview",
+              "vars": {
+                "title": "AMP Access Demo Pageview"
+              }
+            },
+          }
+        }
+      </script>
+    </amp-analytics>
     <div class="main-body">
     <header>
-      <div class="brand-logo" data-z-depth="2"><a href="/">⚡ Instant Times</a>
+      <div class="brand-logo" data-z-depth="2"><a href="/">⚡ AMP Times</a>
         <span amp-access="subscriber" amp-access-hide>
           <a href="<% host %>/logout" class="logout">Logout</a>
         </span>            
@@ -83,17 +101,6 @@
       </section>
 
       <!--
-        This section will only be shown to users who do not have access to the article and
-        have reached the maximum number of articles for that month.
-      -->
-      <section amp-access="NOT access AND maxViews" amp-access-hide class="meter-section" data-z-depth="2">
-        <template amp-access-template type="amp-mustache">
-          You have reached your {{maxViews}} free articles this month!
-        </template>
-        <p><a on="tap:amp-access.login">Login to read more!</a></p>
-      </section>
-
-      <!--
         This section is visible to all users.
       -->  
       <section>
@@ -105,8 +112,31 @@
                                 alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
                                 height="216" on="tap:headline-img-lightbox">
         </amp-img>
-        <p> <b>This is an article preview and visible to everyone.</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent congue arcu non interdum varius. Vestibulum quis quam eget massa condimentum feugiat. 
+        <p>
+          This text is part of the article preview and visible to all users. 
+          This text is part of the article preview and visible to all users. 
+          This text is part of the article preview and visible to all users. 
+          This text is part of the article preview and visible to all users. 
+          This text is part of the article preview and visible to all users. 
+          This text is part of the article preview and visible to all users. 
         </p>
+      </section>
+
+      <!--
+        This section will only be shown to users who do not have access to the article and
+        have reached the maximum number of articles for that month.
+      -->
+      <section amp-access="NOT access AND maxViews" amp-access-hide>
+        <div class="meter-section" data-z-depth="2">
+          <template amp-access-template type="amp-mustache">
+            You have reached your {{maxViews}} free articles this month!
+          </template>
+        </div>
+
+        <div on="tap:amp-access.login" class="button raised center" data-z-depth="2">
+          <div class="center"><a class="center" >Login to read more!</a>
+          </div>
+        </div>
       </section>
 
       <!--
@@ -124,7 +154,15 @@
                                        height="216">
           </amp-img>
         </figure>
-        <p><b>This is the main article and only visible to for the first three articles, subscribers and first-click-free users. </b>Sed bibendum urna ac turpis placerat, eu pellentesque massa congue. Aliquam porta, dui eget cursus aliquam, est orci consequat ex, vel auctor justo leo nec dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla pellentesque eu nisi et dictum. Praesent viverra scelerisque libero et pretium. Sed accumsan quis lectus id ornare. Cras venenatis odio tellus, sed pretium dolor fermentum vel. Praesent luctus sem at sapien elementum, eu congue ipsum cursus. Etiam bibendum sapien nec dui maximus, et bibendum est fermentum. Duis vel sollicitudin libero, non eleifend enim. Nunc malesuada lectus sit amet justo mollis egestas. Duis sed egestas nisi, vulputate volutpat augue. Vivamus tincidunt ultricies neque, ut dapibus mauris pretium id. Ut nisi mauris, sollicitudin et egestas vel, laoreet ut mi. In at tincidunt turpis, a volutpat massa. Cras bibendum lorem sit amet est feugiat finibus.
+        <p>
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
+          This text is part of the article that is only visible to users with access to the entire page contents.
         </p>
       </div>
     </article>
