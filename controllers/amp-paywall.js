@@ -77,6 +77,7 @@ router.get('/amp-authorization.json', function(req, res) {
       'access': hasAccess
     };
   }
+  response['readerId'] = readerId;
   console.log('Authorization response:', readerId, response);
   res.json(response);
 });
