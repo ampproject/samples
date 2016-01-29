@@ -314,10 +314,11 @@
         .pinterest { padding-left: 4%; }
 
         .disclaimer {
-            background-color: #ffa;
+            background-color: #000000;
             padding: 10px 20px;
-            color: #000000;
+            color: #fbb35a;
             font-size: 0.8em;
+            text-align: center;
         }
 
         .meter-section {
@@ -326,7 +327,7 @@
             background-color: #000000;
             color: #fbb35a;
             padding: 7px;
-            margin: 0px 5px;
+            margin: 10px;
             text-align: center;            
         }
 
@@ -348,6 +349,10 @@
             font-weight: bold;
         }  
 
+        .content-container .button {
+            width: 90%;
+            margin: 10px auto;
+        }
     </style>
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui">
     <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
@@ -408,13 +413,14 @@
     <script src="https://cdn.ampproject.org/v0.js" async></script>
 </head>
 <body>
+<div class="disclaimer">Article sample for demo purposes only. Courtesy of Washington Post</div> 
+
 <header class="masthead">
     <a href="https://www.washingtonpost.com">
         <amp-img src="https://img.washingtonpost.com/pb/resources/img/thewashingtonpost-white-2x.png" width="180"
                  height="27"/>
     </a>
 </header>
-<div class="disclaimer">Article sample for demo purposes only. Courtesy of Washington Post</div> 
 
 <!--
     This section will only be shown to users who do not have access to the article and
@@ -554,8 +560,8 @@
         <li><a class="footer-link" href="//www.washingtonpost.com">&copy; 1996-2015 The Washington Post</a></li>
     </ul>
     </div>
-    <div class="disclaimer">Article sample for demo purposes only. Courtesy of Washington Post</div>    
 </footer>
+<div class="disclaimer">Article sample for demo purposes only. Courtesy of Washington Post</div>    
 <amp-pixel src="https://ssl.google-analytics.com/collect?v=1&tid=UA-50597120-4&t=pageview&cid=RANDOM&dt=TITLE&dl=CANONICAL_URL&z=RANDOM"></amp-pixel>
 <amp-pixel src="//sb.scorecardresearch.com/b?c1=2&c2=3005617&rn=RANDOM&c8=TITLE&c7=CANONICAL_URL&c9=DOCUMENT_REFERRER&cs_c7amp=AMPDOC_URL"></amp-pixel>
 <amp-analytics>
