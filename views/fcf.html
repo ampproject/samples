@@ -18,12 +18,21 @@
         </div>  
       </header>
       <main role="main">
+      
       <h1>First-Click-Free Test Links</h1>    
       <ul>
         <%#articles%>
         <li><a href="<% id %>"><% title %></a></li>
         <%/articles%>
       </ul>
+
+      <h1>Sample Articles by Washington Post</h1>
+      <ul>
+        <%#articles%>
+        <li><a href="/washingtonpost/<% id %>"><% title %></a></li>
+        <%/articles%>                
+      </ul>
+
       <section class="help-section">
         This is a test page for <a href="https://support.google.com/news/publisher/answer/40543?hl=en-GB">First-Click-Free</a>. All links opened from this page will be treated 
         as a First-Click-Free referral (the limit is 3).
