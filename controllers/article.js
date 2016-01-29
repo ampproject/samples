@@ -65,7 +65,6 @@ router.get('/((\\d+))', function(req, res) {
 });
 
 router.get('/washingtonpost/((\\d+))', function(req, res) {
-  console.log('ble');
   var id = parseInt(req.params[0]);  
   var host = req.get('host');
   // http works only on localhost
