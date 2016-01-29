@@ -21,7 +21,7 @@ var router = express.Router();
 var ARTICLES = [];
 
 // add some sample articles
-for (var i = 0; i <= 10; i++) {
+for (var i = 0; i < 10; i++) {
   ARTICLES.push({id: i, title: 'Article ' + (i + 1)});
 }
 
@@ -61,6 +61,17 @@ router.get('/((\\d+))', function(req, res) {
     title: ARTICLES[id].title,
     prev: prevArticleId(id),
     next: nextArticleId(id)
+  });
+});
+
+router.get('/washingtonpost/((\\d+))', function(req, res) {
+  console.log('ble');
+  var id = parseInt(req.params[0]);  
+  var host = req.get('host');
+  // http works only on localhost
+  var protocol = host.startsWith('localhost') ? 'http' : 'https';
+  res.render("washingtonpost/" + id, {
+    host: protocol + '://' + host
   });
 });
 
