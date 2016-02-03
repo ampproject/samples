@@ -18,8 +18,8 @@
 var express = require('express');
 var router = express.Router();
 
-var PaywallAccess = require('../models/paywall-access');
-var User = require('../models/user');
+var PaywallAccess = require('../../models/amp-access');
+var User = require('../../models/user');
 
 /** 
  # Authorization is configured via authorization property in the AMP Access 

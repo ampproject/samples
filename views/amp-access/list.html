@@ -1,0 +1,47 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+    <title>AMP Times</title>
+    <link rel="canonical" href="index.html" >
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <%> styles %>
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+      <script async src="https://cdn.ampproject.org/v0.js"></script>
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+  </head>
+  <body>
+    <div class="main-body">
+      <header>
+        <div class="brand-logo">
+          ⚡ AMP Times
+        </div>  
+      </header>
+      <main role="main">
+      <%^fcf%>
+      <section class="meter-section" data-z-depth="2">
+        This is an AMP Paywall demo. To run this demo:
+        <ul>
+          <li>Go to <a target="_blank" href="https://cdn.ampproject.org/experiments.html">
+              AMP CDN Experiments</a> and switch on <b>AMP Dev Channel </b>.</li>
+          <li>For testing First-Click-Free go to the <a href="fcf">
+              First-Click-Free test page</a>.</li>
+        </ul>
+      </section>
+      <%/fcf%>
+      <%#fcf%>
+      <section class="meter-section">
+        This is a test page for <a href="https://support.google.com/news/publisher/answer/40543?hl=en-GB">First-Click-Free</a>. All links opened from this page will be treated as a First-Click-Free referral (the limit is 3).
+      </section>
+      <%/fcf%>
+      <h4><% title %></h4>    
+      <ul>
+        <%#articles%>
+        <li><a href="<% id %>"><% title %></a></li>
+        <%/articles%>
+      </ul>
+
+      </main>
+    </div>
+  </body>
+</html>

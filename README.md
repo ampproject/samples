@@ -14,7 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# AMP Access Publisher Sample
+# AMP Publisher Sample
+
+This is a collection of samples demonstrating different features of [Accelerated Mobile Pages](https://www.ampproject.org).
+
+## AMP Access Sample
 
 This is a demo application for the [AMP Access](https://github.com/ampproject/amphtml/blob/master/extensions/amp-access/amp-access.md) component. AMP Access or “AMP paywall and subscription support” provides control to publishers over what content can be accessed by a reader and with what restrictions. You can try the demo [here](https://rocky-sierra-1919.herokuapp.com).
 
@@ -31,17 +35,17 @@ This is a quick walk through the source code to get you started with AMP Access.
 
 The first step is to implement the AMP Access callbacks in the publisher backend. The endpoint  URLs must be configured in each AMP HTML file using AMP Access:
 
-* **authorization** ([amp-paywall.js](controllers/amp-paywall.js#L31)): this credentialed CORS endpoint produces the authorization response that can be used in the content markup expressions to show/hide different parts of content (e.g. *subscriber*). The response is a free-form JSON object: it can contain any properties and values. 
-* **pingback** ([amp-paywall.js](controllers/amp-paywall.js#L89)): the main purposes for pingback is to count down meter when it is used. As a credentialed CORS endpoint it may contain publisher cookies. Thus it can be used to map AMP Reader ID to the reader's identity if they are logged in.
-* **login** ([login.html](views/login.html)): is a normal Web page with no special constraints, other than it should function well as a browser dialog. 
+* **authorization** ([api.js](controllers/amp-access/api.js#L31)): this credentialed CORS endpoint produces the authorization response that can be used in the content markup expressions to show/hide different parts of content (e.g. *subscriber*). The response is a free-form JSON object: it can contain any properties and values. 
+* **pingback** ([api.js](controllers/amp-access/api.js#L89)): the main purposes for pingback is to count down meter when it is used. As a credentialed CORS endpoint it may contain publisher cookies. Thus it can be used to map AMP Reader ID to the reader's identity if they are logged in.
+* **login** ([login.html](views/amp-access/login.html)): is a normal Web page with no special constraints, other than it should function well as a browser dialog. 
  
-Both endpoints, authorization and pingback, must be credentialed CORS endpoints. This is configured in [amp-paywall-cors.js](middlewares/amp-paywall-cors.js).
+Both endpoints, authorization and pingback, must be credentialed CORS endpoints. This is configured in [amp-paywall-cors.js](middlewares/amp-access-cors.js).
 
 #### AMP HTML Configuration
 
 The second step is to integrate AMP Access into the AMP HTML files:
 
-1. Configure the AMP Access endpoints ([article.html](views/article.html#21)).
+1. Configure the AMP Access endpoints ([article.html](views/amp-access/article.html#21)).
 
     ```html
     <script id="AMP Access" type="application/json">
@@ -53,13 +57,13 @@ The second step is to integrate AMP Access into the AMP HTML files:
     </script>
     ```
 
-2. Include the AMP Access  component ([article.html](views/article.html#L30)):
+2. Include the AMP Access  component ([article.html](views/amp-access/article.html#L30)):
 
     ```html
     <script async custom-element="AMP Access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
     ```
 
-3. Define which parts of the AMP HTML file are visible to subscribers and non-subscribers ([article.html](views/article.html#L51)):
+3. Define which parts of the AMP HTML file are visible to subscribers and non-subscribers ([article.html](views/amp-access/article.html#L51)):
 
     ```html
     <section AMP Access="access AND subscriber" amp-access-hide>

@@ -28,7 +28,10 @@ var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 app.set('view engine', 'html');
-app.set('partials', {styles: 'styles'});
+app.set('partials', {
+  styles: 'styles',
+  material: 'material.css'
+});
 app.enable('view cache');
 app.engine('html', require('hogan-express'));
 app.locals.delimiters = '<% %>';
@@ -37,13 +40,11 @@ app.locals.delimiters = '<% %>';
 app.use(express.static(__dirname + '/public'));
 
 // Middleware 
-app.use(require('./middlewares/amp-paywall-cors'));
+app.use(require('./middlewares/amp-access-cors'));
 app.use(require('./middlewares/logging'));
 
 // Controllers
-app.use(require('./controllers/article'));
-app.use(require('./controllers/login'));
-app.use(require('./controllers/amp-paywall'));
+app.use(require('./controllers'));
 
 var port = process.env.PORT || PORT;
 var server = app.listen(port, function() {

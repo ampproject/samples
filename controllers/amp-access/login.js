@@ -17,8 +17,8 @@
 
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
-var PaywallAccess = require('../models/paywall-access');
+var User = require('../../models/user');
+var PaywallAccess = require('../../models/amp-access');
 
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 
@@ -29,9 +29,9 @@ var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
  * Login Page is simply a normal Web page with no special constraints, other 
  * than it should function well as a browser dialog. 
  */
-router.get('/login', function(req, res) {
+router.get('/', function(req, res) {
   console.log('Serve /login');
-  res.render('login', {
+  res.render('amp-access/login', {
     returnUrl: req.query.return,
     readerId: req.query.rid
   });
@@ -41,7 +41,7 @@ router.get('/login', function(req, res) {
  * A simple login flow. The important thing is to map the user 
  * to it's AMP Reader ID.
  */
-router.post('/login-submit', function(req, res) {
+router.post('/submit', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
   var returnUrl = req.body.returnurl;
@@ -51,7 +51,7 @@ router.post('/login-submit', function(req, res) {
   var user = User.findByEmail(email);
   if (!user || user.password != password) {
     console.log('Login failed: ', user);
-    res.redirect('/login?rid=' + readerId + "&return=" + returnUrl);
+    res.redirect('/?rid=' + readerId + "&return=" + returnUrl);
     return;    
   }
   console.log('Login success: ', user);
