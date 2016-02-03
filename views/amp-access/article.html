@@ -20,9 +20,9 @@
     -->
     <script id="amp-access" type="application/json">
     {
-      "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
-      "pingback": "<% host %>/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
-      "login": "<% host %>/login?rid=READER_ID&url=CANONICAL_URL"
+      "authorization": "<% host %>/amp-access/api/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "pingback": "<% host %>/amp-access/api/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
+      "login": "<% host %>/amp-access/login/?rid=READER_ID&url=CANONICAL_URL"
     }
     </script>
     <%> styles %>
@@ -31,7 +31,7 @@
     <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
     <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,600' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 
   </head>
   <body>
@@ -57,7 +57,7 @@
     <header>
       <div class="brand-logo" data-z-depth="2"><a href="/">⚡ AMP Times</a>
         <span amp-access="subscriber" amp-access-hide>
-          <a href="<% host %>/logout" class="logout">Logout</a>
+          <a href="<% host %>/amp-access/login/logout" class="logout">Logout</a>
         </span>            
         <span amp-access="NOT subscriber" amp-access-hide>
           <a on="tap:amp-access.login" class="logout">Login</a>  
@@ -66,12 +66,12 @@
       <div class="navigation" data-z-depth="2">
         <%#prev%>
         <div class="prev">
-          <a href="/<% prev %>">Previous</a>
+          <a href="<% prev %>">Previous</a>
         </div>
         <%/prev%>        
         <%#next%>        
         <div class="next">
-          <a href="/<% next %>">Next</a>
+          <a href="<% next %>">Next</a>
         </div>
         <%/next%>                
       </div>
@@ -104,10 +104,10 @@
         This section is visible to all users.
       -->  
       <section>
-        <h1><% title %></h1>    
+        <h3><% title %></h3>    
         <amp-img
-            src="img/hero@1x.jpg"
-            srcset="img/hero@1x.jpg 1x, img/hero@2x.jpg 2x"
+            src="/img/hero@1x.jpg"
+            srcset="/img/hero@1x.jpg 1x, /img/hero@2x.jpg 2x"
             layout="responsive" width="360" placeholder
                                 alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
                                 height="216" on="tap:headline-img-lightbox">
@@ -148,7 +148,7 @@
         <figure>
           <amp-img class="full-bleed" placeholder
                    src="img/sea@1x.jpg"
-                   srcset="img/sea@1x.jpg 1x, img/sea@2x.jpg 2x"
+                   srcset="/img/sea@1x.jpg 1x, /img/sea@2x.jpg 2x"
                    layout="responsive" width="360"
                                        alt="Fusce pretium tempor justo, vitae consequat dolor maximus eget."
                                        height="216">

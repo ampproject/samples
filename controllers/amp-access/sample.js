@@ -29,7 +29,9 @@ for (var i = 0; i < 10; i++) {
  * List all Articles 
  **/
 router.get('/', function(req, res) {
-  res.render('list', {
+  res.render('amp-access/list', {
+    title: 'Select an article to get started',
+    fcf: false,
     articles: ARTICLES
   });
 });
@@ -38,7 +40,9 @@ router.get('/', function(req, res) {
  * Test page for first-click-free
  **/
 router.get('/fcf', function(req, res) {
-  res.render('fcf', {
+  res.render('amp-access/list', {
+    title: 'First-Click-Free Test Links',
+    fcf: true,
     articles: ARTICLES
   });
 });
@@ -55,7 +59,7 @@ router.get('/((\\d+))', function(req, res) {
   var host = req.get('host');
   // http works only on localhost
   var protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.render('article', {
+  res.render('amp-access/article', {
     host: protocol + '://' + host,
     id: id,
     title: ARTICLES[id].title,
@@ -69,7 +73,7 @@ router.get('/washingtonpost/((\\d+))', function(req, res) {
   var host = req.get('host');
   // http works only on localhost
   var protocol = host.startsWith('localhost') ? 'http' : 'https';
-  res.render("washingtonpost/" + id, {
+  res.render("amp-access/washingtonpost/" + id, {
     host: protocol + '://' + host
   });
 });
