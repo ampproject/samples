@@ -26,6 +26,7 @@
     }
     </script>
     <%> styles %>
+    <script async custom-element="amp-user-notification" src="https://cdn.ampproject.org/v0/amp-user-notification-0.1.js"></script>
     <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
     <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
     <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
@@ -78,27 +79,38 @@
     </header>
     <main role="main">
     <article>
-      <!-- 
-        This section is only visible by subscribers. The subscriber variable is 
-        defined in the authentification response data.
-      -->
-      <section amp-access="access AND subscriber" amp-access-hide class="meter-section" data-z-depth="2">
-        Thanks for being a subscriber. You rock!
-      </section>
+      <amp-user-notification
+          layout=nodisplay 
+          id="amp-user-notification1"
+          data-show-if-href="<% host %>/amp-user-notification/api/show?timestamp=TIMESTAMP"
+          data-dismiss-href="<% host %>/amp-user-notification/api/dismiss">
 
-      <section amp-access="access AND views" amp-access-hide class="meter-section" data-z-depth="2">
-        <template amp-access-template type="amp-mustache">
-          You are viewing article {{views}} of {{maxViews}} free articles this month!
-        </template>
-      </section>
+          <section amp-access="access" class="meter-section" data-z-depth="2">
+            <!-- 
+              This section is only visible by subscribers. The subscriber variable is 
+              defined in the authentification response data.
+            -->
+            <div amp-access="access AND subscriber" amp-access-hide>
+              Thanks for being a subscriber. You rock!
+            </div>
 
-      <section amp-access="access AND return" amp-access-hide class="meter-section" data-z-depth="2">
-        Welcome back! You've read this article already.
-      </section>
+            <div amp-access="access AND views" amp-access-hide>
+              <template amp-access-template type="amp-mustache">
+                You are viewing article {{views}} of {{maxViews}} free articles this month!
+              </template>
+            </div>          
 
-      <section amp-access="access AND fcs" amp-access-hide class="meter-section" data-z-depth="2">
-        Yay! The first click is free.
-      </section>
+            <div amp-access="access AND return" amp-access-hide>
+              Welcome back! You've read this article already.
+            </div>
+
+            <div amp-access="access AND fcs" amp-access-hide>
+              Yay! The first click is free.
+            </div>    
+
+            <a on="tap:amp-user-notification1.dismiss" class="dismiss" role="button">Dismiss</a>
+          </section>                      
+      </amp-user-notification>    
 
       <!--
         This section is visible to all users.
@@ -108,9 +120,11 @@
         <amp-img
             src="/img/hero@1x.jpg"
             srcset="/img/hero@1x.jpg 1x, /img/hero@2x.jpg 2x"
+            role="button"
+            tabindex="0"
             layout="responsive" width="360" placeholder
-                                alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
-                                height="216" on="tap:headline-img-lightbox">
+            alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
+            height="216" on="tap:headline-img-lightbox">
         </amp-img>
         <p>
           This text is part of the article preview and visible to all users. 
@@ -170,7 +184,9 @@
     <footer>
       <section amp-access="TRUE" class="reset-section">
         <template amp-access-template type="amp-mustache">
-          <a href="/reset?rid={{readerId}}">Reset Access State</a>
+          <div role="button" tabindex="2">
+            <a href="/reset?rid={{readerId}}">Reset Access State</a>
+          </div>
         </template>    
       </section>    
     </footer> 

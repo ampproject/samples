@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use strict";
 
-var router = require('express').Router();
+var DISMISSED_NOTIFICATIONS = {};
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
+/**
+ * Returns true if the notification should be shown for the user
+ * and notificationId
+ */
+exports.shouldShowNotification = function(notificationId, userId) {
+	var user = DISMISSED_NOTIFICATIONS[userId];
+	if (!user) {
+		return true;
+	}
+	return !user[notificationId];
+}
 
-router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
-});
-
-module.exports = router;
+/**
+ * Dismisses further notifications for the user and notificationId
+ */
+exports.dismissNotification = function(notificationId, userId) {
+	var user = DISMISSED_NOTIFICATIONS[userId];
+	if (!user) {
+		user = {};
+		DISMISSED_NOTIFICATIONS[userId] = user;
+	}
+	user[notificationId] = true;
+};
