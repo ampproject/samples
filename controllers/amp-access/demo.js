@@ -42,7 +42,7 @@ router.get('/((\\d+))', function(req, res) {
  * List all Articles 
  **/
 router.get('/', function(req, res) {
-  res.render('amp-access/list', {
+  res.render('amp-access/washingtonpost/list', {
     title: 'Select an article to get started',
     fcf: false,
     articles: ARTICLES
@@ -53,7 +53,7 @@ router.get('/', function(req, res) {
  * Test page for first-click-free
  **/
 router.get('/fcf', function(req, res) {
-  res.render('amp-access/list', {
+  res.render('amp-access/washingtonpost/list', {
     title: 'First-Click-Free Test Links',
     fcf: true,
     articles: ARTICLES
