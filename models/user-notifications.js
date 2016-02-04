@@ -30,7 +30,7 @@ exports.shouldShowNotification = function(notificationId, userId) {
 }
 
 /**
- * Dismisses further notifications for the user and tnotificationId
+ * Dismisses further notifications for the user and notificationId
  */
 exports.dismissNotification = function(notificationId, userId) {
 	var user = DISMISSED_NOTIFICATIONS[userId];

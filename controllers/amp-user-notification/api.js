@@ -21,7 +21,7 @@ var UserNotification = require("../../models/user-notifications");
 
 /**
  * AMP will make a CORS GET request to this URL to determine whether 
- * the notification should be shown. We will append the elementId and 
+ * the notification should be shown. The AMP runtime will append the elementId and 
  * ampUserId query string fields to the href provided on the data-show-if-href
  * attribute. 
  */
@@ -34,7 +34,7 @@ router.get('/show', function(req, res){
 
 /**
  * AMP will make a CORS POST request to this URL transmitting the elementId 
- * and ampUserId only when the user has explicitly agreed.
+ * and ampUserId only when the user dismisses the notification.
  */
 router.post('/dismiss', function(req, res){
 	var userId = req.body.ampUserId;
