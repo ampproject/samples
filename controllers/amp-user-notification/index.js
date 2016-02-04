@@ -18,12 +18,10 @@
 
 var router = require('express').Router();
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
+router.use('/api', require('./api.js'));
 
 router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
+  res.redirect('../');
 });
 
 module.exports = router;
