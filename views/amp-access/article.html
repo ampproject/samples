@@ -26,13 +26,12 @@
     }
     </script>
     <%> styles %>
-    <script async custom-element="amp-user-notification" src="https://cdn.ampproject.org/v0/amp-user-notification-0.1.js"></script>
     <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
     <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
     <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
     <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
-<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 
   </head>
   <body>
@@ -60,7 +59,7 @@
         <span amp-access="subscriber" amp-access-hide>
           <a href="<% host %>/amp-access/login/logout" class="logout">Logout</a>
         </span>            
-        <span amp-access="NOT subscriber" amp-access-hide>
+        <span amp-access="NOT subscriber" amp-access-hide role="button" tabindex="0">
           <a on="tap:amp-access.login" class="logout">Login</a>  
         </span>                  
       </div>  
@@ -79,38 +78,32 @@
     </header>
     <main role="main">
     <article>
-      <amp-user-notification
-          layout=nodisplay 
-          id="amp-user-notification1"
-          data-show-if-href="<% host %>/amp-user-notification/api/show?timestamp=TIMESTAMP"
-          data-dismiss-href="<% host %>/amp-user-notification/api/dismiss">
 
-          <section amp-access="access" class="meter-section" data-z-depth="2">
-            <!-- 
-              This section is only visible by subscribers. The subscriber variable is 
-              defined in the authentification response data.
-            -->
-            <div amp-access="access AND subscriber" amp-access-hide>
-              Thanks for being a subscriber. You rock!
-            </div>
+      <section id="meter-notif" amp-access="access" class="meter-section" data-z-depth="2">
+        <!-- 
+          This section is only visible by subscribers. The subscriber variable is 
+          defined in the authentification response data.
+        -->
+        <div amp-access="access AND subscriber" amp-access-hide>
+          Thanks for being a subscriber. You rock!
+        </div>
 
-            <div amp-access="access AND views" amp-access-hide>
-              <template amp-access-template type="amp-mustache">
-                You are viewing article {{views}} of {{maxViews}} free articles this month!
-              </template>
-            </div>          
+        <div amp-access="access AND views" amp-access-hide>
+          <template amp-access-template type="amp-mustache">
+            You are viewing article {{views}} of {{maxViews}} free articles this month!
+          </template>
+        </div>          
 
-            <div amp-access="access AND return" amp-access-hide>
-              Welcome back! You've read this article already.
-            </div>
+        <div amp-access="access AND return" amp-access-hide>
+          Welcome back! You've read this article already.
+        </div>
 
-            <div amp-access="access AND fcs" amp-access-hide>
-              Yay! The first click is free.
-            </div>    
+        <div amp-access="access AND fcs" amp-access-hide>
+          Yay! The first click is free.
+        </div>    
 
-            <a on="tap:amp-user-notification1.dismiss" class="dismiss" role="button">Dismiss</a>
-          </section>                      
-      </amp-user-notification>    
+        <a on="tap:meter-notif.hide" role="button" tabindex="1">Dismiss</a>
+      </section>                      
 
       <!--
         This section is visible to all users.
@@ -124,7 +117,8 @@
             tabindex="0"
             layout="responsive" width="360" placeholder
             alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
-            height="216" on="tap:headline-img-lightbox">
+            height="216" on="tap:headline-img-lightbox"
+            role="button" tabindex="2">
         </amp-img>
         <p>
           This text is part of the article preview and visible to all users. 
@@ -147,7 +141,7 @@
           </template>
         </div>
 
-        <div on="tap:amp-access.login" class="button raised center" data-z-depth="2">
+        <div on="tap:amp-access.login" class="button raised center" data-z-depth="2" role="button" tabindex="3">
           <div class="center"><a class="center" >Login to read more!</a>
           </div>
         </div>
