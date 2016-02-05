@@ -80,7 +80,6 @@ router.get('/washingtonpost/((\\d+))', function(req, res) {
 
 function prevArticleId(id) {
   var prevId = id - 1;
-  console.log('prev ' + id + '<' + prevId);
   return prevId >= 0 ? String(prevId) : false;
 }
 
