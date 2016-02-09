@@ -32,6 +32,10 @@ module.exports = function(req, res, next) {
     if (isValidOrigin(requestingOrigin)) {
       // return the allowed requesting origin as required by the CORS spec
       res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
+      // allow credentials
+      res.header('Access-Control-Allow-Credentials', 'true');
+    } else {
+      console.log('invalid origin', requestingOrigin);
     }
 
     // check the source origin
@@ -43,6 +47,7 @@ module.exports = function(req, res, next) {
       // Allow the CORS response to contain the "AMP-Access-Control-Allow-Source-Origin" header.
       res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
     } else {
+      console.log('invalid source origin', requestingSourceOrigin);
       // the request is not authorized
       res.sendStatus(401).end();
       return;
@@ -59,7 +64,7 @@ module.exports = function(req, res, next) {
  * - The Publisher’s own origins
  */
 function isValidOrigin(origin) {
-  return matchesAnyOrigin(VALID_ORIGINS, origin) && isValidSourceOrigin(origin);
+  return matchesAnyOrigin(VALID_ORIGINS, origin) || isValidSourceOrigin(origin);
 }
 
 /**
