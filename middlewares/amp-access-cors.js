@@ -17,41 +17,39 @@
 
 var url = require('url');
 
-var VALID_ORIGINS = [/.*\.ampproject\.org/g];
-var VALID_SOURCE_ORIGINS = [/localhost/, /rocky-sierra-1919\.herokuapp\.com/g];
+var VALID_AMP_ORIGINS = [/.*\.ampproject\.org/g];
+var VALID_SOURCE_ORIGINS = [/rocky-sierra-1919\.herokuapp\.com/g];
 
 /**
  * Enable CORS for all AMP API requests. More information here: 
  * https://github.com/ampproject/amphtml/blob/master/spec/amp-cors-requests.md 
  */
 module.exports = function(req, res, next) {
+  // Enable CORS only for API requests 
   if (req.url.indexOf('/api/') > -1) {
-    // check the origin
-    var requestingOrigin = req.headers['origin'];
-    console.log('---- requesting origin: ', requestingOrigin);
-    if (isValidOrigin(requestingOrigin)) {
-      // return the allowed requesting origin as required by the CORS spec
-      res.setHeader('Access-Control-Allow-Origin', requestingOrigin);
-      // allow credentials
-      res.header('Access-Control-Allow-Credentials', 'true');
-    } else {
-      console.log('invalid origin', requestingOrigin);
-    }
-
-    // check the source origin
-    var requestingSourceOrigin = req.query.__amp_source_origin;
-    console.log('---- requesting source origin: ', requestingSourceOrigin);
-    if (isValidSourceOrigin(requestingSourceOrigin)) {
-      // The source origin that is allowed to read the authorization response 
-      res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
-      // Allow the CORS response to contain the "AMP-Access-Control-Allow-Source-Origin" header.
-      res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
-    } else {
-      console.log('invalid source origin', requestingSourceOrigin);
-      // the request is not authorized
-      res.sendStatus(401).end();
+    // Verify the origin (AMP and publisher domain)
+    var requestingOrigin = req.headers.origin;
+    if (!isValidOrigin(req, requestingOrigin)) {
+      // The request is not authorized
+      res.sendStatus(401);
       return;
     }
+    // Verify the source origin (publisher domain)
+    var requestingSourceOrigin = req.query.__amp_source_origin;
+    if (!isValidSourceOrigin(req, requestingSourceOrigin)) {
+      // The request is not authorized
+      res.sendStatus(401);
+      return;
+    }
+    console.log('---- valid requesting origins');
+    // Return the allowed requesting origin 
+    res.header('Access-Control-Allow-Origin', requestingOrigin);
+    // Allow CORS credentials
+    res.header('Access-Control-Allow-Credentials', 'true');
+    // Allow the CORS response to contain the "AMP-Access-Control-Allow-Source-Origin" header.
+    res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
+    // The source origin that is allowed to read the authorization response 
+    res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
   }
   next();
 };
@@ -62,16 +60,27 @@ module.exports = function(req, res, next) {
  *
  * - *.ampproject.org
  * - The Publisher’s own origins
+ *
  */
-function isValidOrigin(origin) {
-  return matchesAnyOrigin(VALID_ORIGINS, origin) || isValidSourceOrigin(origin);
+function isValidOrigin(req, origin) {
+  if (!origin) {
+    // if origin not set verify the request host
+    origin = req.protocol + '://' + req.hostname;
+  }
+  console.log('---- verifying origin: ', origin);
+  return matchesAnyOrigin(VALID_AMP_ORIGINS, origin) || isValidSourceOrigin(req, origin);
 }
 
 /**
  * Check requesting source origin. This has to be restricted to only
  * allow the Publisher's own origin.
  */
-function isValidSourceOrigin(sourceOrigin) {
+function isValidSourceOrigin(req, sourceOrigin) {
+  console.log('---- verifying source origin: ', sourceOrigin);
+  if (req.hostname == 'localhost' && req.app.get('env') == 'development') {
+    console.log('no origin check in dev mode');
+    return true;
+  }
   return matchesAnyOrigin(VALID_SOURCE_ORIGINS, sourceOrigin);
 }
 
@@ -80,10 +89,13 @@ function isValidSourceOrigin(sourceOrigin) {
  * origin.
  */
 function matchesAnyOrigin(validOrigins, origin) {
-  if(!origin) {
+  if (!origin) {
     return false;
   }
   var host = url.parse(origin).hostname;
+  if (!host) {
+    return false;
+  }
   for (var i = 0; i < validOrigins.length; i++) {
     var urlPattern = validOrigins[i];
     if (host.match(urlPattern)) {
@@ -92,3 +104,4 @@ function matchesAnyOrigin(validOrigins, origin) {
   }
   return false;
 }
+
