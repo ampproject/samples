@@ -1,0 +1,86 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+    <title>AMP Times</title>
+    <link rel="canonical" href="<% id %>" >
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <%> styles %>
+    <script async custom-element="amp-user-notification" src="https://cdn.ampproject.org/v0/amp-user-notification-0.1.js"></script>    
+    <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.1.js"></script>
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+  </head>
+  <body>
+    <amp-analytics type="googleanalytics" id="analytics">
+      <script type="application/json">
+        {
+          "vars": {
+            "account": "UA-72665224-1"
+          },
+          "triggers": {
+            "default pageview": {
+              "on": "visible",
+              "request": "pageview",
+              "vars": {
+                "title": "AMP User Notification Demo Pageview"
+              }
+            }
+          }
+        }
+      </script>
+    </amp-analytics>
+    <div class="main-body">
+      <header>
+        <div class="brand-logo" data-z-depth="2"><a href="/">⚡ AMP Times</a>
+        </div>  
+      </header>
+      <main role="main">
+        <article>
+          <!-- Example of valid amp-user-notification -->
+          <amp-user-notification
+              layout=nodisplay
+              id="amp-user-notification1"
+              data-show-if-href="<% host %>/amp-user-notification/api/show?timestamp=TIMESTAMP"
+              data-dismiss-href="<% host %>/amp-user-notification/api/dismiss"
+              class="notification">              
+              This site uses cookies to personalize content.
+             <a on="tap:amp-user-notification1.dismiss" class="dismiss">I accept</a>
+          </amp-user-notification>
+
+          <section>
+            <h3>Amp User Notification Demo</h3>    
+            <amp-img
+                src="/img/hero@1x.jpg"
+                srcset="/img/hero@1x.jpg 1x, /img/hero@2x.jpg 2x"
+                role="button"
+                tabindex="0"
+                layout="responsive" width="360" placeholder
+                alt="Curabitur convallis, urna quis pulvinar feugiat, purus diam posuere turpis, sit amet tincidunt purus justo et mi."
+                height="216" on="tap:headline-img-lightbox"
+                role="button" tabindex="2">
+            </amp-img>
+            <p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget dolor lobortis, vehicula turpis a, hendrerit lorem. Phasellus fringilla, est commodo volutpat auctor, lorem mi dignissim metus, a varius neque lorem at lectus. Pellentesque eget sodales nisi. Phasellus porttitor viverra felis, eget gravida erat malesuada ut. Mauris in urna id nunc lacinia molestie ut sed ex. Quisque ligula ligula, finibus at rutrum non, ultricies sit amet ipsum. Pellentesque ut massa pellentesque mi ornare iaculis. Mauris maximus pulvinar lacus, quis mollis urna dapibus eget. Phasellus semper fermentum diam quis elementum. Curabitur ornare dignissim dui et sodales. Suspendisse semper sit amet mauris at blandit. Suspendisse molestie magna at libero mattis, a tincidunt turpis tincidunt. Pellentesque semper sagittis mollis. Praesent sed finibus felis, nec sagittis erat. Curabitur aliquam a sem eu auctor. Curabitur in ligula nec ex ultrices vulputate.
+            </p>
+          </section>
+
+          <figure>
+            <amp-img class="full-bleed" placeholder
+                     src="img/sea@1x.jpg"
+                     srcset="/img/sea@1x.jpg 1x, /img/sea@2x.jpg 2x"
+                     layout="responsive" width="360"
+                                         alt="Fusce pretium tempor justo, vitae consequat dolor maximus eget."
+                                         height="216">
+            </amp-img>
+          </figure>
+          <p>
+Praesent eu viverra quam. Nullam ut fringilla tellus. Curabitur eu felis ut odio consequat rhoncus ac sodales elit. Donec rhoncus varius mauris. Pellentesque aliquet ligula tortor, a facilisis quam consectetur et. Phasellus tristique maximus sapien laoreet ornare. Donec non nisi eget leo dictum vestibulum at ut arcu. Quisque quis porttitor dui, non facilisis velit. Quisque ornare orci dictum, porta odio id, sodales urna. Donec massa tortor, molestie nec lacus ut, placerat consectetur arcu. Nullam convallis, turpis a maximus ullamcorper, lacus justo dictum enim, non tincidunt nunc leo nec tortor. Suspendisse auctor velit sit amet pellentesque facilisis. Sed pellentesque mattis odio.
+          </p>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>
