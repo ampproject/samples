@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use strict";
 
-var router = require('express').Router();
+var express = require('express');
+var router = express.Router();
 
-router.use('/api', require('./api.js'));
-router.use('/', require('./demo.js'));
+router.get('/', function(req, res) {
+	res.render('amp-user-notification/demo.html');
+});
 
 module.exports = router;
