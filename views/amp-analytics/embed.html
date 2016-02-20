@@ -1,0 +1,35 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+    <title>AMP Publisher Samples</title>
+    <link rel="canonical" href="index.html" >
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <style amp-custom>
+      body {
+        padding: 16px;
+        background: #eee;
+        font-family: "Roboto";
+      }
+      p {
+       line-height: 8px;
+      }
+      h4 {
+        margin: 0;
+        margin-bottom: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h4>Account: <% account %> </h4>
+    <%# data %>
+      <p><%key%> : <%value%></p>
+    <%/ data %>
+    <%^ data %>
+      No data available.
+    <%/ data %>
+  </body>
+</html>

@@ -16,15 +16,28 @@
 
 "use strict";
 
-var router = require('express').Router();
+var express = require('express');
+var router = express.Router();
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
+var Analytics = require('../../models/amp-analytics');
 
-router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
+/**
+ * Registers an event for the given account. 
+ *
+ * Example: /amp-analytics/ping?acccount=AN_ACCOUNT&event=AN_EVENT
+ */
+router.post('/', function(req, res) {
+  // enable CORS
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  // register the event
+  var account = req.query.account;
+  var event = req.query.event;
+  if (!Analytics.trackEvent(account, event)) {
+    res.sendStatus(400);
+    return;
+  }
+  res.sendStatus(200);
 });
 
 module.exports = router;
