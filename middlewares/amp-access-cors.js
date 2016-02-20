@@ -18,7 +18,7 @@
 var url = require('url');
 
 var VALID_AMP_ORIGINS = [/.*\.ampproject\.org/g];
-var VALID_SOURCE_ORIGINS = [/rocky-sierra-1919\.herokuapp\.com/g];
+var VALID_SOURCE_ORIGINS = [/amp-by-example\.appspot\.com/g, /amp-by-example-staging\.appspot\.com/g, /rocky-sierra-1919\.herokuapp\.com/g];
 
 /**
  * Enable CORS for all AMP API requests. More information here: 
@@ -30,6 +30,7 @@ module.exports = function(req, res, next) {
     // Verify the origin (AMP and publisher domain)
     var requestingOrigin = req.headers.origin;
     if (!isValidOrigin(req, requestingOrigin)) {
+      console.log('invalid origin: ' + requestingOrigin);
       // The request is not authorized
       res.sendStatus(401);
       return;
@@ -37,6 +38,7 @@ module.exports = function(req, res, next) {
     // Verify the source origin (publisher domain)
     var requestingSourceOrigin = req.query.__amp_source_origin;
     if (!isValidSourceOrigin(req, requestingSourceOrigin)) {
+      console.log('invalid source origin: ' + requestingSourceOrigin);
       // The request is not authorized
       res.sendStatus(401);
       return;
