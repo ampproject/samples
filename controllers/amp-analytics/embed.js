@@ -16,14 +16,22 @@
 
 "use strict";
 
-var router = require('express').Router();
+var express = require('express');
+var router = express.Router();
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
+var Analytics = require('../../models/amp-analytics');
 
+/**
+ * Lists all available analytics data for the given account.
+ *
+ * Example: /amp-analytics/view?acccount=AN_ACCOUNT
+ */
 router.get('/', function(req, res) {
-  res.render('index.html', {
+  var account = req.query.account;
+  var analytics = Analytics.forAccount(account);
+  res.render('amp-analytics/embed', {
+      account: account,
+      data: analytics
   });
 });
 

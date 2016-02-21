@@ -16,14 +16,22 @@
 
 "use strict";
 
-var router = require('express').Router();
+var express = require('express');
+var router = express.Router();
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
+var Analytics = require('../../models/amp-analytics');
 
+/**
+ * Shows analytics for this sample.
+ */
 router.get('/', function(req, res) {
-  res.render('index.html', {
+  var host = req.get('host');
+  // http works only on localhost
+  var protocol = host.startsWith('localhost') ? 'http' : 'https';
+  var analytics = Analytics.forAccount('amp-publisher-sample');
+  res.render('amp-analytics/demo', {
+      data: analytics,
+      host: protocol + '://' + host
   });
 });
 

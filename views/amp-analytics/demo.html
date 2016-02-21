@@ -1,0 +1,52 @@
+<!doctype html>
+<html ⚡>
+  <head>
+    <meta charset="utf-8">
+    <title>AMP Analytics Samples</title>
+    <link rel="canonical" href="index.html" >
+    <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <%> styles %>
+    <style>body {opacity: 0}</style><noscript><style>body {opacity: 1}</style></noscript>
+      <script async src="https://cdn.ampproject.org/v0.js"></script>
+      <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+  </head>
+  <body>
+    <div class="main-body">
+      <header>
+        <div class="brand-logo">
+          AMP Analytics Sample
+        </div>  
+      </header>
+      <main role="main">
+      <h4>Analytics</h4>
+      <p>Analytics for this page (refresh to count another pageview).</p>
+      <%# data %>
+        <p><%key%> : <%value%></p>
+      <%/ data %>
+      <%^ data %>
+        No data available.
+      <%/ data %>
+      </main>
+    </div>
+  </body>
+<amp-analytics>
+<script type="application/json">
+{
+  "requests": {
+    "pageview": "<% host %>/amp-analytics/ping?account=${account}&event=pageview"
+  },
+  "vars": {
+    "account": "amp-publisher-sample"
+  },
+  "triggers": {
+    "trackPageview": {
+      "on": "visible",
+      "request": "pageview"
+    }
+  }
+}
+</script>
+</amp-analytics>
+</html>

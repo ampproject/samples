@@ -16,15 +16,14 @@
 
 "use strict";
 
-var router = require('express').Router();
+var express = require('express');
+var router = express.Router();
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
+var Analytics = require('../../models/amp-analytics');
 
-router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
-});
+router.use('/ping', require('./ping'));
+router.use('/demo', require('./demo'));
+router.use('/embed', require('./embed'));
 
 module.exports = router;
+
