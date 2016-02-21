@@ -22,7 +22,11 @@
     {
       "authorization": "<% host %>/amp-access/api/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
       "pingback": "<% host %>/amp-access/api/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
-      "login": "<% host %>/amp-access/login/?rid=READER_ID&url=CANONICAL_URL"
+      "login": "<% host %>/amp-access/login/?rid=READER_ID&url=CANONICAL_URL",
+      "authorizationFallbackResponse": {
+        "error": true,
+        "access": false
+      }     
     }
     </script>
     <%> styles %>
@@ -79,7 +83,7 @@
     <main role="main">
     <article>
 
-      <section id="meter-notif" amp-access="access" class="meter-section" data-z-depth="2">
+      <section id="meter-notif" amp-access="access OR error" class="meter-section" data-z-depth="2">
         <!-- 
           This section is only visible by subscribers. The subscriber variable is 
           defined in the authentification response data.
@@ -101,6 +105,10 @@
         <div amp-access="access AND fcs" amp-access-hide>
           Yay! The first click is free.
         </div>    
+
+        <div amp-access="error">
+          Ooops, something went wrong on the authorization endpoint!
+        </div>
 
         <a on="tap:meter-notif.hide" role="button" tabindex="1">Dismiss</a>
       </section>                      
