@@ -52,7 +52,81 @@
               "vars": {
                 "title": "AMP Access Demo Pageview"
               }
-            }
+            },
+            "accessAuthorizationReceived": {
+              "on": "access-authorization-received",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "auth-received",                
+                "eventLabel" : "access",
+                "eventValue" : "AUTHDATA(access)"                
+              }
+            },
+            "accessAuthorizationFailed": {
+              "on": "access-authorization-failed",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "auth-failed"                                
+              }
+            },            
+            "accessViewed": {
+              "on": "access-viewed",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "article-viewed"                                
+              }
+            },
+            "accessPingbackSent": {
+              "on": "access-pingback-sent",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "pingback-sent"                                
+              }              
+            },
+            "accessPingbackFailed": {
+              "on": "access-pingback-failed",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "pingback-failed"                                
+              }              
+            },
+            "accessLoginStarted": {
+              "on": "access-login-started",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "login-started"                                
+              }              
+            },                        
+            "accessLoginSuccess": {
+              "on": "access-login-success",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "login-success"                                
+              }              
+            },
+            "accessLoginRejected": {
+              "on": "access-login-rejected",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "login-rejected"                                
+              }              
+            },
+            "accessLoginFailed": {
+              "on": "access-login-failed",
+              "request": "event",
+              "vars": {
+                "eventCategory": "amp-access",
+                "eventAction": "login-failed"                                
+              }              
+            }                        
           }
         }
       </script>
