@@ -21,6 +21,8 @@ var router = require('express').Router();
 router.use('/amp-access', require('./amp-access'));
 router.use('/amp-user-notification', require('./amp-user-notification'));
 router.use('/amp-analytics', require('./amp-analytics'));
+router.use('/*/collect', require('./amp-analytics/proxy'));
+router.use('/collect', require('./amp-analytics/proxy'));
 
 router.get('/', function(req, res) {
   res.render('index.html', {

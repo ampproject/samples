@@ -16,7 +16,8 @@
     "express": "4.13.3",
     "gcloud": "^0.27.0",
     "hogan-express": "0.5.2",
-    "cookie-parser": "1.4.1"
+    "cookie-parser": "1.4.1",
+    "uuid": "2.0.1"
   },
   "devDependencies": {
     "jshint": "^2.8.0"
