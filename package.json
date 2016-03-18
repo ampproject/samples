@@ -9,24 +9,22 @@
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
   "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "body-parser": "1.14.1",
-    "express": "4.13.3",
-    "gcloud": "^0.27.0",
-    "hogan-express": "0.5.2",
-    "cookie-parser": "1.4.1",
-    "uuid": "2.0.1"
-  },
-  "devDependencies": {
-    "jshint": "^2.8.0"
-  },
-  "scripts": {
     "start": "node app.js",
     "monitor": "nodemon app.js",
     "deploy": "gcloud preview app deploy app.yaml",
     "lint": "jshint --exclude-path=.gitignore .",
     "test": "npm run lint"
+  },
+  "dependencies": {
+    "body-parser": "1.14.1",
+    "cookie-parser": "1.4.1",
+    "express": "4.13.3",
+    "gcloud": "^0.27.0",
+    "hogan-express": "0.5.2",
+    "hogan.js": "^3.0.2",
+    "uuid": "2.0.1"
+  },
+  "devDependencies": {
+    "jshint": "^2.8.0"
   }
 }
