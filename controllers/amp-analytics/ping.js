@@ -30,10 +30,10 @@ router.post('/', function(req, res) {
   // enable CORS
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Credentials', 'true');
-  // register the event
   var account = req.query.account;
   var event = req.query.event;
-  if (!Analytics.trackEvent(account, event)) {
+  var user = req.query.user;
+  if (!Analytics.trackEvent(account, event, user)) {
     res.sendStatus(400);
     return;
   }

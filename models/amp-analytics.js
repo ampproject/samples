@@ -16,19 +16,41 @@
 "use strict";
 
 var EVENTS = {};
+var USER_CHANGE_LISTENERS = {};
+var GLOBAL_ANALYTICS = '__all_users__';
 
 /**
  * Counts an analytics event.
  */
-exports.trackEvent = function(account, event) {
+exports.trackEvent = function(account, event, user) {
+  console.log('track ' + account + ';' + event + ';' + user);
   if (!account || !event) {
     return false;
   }
-  var data = EVENTS[account];
-  if (!data) {
-    data = {};
-    EVENTS[account] = data;
+  trackUserEvent(account, event, GLOBAL_ANALYTICS);
+  if (user) {
+    trackUserEvent(account, event, user);
   }
+  return true;
+}
+
+function trackUserEvent(account, event, user) {
+  var accountData = get(EVENTS, account);
+  var userData = get(accountData, user);
+  inc(userData, event);
+  notifyListeners(user, userData);
+}
+
+function get(obj, prop) {
+  var value = obj[prop];
+  if (!value) {
+    value = {};
+    obj[prop] = value;
+  }
+  return value;
+}
+
+function inc(data, event) {
   var eventCount = data[event];
   if (!eventCount) {
     eventCount = 0;
@@ -37,10 +59,62 @@ exports.trackEvent = function(account, event) {
 }
 
 /**
+ * Returns analytics for the given user and account.
+ */
+exports.forUser = function(account, user) {
+  var accountData = EVENTS[account];
+  if (!accountData) {
+    return '';
+  }
+  return formatData(accountData[user]);
+}
+
+/**
  * Returns analytics for the given account.
  */
 exports.forAccount = function(account) {
-  return formatData(EVENTS[account]);
+  return module.exports.forUser(account, GLOBAL_ANALYTICS);
+}
+
+/**
+ * Add user analytics change listener.
+ */
+exports.addUserListener = function(userId, callback) {
+  var listeners = USER_CHANGE_LISTENERS[userId];
+  if (!listeners) {
+    listeners = [];
+    USER_CHANGE_LISTENERS[userId] = listeners;
+  }
+  listeners.push(callback);
+}
+
+/**
+ * Remove user analytics change listener.
+ **/
+exports.removeUserListener = function(userId, callback) {
+  var listeners = USER_CHANGE_LISTENERS[userId];
+  if (!listeners) {
+    console.log('error: no listener registered for user ' + user);
+    return;
+  }
+  var index = listeners.indexOf(callback);
+  if (index == -1) {
+    return;
+  }
+  listeners.splice(index, 1);
+}
+
+function notifyListeners(user, data) {
+  var listeners = USER_CHANGE_LISTENERS[user]
+  if(!listeners) {
+    console.log('no listeners for user events ' + user);
+    return;
+  }
+  console.log('notify listeners for user events ' + user);
+  var formattedData = formatData(data);
+  listeners.forEach(function(listener) {
+    listener(formattedData);
+  });
 }
 
 /**

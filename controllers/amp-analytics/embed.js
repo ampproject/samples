@@ -17,9 +17,55 @@
 "use strict";
 
 var express = require('express');
+var hogan = require("hogan.js");
+
 var router = express.Router();
 
 var Analytics = require('../../models/amp-analytics');
+
+var analyticsTemplate = hogan.compile(`
+    <table>
+    <tr>
+      <th>Event</th>
+      <th>Count</th>
+    </tr>
+    {{#data}}
+    <tr>
+      <td>{{key}}</td><td>{{value}}</td>
+    </tr>
+    {{/data}}
+    {{^data}}
+    No data available.
+    {{/data}}
+    </table>`.replace(/\n/g, ''));
+
+router.get('/listen', function(req, res){
+  var account = req.query.account;
+  var user = req.query.user;
+  if (!account || !user) {
+    res.sendStatus(400);
+  }
+  console.log('new connection for user ' + user);
+  res.writeHead(200, {
+    'Connection': 'keep-alive',
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache'
+  });
+
+  var onNewAnalyticsData = function(userData) {
+    var content = analyticsTemplate.render({data: userData});
+    console.log('received user event ' + content);
+    res.write('data: ' + content + '\n\n');
+  };
+
+  var userData = Analytics.forUser(account, user);
+  onNewAnalyticsData(userData);
+
+  Analytics.addUserListener(user, onNewAnalyticsData);
+  req.on("close", function() {
+    Analytics.removeUserListener(user, onNewAnalyticsData);
+  });
+});
 
 /**
  * Lists all available analytics data for the given account.
@@ -28,9 +74,11 @@ var Analytics = require('../../models/amp-analytics');
  */
 router.get('/', function(req, res) {
   var account = req.query.account;
-  var analytics = Analytics.forAccount(account);
+  var user = req.query.user;
+  var analytics = Analytics.forUser(account, user);
   res.render('amp-analytics/embed', {
       account: account,
+      user: user,
       data: analytics
   });
 });
