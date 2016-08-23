@@ -18,7 +18,8 @@
 var url = require('url');
 
 var VALID_AMP_ORIGINS = [/.*\.ampproject\.org/g, /cdn\.edgeamp\.org/g, /amp\.cloudflare\.com/g, /cdn\.ampcache\.org/g];
-var VALID_SOURCE_ORIGINS = [/ampbyexample\.com/g, /amp-by-example-staging\.appspot\.com/g, /rocky-sierra-1919\.herokuapp\.com/g];
+var VALID_SOURCE_ORIGINS = [/ampbyexample\.com/g, /amp-by-example-staging\.appspot\.com/g,
+    /rocky-sierra-1919\.herokuapp\.com/g, /limitless-tundra-65881\.herokuapp\.com/g];
 
 /**
  * Enable CORS for all AMP API requests. More information here: 

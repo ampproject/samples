@@ -19,8 +19,12 @@
       * RANDOM: A random number. Helpful to avoid browser cache.
     -->
     <script id="amp-access" type="application/json">
+    <%#serverMode%>
     {
-      "authorization": "<% host %>/amp-access/api/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "type": "server",
+      "jwt": true,
+      "publicKeyUrl": "<% host %>/public.pem",
+      "authorization": "<% host %>/amp-access/api/amp-authorization.json?type=server&rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
       "pingback": "<% host %>/amp-access/api/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
       "login": "<% host %>/amp-access/login/?rid=READER_ID&url=CANONICAL_URL",
       "authorizationFallbackResponse": {
@@ -28,6 +32,19 @@
         "access": false
       }     
     }
+    <%/serverMode%>
+    <%^serverMode%>
+    {
+      "type": "client",
+      "authorization": "<% host %>/amp-access/api/amp-authorization.json?type=client&rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER&_=RANDOM",
+      "pingback": "<% host %>/amp-access/api/amp-pingback?rid=READER_ID&ref=DOCUMENT_REFERRER&url=CANONICAL_URL",
+      "login": "<% host %>/amp-access/login/?rid=READER_ID&url=CANONICAL_URL",
+      "authorizationFallbackResponse": {
+        "error": true,
+        "access": false
+      }     
+    } 
+    <%/serverMode%>    
     </script>
     <%> styles %>
     <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
@@ -134,7 +151,7 @@
         }
       </script>
     </amp-analytics>
-    <div class="main-body">
+    <div class="main-body">                 
     <header>
       <div class="brand-logo" data-z-depth="2"><a href="/">⚡ AMP Times</a>
         <span amp-access="subscriber" amp-access-hide>
@@ -160,7 +177,7 @@
     <main role="main">
     <article>
 
-      <section id="meter-notif" amp-access="access OR error" class="meter-section" data-z-depth="2">
+      <section id="meter-notif" amp-access="access OR error" class="meter-section" data-z-depth="2" amp-access-hide>
         <!-- 
           This section is only visible by subscribers. The subscriber variable is 
           defined in the authentification response data.
@@ -183,7 +200,7 @@
           Yay! The first click is free.
         </div>    
 
-        <div amp-access="error">
+        <div amp-access="error" amp-access-hide>
           Ooops, something went wrong on the authorization endpoint!
         </div>
 
