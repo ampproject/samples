@@ -50,7 +50,7 @@ router.get('/fcf', function(req, res) {
 /**
  * View a single Article 
  **/
-router.get('/((\\d+))', function(req, res) {
+router.get(['/((\\d+))', '/server/((\\d+))'], function(req, res) {
   var id = parseInt(req.params[0]);
   if (!ARTICLES[id]) {
     res.sendStatus(404);
@@ -61,6 +61,7 @@ router.get('/((\\d+))', function(req, res) {
   var protocol = host.startsWith('localhost') ? 'http' : 'https';
   res.render('amp-access/article', {
     host: protocol + '://' + host,
+    serverMode: req.originalUrl.indexOf('/server/') >= 0,
     id: id,
     title: ARTICLES[id].title,
     prev: prevArticleId(id),

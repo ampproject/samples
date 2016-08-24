@@ -22,10 +22,11 @@
       <section class="meter-section" data-z-depth="2">
         This is an AMP Paywall demo. To run this demo:
         <ul>
-          <li>Go to <a target="_blank" href="https://cdn.ampproject.org/experiments.html">
-              AMP CDN Experiments</a> and switch on <b>AMP Dev Channel </b>.</li>
           <li>For testing First-Click-Free go to the <a href="fcf">
               First-Click-Free test page</a>.</li>
+          <li>To run the <b>Server</b> demos, enable the “<b>amp-access-jwt</b>” and “<b>amp-access-server</b>” 
+              on the <a target="_blank" href="https://cdn.ampproject.org/experiments.html">
+              AMP CDN Experiments</a> page or by using "<b>AMP.toggleExperiment</b>" function on the console.</li>
         </ul>
       </section>
       <%/fcf%>
@@ -37,10 +38,11 @@
       <h4><% title %></h4>    
       <ul>
         <%#articles%>
-        <li><a href="<% id %>"><% title %></a></li>
+        <li>
+          <% title %> - [<a href="<% id %>">client</a> / <a href="server/<% id %>">server</a>]  
+        </li>
         <%/articles%>
       </ul>
-
       </main>
     </div>
   </body>

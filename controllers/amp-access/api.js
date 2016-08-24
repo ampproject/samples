@@ -17,9 +17,26 @@
 
 var express = require('express');
 var router = express.Router();
-
+var privateKey = 
+`-----BEGIN RSA PRIVATE KEY-----
+MIICWgIBAAKBgGuSzXXydlcWrOpzmTyx/e1D/vNGZcfcgXrGq2eM6eX8YbA9OX+w
+3+hHfUN88l4O5w+aQabc+/Edz90KOdqeIbAnGMCwnieIJj5Fdkvk+MtRRVzu5aVh
+4p5nJSb/juG3trQn9L7bAKoA5iDpXIKSq1ViTPXJ/WrkDJ3UGjAzrGG1AgMBAAEC
+gYAN7kHrP03x8z7LUdMLWCWBH2gZywkNO9IMu0OhMk9r+CYSc6tJjPdCFlfzcG/W
+nGlxzNEpsb5yuCCeCF/7nrTP9oZ0qdx4LwM/9f21iSry2n5E9AVBztnPw5Kzuo6p
+hyzN05eL4uuXnPv2y+t1quK0NRyru012KVNnfodJBcJEFQJBAMLmlvYmgP9Chxf2
+ozxAYOHbIXWN4LVFKEhz9YabRgdLpe7xFGGRUjNxQe6fXoCAequJvmlb7gvUyXH2
+JCPSRwMCQQCNS+rMFDq2/zIOxZAE2ynuhXymMKaodsXcf691cNh5W/k/N4DGIIJJ
+M3uIcMdWS9IP/Z48nAOXtfrf1wW56BrnAkBwtgFfYG0BMWwGw68qzOA6PQtgfCgT
+LGdbXxQCQBGDbpALWoe61NuAvGKwqKFyFtraENJ5A5zqYqgMq5fCz3wZAkAg/065
+FCxWGijNjFPC3o/fVSs0AH6bLwmsIeGO8qiLRvBhVAvtuR/UCoLZ7USQIarP8zGm
+A+VO47/P0H5U2SCXAkBY2ykmcZh+F1fMt3UFk48li6vWnHenRYKeJsPEQAm0ujgQ
+v41z3Wnhg65zI8j1o+K9dc0qtgZ/Fsa8c7zTF8SC
+-----END RSA PRIVATE KEY-----`;
+var FIVE_MINUTES = 1000 * 60 * 5;
 var PaywallAccess = require('../../models/amp-access');
 var User = require('../../models/user');
+var jwt = require('jsonwebtoken');
 
 /** 
  # Authorization is configured via authorization property in the AMP Access 
@@ -34,6 +51,8 @@ router.get('/amp-authorization.json', function(req, res) {
     res.sendStatus(400);
     return;
   }
+
+  var serverSide = req.query.type === 'server';
 
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
   // check if there is a logged in user
@@ -77,9 +96,23 @@ router.get('/amp-authorization.json', function(req, res) {
       'access': hasAccess
     };
   }
-  response['readerId'] = readerId;
+  response.readerId = readerId;
   console.log('Authorization response:', readerId, response);
-  res.json(response);
+
+  if (serverSide) {
+    var jwtResponse = {
+      'aud': 'ampproject.org',
+      'iss': req.get('host'),
+      'exp': new Date().getTime() + FIVE_MINUTES, 
+      'amp_authdata': response
+    };
+    var encodedResponse = jwt.sign(jwtResponse, privateKey, { algorithm: 'RS256'});
+    console.log(encodedResponse);
+    res.set('Content-Type', 'text/plain');
+    res.send(encodedResponse);
+  } else {
+    res.json(response);
+  }
 });
 
 /** 
