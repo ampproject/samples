@@ -33,7 +33,7 @@ FCxWGijNjFPC3o/fVSs0AH6bLwmsIeGO8qiLRvBhVAvtuR/UCoLZ7USQIarP8zGm
 A+VO47/P0H5U2SCXAkBY2ykmcZh+F1fMt3UFk48li6vWnHenRYKeJsPEQAm0ujgQ
 v41z3Wnhg65zI8j1o+K9dc0qtgZ/Fsa8c7zTF8SC
 -----END RSA PRIVATE KEY-----`;
-var ONE_DAY = 1000 * 60 * 60 * 24;
+var FIVE_MINUTES = 1000 * 60 * 5;
 var PaywallAccess = require('../../models/amp-access');
 var User = require('../../models/user');
 var jwt = require('jsonwebtoken');
@@ -103,7 +103,7 @@ router.get('/amp-authorization.json', function(req, res) {
     var jwtResponse = {
       'aud': 'ampproject.org',
       'iss': req.get('host'),
-      'exp': new Date().getTime() + ONE_DAY, 
+      'exp': new Date().getTime() + FIVE_MINUTES, 
       'amp_authdata': response
     };
     var encodedResponse = jwt.sign(jwtResponse, privateKey, { algorithm: 'RS256'});
