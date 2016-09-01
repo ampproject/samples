@@ -25,14 +25,19 @@ const ONE_MINUTE = 1000 * 60;
 const ONE_HOUR = ONE_MINUTE * 60;
 
 function encrypt(input, secret) {
-  // TODO Implement preper encryption
+  // TODO Implement proper encryption
+  return input;
+}
+
+function decrypt(input, secret) {
+  // TODO Implement proper encryption  
   return input;
 }
 
 function generateAuthCode(oAuthClient, user, scope) {
   const authCode = {
     type: "code",
-    id: user.username,
+    id: user.email,
     scope: scope,
     expires_at: new Date() + ONE_MINUTE
   }
@@ -53,6 +58,25 @@ function generateIdToken(user, host) {
       + "."
       + encodeBase64(JSON.stringify(idToken))
       + ".";
+}
+
+function generateRefreshToken(oAuthClient, user, scope) {
+  const refreshToken = {
+    type: 'refresh_token',
+    id: user.email,
+    scope: scope
+  };
+  return encrypt(JSON.stringify(refreshToken), oAuthClient.secret); 
+}
+
+function generateAccessToken(oAuthClient, user, scope) {
+  const accessToken = {
+	  type: 'token',
+	  id: user.email,
+    scope: scope,
+    expires_at: new Date() + ONE_HOUR
+  };
+  return encrypt(JSON.stringify(accessToken), oAuthClient.secret);  
 }
 
 function encodeBase64(input) {
@@ -149,13 +173,30 @@ function doAutoSignInOrUp(oAuthClient, request, response) {
 }
 
 function doAuthorizationCode(oAuthClient, request, response) {
-  const responseType = request.getParameter("response_type"); // Should be always `token`
-  const code = request.getParameter("code");
+  // Validate Authorization Code and return a Refresh Token  
+  const responseType = request.body.response_type; // Should be always `token`
+  const code = request.body.code;
+  const authCode = JSON.parse(decrypt(code, oAuthClient.secret));
+  const user = userModel.findByEmail(authCode.id);
+  const refreshToken = generateRefreshToken(oAuthClient, user, authCode.scope);
+
+  response.json({
+    token_type: 'bearer',
+    refresh_token: refreshToken
+  });
 }
 
 function doRefreshToken(oAuthClient, request, response) {
+  // Validate Refresh Token and return an Access Token
   const responseType = request.body.response_type;
-  const refreshToken = request.body.refresh_token;  
+  const refreshToken = JSON.parse(decrypt(request.body.refresh_token, oAuthClient.secret));
+  const user = userModel.findByEmail(refreshToken.id);
+  const accessToken = generateAccessToken(oAuthClient, user, refreshToken.scope);
+
+  response.json({
+    token_type: 'bearer',
+    token: accessToken 
+  });
 }
 
 module.exports = router;
