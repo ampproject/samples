@@ -27,6 +27,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+var session = require('express-session');
+app.use(session({
+  name: 'express-session',
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { domain:'localhost', sameSite: false, httpOnly: false }
+}));
+
 app.set('view engine', 'html');
 app.set('partials', {
   styles: 'styles',
