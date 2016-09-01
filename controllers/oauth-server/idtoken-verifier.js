@@ -15,25 +15,20 @@
  */
 "use strict";
 
-var USERS = {};
+const fetch = require('node-fetch');
+const VALIDATION_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=';
 
-// add a sample user
-USERS['subscriber@example.com'] = {
-  name: 'The Subscriber',
-  email: 'subscriber@example.com',
-  password: '123456',
-  subscriber: true
-};
-
-// Find user by email
-exports.findByEmail = function(email) {
-  return USERS[email];
-};
-
-exports.addUser = function(email, userid) {
-  USERS[email] = {
-    email: email,
-    userId: userid
-  };
-  return USERS[email];
+exports.verify = function(idToken) {
+  return new Promise((resolve, reject) => {
+    fetch(VALIDATION_ENDPOINT + idToken)
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        resolve(json);
+      })
+      .catch(err => {
+        reject(err);
+      })
+  }); 
 }

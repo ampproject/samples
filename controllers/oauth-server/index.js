@@ -17,7 +17,10 @@
 
 const express = require('express');
 const oauthClientsModel = require('../../models/oauth-clients');
+const userModel = require('../../models/user');
+const crypto = require('crypto');
 const router = express.Router(); 
+const idTokenVerifier = require('./idtoken-verifier');
 const ONE_MINUTE = 1000 * 60;
 const ONE_HOUR = ONE_MINUTE * 60;
 
@@ -26,7 +29,7 @@ function encrypt(input, secret) {
   return input;
 }
 
-function generateAuthCode(oauthClient, user, scope) {
+function generateAuthCode(oAuthClient, user, scope) {
   const authCode = {
     type: "code",
     id: user.username,
@@ -36,23 +39,30 @@ function generateAuthCode(oauthClient, user, scope) {
   return encrypt(JSON.stringify(authCode), oAuthClient.secret);
 }
 
-function generateIdToken(user) {
+function generateIdToken(user, host) {
     const idToken = {
-      iss: req.get('host'), // TODO Choose a Partner Domain!!
+      iss: host, // TODO Choose a Partner Domain!!
       aud: 'https://www.google.com',
       iat: new Date(),
       exp: new Date() + ONE_HOUR,
-      sub: user.username,
+      sub: user.email,
       name: user.name
     }
 
     return encodeBase64("{\"alg\":\"none\",\"typ\":\"JWT\"}")
       + "."
-      + encodeBase64(JSON.stringify(authCode))
+      + encodeBase64(JSON.stringify(idToken))
       + ".";
 }
 
-router.get('/signin', (request, response) => {
+function encodeBase64(input) {
+  return new Buffer(input).toString('base64');
+}
+
+router.get('/authorize', (request, response) => {
+  if (!request.cookies.email) {
+    response.redirect('/amp-access/login?return=/oauth/authorize');
+  }
   const session = request.session;
   session.signInRequest = {
         clientId: request.query.client_id,
@@ -68,7 +78,7 @@ router.get('/signin', (request, response) => {
   });  
 });
 
-router.post('/signin', (request, response, next) => {
+router.post('/authorize', (request, response, next) => {
   const signInRequest = request.session.signInRequest;
   const oAuthClient = oauthClientsModel.findByKey(signInRequest.clientId);
   if (!oAuthClient) {
@@ -76,13 +86,18 @@ router.post('/signin', (request, response, next) => {
     return;
   }
 
-  const authCode = OAuthUtils.generateAuthCode(oAuthClient, user, signinRequest.getScope()); //TODO Add proper User
-  const idToken = OAuthUtils.generateIdToken(user);
+  const user = userModel.findByEmail(request.cookies.email);
+  if (!user) {
+    next('User not logged in');
+    return;
+  }
+  const authCode = generateAuthCode(oAuthClient, user, signInRequest.scope);
+  const idToken = generateIdToken(user, request.get('host'));
 
   response.redirect("https://oauth-redirect.googleusercontent.com/_/redirect?" +
           "code=" + authCode +
           "&id_token=" + idToken +
-          "&state=" + signinRequest.getState());
+          "&state=" + signInRequest.state);
 });
 
 router.post('/token', (request, response, next) => {
@@ -113,13 +128,17 @@ function doAutoSignInOrUp(oAuthClient, request, response) {
   const scope = request.getParameter("scope");
   const assertion = request.getParameter("assertion");
 
-  const googleIdToken = verifier.verify(assertion); // TODO Install Token Verifier library
-  const userEmail = googleIdToken.getPayload().getEmail();
-  const userId = googleIdToken.getPayload().getSubject();
-  // TODO Fetch or Create user from DB
+  const googleIdToken = idTokenVerifier.verify(assertion);
+  const userEmail = googleIdToken.email;
+  const userId = googleIdToken.sub;
+  
+  let user = userModel.findByEmail(userEmail);
+  if (!user) {
+    userModel.addUser(userEmail, userId);
+  }
 
-  const authCode = generateAuthCode(oAuthClient, null, scope); // TODO Add Correct User
-  const idToken = generateIdToken(null); //TODO Add Correct User
+  const authCode = generateAuthCode(oAuthClient, user, scope);
+  const idToken = generateIdToken(user, request.get('host'));
 
   const respContent = {
     authorization_code: authCode,
