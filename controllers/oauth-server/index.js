@@ -124,6 +124,11 @@ router.post('/authorize', (request, response, next) => {
           "&state=" + signInRequest.state);
 });
 
+router.get('/constrained', (request, response, next) => {
+  const accessToken = JSON.parse(decrypt(req.query.access_token, oAuthClient.secret));
+
+});
+
 router.post('/token', (request, response, next) => {
   const clientId = request.body.client_id;
   const clientSecret = request.body.client_secret;
