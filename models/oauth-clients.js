@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use strict";
 
-var router = require('express').Router();
+const GOOGLE_OAUTH_CLIENT = {
+  key: 'GOOGLE',
+  secret: '123456'
+}
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
-router.use('/*/collect', require('./amp-analytics/proxy'));
-router.use('/collect', require('./amp-analytics/proxy'));
-router.use('/oauth', require('./oauth-server'));
+exports.findByKey = function(key) {
+  if (key === GOOGLE_OAUTH_CLIENT.key) {
+    return GOOGLE_OAUTH_CLIENT;
+  }
+  return null;
+}
 
-router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
-});
-
-module.exports = router;
+exports.findByKeyAndSecret = function(key, secret) {
+  const oauthClient = this.findByKey(key);
+  if (oauthClient && oauthClient.secret === secret) {
+    return oauthClient;
+  }
+  return null;
+}

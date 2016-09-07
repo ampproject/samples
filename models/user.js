@@ -19,6 +19,7 @@ var USERS = {};
 
 // add a sample user
 USERS['subscriber@example.com'] = {
+  name: 'The Subscriber',
   email: 'subscriber@example.com',
   password: '123456',
   subscriber: true
@@ -28,3 +29,11 @@ USERS['subscriber@example.com'] = {
 exports.findByEmail = function(email) {
   return USERS[email];
 };
+
+exports.addUser = function(email, userid) {
+  USERS[email] = {
+    email: email,
+    userId: userid
+  };
+  return USERS[email];
+}

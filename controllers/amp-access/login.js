@@ -42,6 +42,7 @@ router.get('/', function(req, res) {
  * to it's AMP Reader ID.
  */
 router.post('/submit', function(req, res) {
+  console.log('submit');
   var email = req.body.email;
   var password = req.body.password;
   var returnUrl = req.body.returnurl;

@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use strict";
 
-var router = require('express').Router();
+const fetch = require('node-fetch');
+const VALIDATION_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=';
 
-router.use('/amp-access', require('./amp-access'));
-router.use('/amp-user-notification', require('./amp-user-notification'));
-router.use('/amp-analytics', require('./amp-analytics'));
-router.use('/*/collect', require('./amp-analytics/proxy'));
-router.use('/collect', require('./amp-analytics/proxy'));
-router.use('/oauth', require('./oauth-server'));
-
-router.get('/', function(req, res) {
-  res.render('index.html', {
-  });
-});
-
-module.exports = router;
+exports.verify = function(idToken) {
+  return new Promise((resolve, reject) => {
+    fetch(VALIDATION_ENDPOINT + idToken)
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        resolve(json);
+      })
+      .catch(err => {
+        reject(err);
+      })
+  }); 
+}
