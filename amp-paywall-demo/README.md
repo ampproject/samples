@@ -14,10 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# AMP Publisher Sample
-
-This is a collection of samples demonstrating different features of [Accelerated Mobile Pages](https://www.ampproject.org).
-
 ## AMP Access Sample
 
 This is a demo application for the [AMP Access](https://github.com/ampproject/amphtml/blob/master/extensions/amp-access/amp-access.md) component. AMP Access or “AMP paywall and subscription support” provides control to publishers over what content can be accessed by a reader and with what restrictions. You can try the demo [here](https://rocky-sierra-1919.herokuapp.com).
