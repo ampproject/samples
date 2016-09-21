@@ -32,6 +32,7 @@ An AMP HTML tutorial - learn the different building blocks of an AMP HTML file. 
   </style>
   <!-- The AMP runtime must be loaded from the last element in the head. -->
   <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-install-serviceworker" src="https://cdn.ampproject.org/v0/amp-install-serviceworker-0.1.js"></script>
 </head>
 <!-- #### Body -->
 <!-- -->
@@ -51,6 +52,6 @@ An AMP HTML tutorial - learn the different building blocks of an AMP HTML file. 
     Check out the [other examples](/) to learn more about AMP.
   -->
   <amp-img src="/icon.png" width="1080" height="610" layout="responsive"></amp-img>
-
+  <amp-install-serviceworker src="/service-worker.js" layout="nodisplay"></amp-install-serviceworker>
 </body>
 </html>
