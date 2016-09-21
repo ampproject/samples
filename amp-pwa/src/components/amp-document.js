@@ -13,6 +13,7 @@ class AMPDocument extends React.Component {
 
     /**
      * `window.AMP` is set by the AMP runtime when it finishes loading.
+     * @const
      * @private
      */
     this.ampReadyPromise_ = new Promise(resolve => {
@@ -22,12 +23,14 @@ class AMPDocument extends React.Component {
     /**
      * Child element that the AMP document will be added as a shadow root to.
      * @private
+     * @type {Element}
      */
     this.container_ = null;
 
     /**
      * XMLHTTPRequest that fetches the AMP document.
      * @private
+     * @type {XMLHTTPRequest}
      */
     this.xhr_ = null;
 
@@ -38,7 +41,7 @@ class AMPDocument extends React.Component {
   componentDidMount() {
     this.container_.addEventListener('click', this.boundClickListener_);
 
-    this.fetchAndAttachAMPDoc_(this.props.src);
+    this.fetchAndAttachAmpDoc_(this.props.src);
   }
 
   componentWillUnmount() {
@@ -51,7 +54,7 @@ class AMPDocument extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.fetchAndAttachAMPDoc_(nextProps.src);
+    this.fetchAndAttachAmpDoc_(nextProps.src);
   }
 
   render() {
@@ -72,7 +75,7 @@ class AMPDocument extends React.Component {
    * @private
    * @param {string} url
    */
-  fetchAndAttachAMPDoc_(url) {
+  fetchAndAttachAmpDoc_(url) {
     this.fetchDocument_(url).then(doc => {
       return this.ampReadyPromise_.then(amp => {
         amp.attachShadowDoc(this.container_, doc, url);
@@ -86,39 +89,41 @@ class AMPDocument extends React.Component {
    * Fetches and parses HTML at `url`.
    * @private
    * @param {string} url
-   * @return {Promise} If fetch succeeds, resolved with {Document}.
-   *         Otherwise, rejects with {string} error description.
+   * @return {!Promise<!Document|!string>} If fetch succeeds, resolved with {!Document}.
+   *         Otherwise, rejects with {!string} error description.
    */
   fetchDocument_(url) {
     return new Promise((resolve, reject) => {
-      const xhr = (this.xhr_ = new XMLHttpRequest());
-      xhr.open('GET', url, true);
-      xhr.responseType = 'document';
+      this.xhr_ = new XMLHttpRequest();
+      this.xhr_.open('GET', url, true);
+      this.xhr_.responseType = 'document';
       // This is set to text/* instead of text/html because the development server
       // only forwards requests to the proxy for requests whose 'Accept' header
       // is NOT text/html.
       // https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#proxying-api-requests-in-development
-      xhr.setRequestHeader('Accept', 'text/*');
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState < /* STATUS_RECEIVED */ 2) {
+      this.xhr_.setRequestHeader('Accept', 'text/*');
+      this.xhr_.onreadystatechange = () => {
+        if (this.xhr_.readyState < /* STATUS_RECEIVED */ 2) {
           return;
         }
-        if (xhr.status < 100 || xhr.status > 599) {
-          xhr.onreadystatechange = null;
-          reject(new Error(`Unknown HTTP status ${xhr.status}`));
+        if (this.xhr_.status < 100 || this.xhr_.status > 599) {
+          this.xhr_.onreadystatechange = null;
+          reject(new Error(`Unknown HTTP status ${this.xhr_.status}`));
+          this.xhr_ = null;
           return;
         }
-        if (xhr.readyState === /* COMPLETE */ 4) {
-          if (xhr.responseXML) {
-            resolve(xhr.responseXML);
+        if (this.xhr_.readyState === /* COMPLETE */ 4) {
+          if (this.xhr_.responseXML) {
+            resolve(this.xhr_.responseXML);
           } else {
             reject(new Error('No xhr.responseXML'));
           }
+          this.xhr_ = null;
         }
       };
-      xhr.onerror = () => { reject(new Error('Network failure')); };
-      xhr.onabort = () => { reject(new Error('Request aborted')); };
-      xhr.send();
+      this.xhr_.onerror = () => { reject(new Error('Network failure')); };
+      this.xhr_.onabort = () => { reject(new Error('Request aborted')); };
+      this.xhr_.send();
     });
   }
 
