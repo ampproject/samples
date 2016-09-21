@@ -1,9 +1,10 @@
 import React from 'react';
+import { withRouter } from 'react-router'
 
 /**
  * Fetches the AMP document at a given `src` URL and renders it via Shadow DOM.
  */
-export default class AMPDocument extends React.Component {
+class AMPDocument extends React.Component {
   constructor(props) {
     super(props);
 
@@ -29,13 +30,20 @@ export default class AMPDocument extends React.Component {
      * @private
      */
     this.xhr_ = null;
+
+    /** @private */
+    this.boundClickListener_ = this.clickListener_.bind(this);
   }
 
   componentDidMount() {
+    this.container_.addEventListener('click', this.boundClickListener_);
+
     this.fetchAndAttachAMPDoc_(this.props.src);
   }
 
   componentWillUnmount() {
+    this.container_.removeEventListener('click', this.boundClickListener_);
+
     if (this.xhr_) {
       this.xhr_.abort();
       this.xhr_ = null;
@@ -113,5 +121,31 @@ export default class AMPDocument extends React.Component {
       xhr.send();
     });
   }
+
+  /**
+   * Event listener that redirects clicks on same-domain links to react-router.
+   * This avoids page reload due to navigation from same-domain links in the AMP document,
+   * which affords seamless UX in the style of a single-page app.
+   * @private
+   * @param e {!Event}
+   */
+  clickListener_(e) {
+    if (e.defaultPrevented) {
+      return false;
+    }
+    // Check `path` since events that cross the Shadow DOM boundary are retargeted.
+    // See http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-events
+    const a = e.path[0];
+    if (a.tagName === 'A' && a.href) {
+      const url = new URL(a.href);
+      if (url.origin == window.location.origin) {
+        e.preventDefault();
+        this.props.router.push(url.pathname);
+        return false;
+      }
+    }
+    return true;
+  }
 }
 AMPDocument.propTypes = { src: React.PropTypes.string.isRequired }
+export default withRouter(AMPDocument);
