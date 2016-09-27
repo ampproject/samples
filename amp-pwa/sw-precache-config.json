@@ -1,0 +1,32 @@
+{
+  "navigateFallback": "/",
+  "root": "build/",
+  "staticFileGlobs": [
+    "build/static/**/!(*.map)",
+    "build/index.html",
+    "build/manifest.webmanifest"
+  ],
+  "templateFilePath": "service-worker.tmpl",
+  "runtimeCaching": [
+    {
+      "urlPattern": "/shadow-v0.js",
+      "handler": "cacheFirst",
+      "options": {
+        "origin": "https://cdn.ampproject.org"
+      }
+    },
+    {
+      "urlPattern": "/documents",
+      "handler": "networkFirst"
+    },
+    {
+      "urlPattern": "/content/*",
+      "handler": "fastest",
+      "options": {
+        "cache": {
+          "maxEntries": 10
+        }
+      }
+    }
+  ]
+}

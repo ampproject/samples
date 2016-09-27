@@ -1,0 +1,9 @@
+.contents {
+  /** Prevents fixed-top navbar from overlapping site contents. */
+  padding-top: 70px;
+}
+
+a:hover {
+  /** Disables Bootstrap's default underline-on-hover behavior. */
+  text-decoration:none !important;
+}
