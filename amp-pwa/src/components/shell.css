@@ -1,6 +1,6 @@
 .contents {
   /** Prevents fixed-top navbar from overlapping site contents. */
-  padding-top: 70px;
+  padding-top: 50px;
 }
 
 a:hover {

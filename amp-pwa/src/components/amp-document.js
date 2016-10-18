@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router'
+import './amp-document.css'
 
 /**
  * Fetches the AMP document at a given `src` URL and renders it via Shadow DOM.
@@ -34,6 +35,14 @@ class AMPDocument extends React.Component {
      */
     this.xhr_ = null;
 
+    /**
+     * Provides AMP functionality on the newly created shadow root after
+     * an AMP document is attached.
+     * @private
+     * @type {Object}
+     */
+    this.shadowAmp_ = null;
+
     /** @private */
     this.boundClickListener_ = this.clickListener_.bind(this);
   }
@@ -45,6 +54,11 @@ class AMPDocument extends React.Component {
   }
 
   componentWillUnmount() {
+    // Cleans up internal shadow AMP document state.
+    if (typeof(this.shadowAmp_.close) === 'function') {
+      this.shadowAmp_.close();
+    }
+
     this.container_.removeEventListener('click', this.boundClickListener_);
 
     if (this.xhr_) {
@@ -78,12 +92,27 @@ class AMPDocument extends React.Component {
   fetchAndAttachAmpDoc_(url) {
     this.fetchDocument_(url).then(doc => {
       return this.ampReadyPromise_.then(amp => {
-        amp.attachShadowDoc(this.container_, doc, url);
+        // Hide navigational and other unwanted elements before displaying.
+        this.hideUnwantedElementsOnDocument_(doc);
+        // Attach the document as a shadow root to the container.
+        this.shadowAmp_ = amp.attachShadowDoc(this.container_, doc, url);
       });
     }).catch(error => {
       this.setState({'offline': true});
     });
   }
+
+  /**
+   * Hides elements (e.g. banners) that would clash with the app shell.
+   * @param {!Document} doc
+   * @private
+   */
+   hideUnwantedElementsOnDocument_(doc) {
+     const banners = doc.getElementsByClassName('banner');
+     for (let i = 0; i < banners.length; i++) {
+       banners[i].style.display = 'none';
+     }
+   }
 
   /**
    * Fetches and parses HTML at `url`.
@@ -140,13 +169,18 @@ class AMPDocument extends React.Component {
     }
     // Check `path` since events that cross the Shadow DOM boundary are retargeted.
     // See http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-events
-    const a = e.path[0];
-    if (a.tagName === 'A' && a.href) {
-      const url = new URL(a.href);
-      if (url.origin == window.location.origin) {
-        e.preventDefault();
-        this.props.router.push(url.pathname);
-        return false;
+    for (let i = 0; i < e.path.length; i++) {
+      const a = e.path[i];
+      if (a.tagName === 'A' && a.href) {
+        const url = new URL(a.href);
+        if (url.origin === window.location.origin) {
+          // Perform router push instead of page navigation.
+          e.preventDefault();
+          this.props.router.push(url.pathname);
+          // Scroll to top of new document.
+          window.scrollTo(0, 0);
+          return false;
+        }
       }
     }
     return true;
