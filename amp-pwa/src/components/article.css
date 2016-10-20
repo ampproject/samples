@@ -1,8 +1,45 @@
 .article {
-  padding: 24px 0;
-  border-bottom: 1px solid #eee;
+  background-size: cover;
+  margin-left: -15px;
+  margin-right: -15px;
+  margin-bottom: 5px;
+  height: 240px;
+  position: relative;
 }
 
-.article {
-  color: #777;
+.article .scrim-top {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0));
+  height: 80px;
+}
+
+.article .scrim-bottom {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.33));
+  width: 100%;
+  height: 60px;
+  position: absolute;
+  top: 180px;
+}
+
+.article h3 {
+  font-family: 'Playfair Display', serif;
+  font-weight: bold;
+  font-size: 22pt;
+  color: white;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 30px;
+  left: 12%;
+  right: 12%;
+  margin: 0;
+}
+
+.article h4 {
+  font-family: 'Muli', sans-serif;
+  font-weight: normal;
+  color: white;
+  font-size: 8pt;
+  letter-spacing: 1px;
+  position: absolute;
+  top: 200px;
+  left: 12%;
 }

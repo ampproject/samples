@@ -1,0 +1,4 @@
+.amp-container {
+  /* Offset parent's (.container) padding so the document is rendered full-bleed. */
+  margin: 0 -15px;
+}

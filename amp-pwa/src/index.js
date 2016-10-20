@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
 import Shell from './components/shell';
-import './amp-shadow'; // TODO(choumx): Remove once prod bug is fixed.
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './bootstrap-theme.css'; // Replace with your own bootstrap theme!

@@ -1,8 +1,31 @@
-.jumbotron a {
-  font-family: "News Cycle", "Arial Narrow Bold", sans-serif;
+.categories {
+  text-align: center;
+  font-family: 'Muli', sans-serif;
   text-transform: uppercase;
+  color: #999;
 }
 
-.articles {
-  margin-left: 24px;
+.categories a {
+  color: #999;
+}
+
+.categories ul {
+  list-style-type: none;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.categories li {
+  display: inline;
+  padding: 20px;
+}
+
+.categories span {
+  padding-bottom: 2px;
+}
+
+.active {
+  border-bottom: solid 2px #37dc8c;
+  color: black;
 }
