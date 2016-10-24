@@ -1,0 +1,18 @@
+{
+  "name": "react-amp-document",
+  "version": "0.1.0",
+  "description": "React component that fetches and renders AMP documents.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ampproject/amp-publisher-sample.git"
+  },
+  "keywords": [
+    "React",
+    "AMP"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ampproject/amp-publisher-sample/issues"
+  },
+  "homepage": "https://github.com/ampproject/amp-publisher-sample/amp-pwa#readme"
+}

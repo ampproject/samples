@@ -1,4 +1,4 @@
-import AMPDocument from './components/amp-document';
+import AMPDocument from './components/amp-document/amp-document';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
