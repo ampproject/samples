@@ -1,6 +1,6 @@
 {
   "name": "react-amp-document",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "React component that fetches and renders AMP documents.",
   "repository": {
     "type": "git",
@@ -14,5 +14,15 @@
   "bugs": {
     "url": "https://github.com/ampproject/amp-publisher-sample/issues"
   },
-  "homepage": "https://github.com/ampproject/amp-publisher-sample/amp-pwa#readme"
+  "homepage": "https://github.com/ampproject/amp-publisher-sample/amp-pwa#readme",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0"
+  },
+  "main": "react-amp-document.js",
+  "scripts": {
+    "build": "babel ./amp-document.js --presets babel-preset-es2015,babel-preset-react --out-file ./react-amp-document.js",
+    "prepublish": "npm run build"
+  }
 }

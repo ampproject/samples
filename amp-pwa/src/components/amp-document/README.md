@@ -18,8 +18,11 @@ npm install react-amp-document
 
 **./index.js**
 ```
-import AMPDocument from 'react-amp-document/amp-document';
+import AMPDocument from 'react-amp-document';
 
 // Create an <AMPDocument> and set its `src` prop to an AMP document URL:
-ReactDOM.render(<AMPDocument src="https://ampbyexample.com" />);
+ReactDOM.render(
+  <AMPDocument src="https://ampbyexample.com" />,
+  document.getElementById('root')
+);
 ```
