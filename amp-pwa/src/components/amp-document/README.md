@@ -10,16 +10,26 @@ npm install react-amp-document
 
 **./index.html**
 ```
-<head>
-  <!-- Include AMP runtime with Shadow DOM API. -->
-  <script async src="https://cdn.ampproject.org/shadow-v0.js"></script>
-</head>
+<!doctype html>
+<html>
+  <head>
+    <!-- Include AMP runtime with Shadow DOM API. -->
+    <script async src="https://cdn.ampproject.org/shadow-v0.js"></script>
+  </head>
+  <body>
+    <!-- Container for AMP document. -->
+    <div id="root"/>
+  </body>
+</html>
 ```
 
 **./index.js**
 ```
-import AMPDocument from 'react-amp-document/amp-document';
+import AMPDocument from 'react-amp-document';
 
 // Create an <AMPDocument> and set its `src` prop to an AMP document URL:
-ReactDOM.render(<AMPDocument src="https://ampbyexample.com" />);
+ReactDOM.render(
+  <AMPDocument src="https://ampbyexample.com" />,
+  document.getElementById('root')
+);
 ```
