@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 "use strict";
 
 var express = require('express');
 var router = express.Router();
-var privateKey = 
+var privateKey =
 `-----BEGIN RSA PRIVATE KEY-----
 MIICWgIBAAKBgGuSzXXydlcWrOpzmTyx/e1D/vNGZcfcgXrGq2eM6eX8YbA9OX+w
 3+hHfUN88l4O5w+aQabc+/Edz90KOdqeIbAnGMCwnieIJj5Fdkvk+MtRRVzu5aVh
@@ -38,11 +39,11 @@ var PaywallAccess = require('../../models/amp-access');
 var User = require('../../models/user');
 var jwt = require('jsonwebtoken');
 
-/** 
- # Authorization is configured via authorization property in the AMP Access 
- # Configuration section. It is a credentialed CORS endpoint. 
- # 
- # This endpoint produces the authorization response that can be used in the 
+/**
+ # Authorization is configured via authorization property in the AMP Access
+ # Configuration section. It is a credentialed CORS endpoint.
+ #
+ # This endpoint produces the authorization response that can be used in the
  # content markup expressions to show/hide different parts of content.
  */
 router.get('/amp-authorization.json', function(req, res) {
@@ -84,7 +85,7 @@ router.get('/amp-authorization.json', function(req, res) {
   } else {
     // metered access
     var hasAccess = paywallAccess.hasAccess(referrer, viewedUrl);
-    // send an increased view count if user hasn't already seen the url 
+    // send an increased view count if user hasn't already seen the url
     // the actual view is counted in the pingback
     var views = paywallAccess.numViews;
     if (hasAccess && !paywallAccess.hasAlreadyVisisted()) {
@@ -103,7 +104,7 @@ router.get('/amp-authorization.json', function(req, res) {
     var jwtResponse = {
       'aud': 'ampproject.org',
       'iss': req.get('host'),
-      'exp': new Date().getTime() + FIVE_MINUTES, 
+      'exp': new Date().getTime() + FIVE_MINUTES,
       'amp_authdata': response
     };
     var encodedResponse = jwt.sign(jwtResponse, privateKey, { algorithm: 'RS256'});
@@ -115,8 +116,8 @@ router.get('/amp-authorization.json', function(req, res) {
   }
 });
 
-/** 
- * Pingback is configured via pingback property in the AMP Access Configuration section. 
+/**
+ * Pingback is configured via pingback property in the AMP Access Configuration section.
  * It must be a credentialed CORS endpoint. Pingback must not produce a response.
  *
  * Use the pingback to:
@@ -143,11 +144,11 @@ router.post('/amp-pingback', function(req, res) {
 
 /**
  * Retrieves a logged in user via cookie. If it exists it will store the
- * user with the Reader ID. This makes it possible to automatically 
- * login paywall users if they are already logged into your site. 
+ * user with the Reader ID. This makes it possible to automatically
+ * login paywall users if they are already logged into your site.
  */
 function matchUserToReaderId(req, paywallAccess) {
-  //retrieve the login cookie. 
+  //retrieve the login cookie.
   var email = req.cookies.email;
   var user = User.findByEmail(email);
   if (user) {
