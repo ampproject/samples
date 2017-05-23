@@ -3,7 +3,7 @@
     width: 80vw;
     height: 100vh;
     max-width: 200px;
-    position: absolute;
+    position: fixed;
     top: var(--header-height);
     left: 0;
     transform: translateX(-100%);
@@ -39,12 +39,6 @@
     background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
 }
 
-/* Nav Trigger */
-#nav-trigger {
-    position: absolute;
-    clip: rect(0, 0, 0, 0);
-}
-
 header,
 main,
 .category,
@@ -52,11 +46,11 @@ main,
     transition: transform var(--animation-speed);
 }
 
-#nav-trigger:checked ~ .category,
-#nav-trigger:checked ~ main {
+.nav-shown .category,
+.nav-shown main {
     transform: translateX(200px);
 }
 
-#nav-trigger:checked ~ .navigation {
+.nav-shown .navigation {
     transform: translateX(0);
 }

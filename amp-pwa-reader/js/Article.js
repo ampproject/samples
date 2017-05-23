@@ -133,6 +133,8 @@ class Article {
                     // add class to html element for global CSS stuff
                     document.documentElement.classList.add('article-shown');
 
+                    this.takeoverScroll();
+
                     // Set the visibility state of the AMP doc to visible
                     this.ampDoc.setVisibilityState('visible');
 
@@ -149,6 +151,8 @@ class Article {
         // remove class to html element for global CSS stuff
         document.documentElement.classList.remove('article-shown');
 
+        this.restoreScroll();
+
         // Show the card header
         this.card.elem.style.opacity = '1';
 
@@ -157,11 +161,22 @@ class Article {
 
         return new Promise((resolve, reject) => {
             this.animateOut().onfinish = () => {
+
                 this.clear();
                 resolve();
             };
         });
 
+    }
+
+    takeoverScroll() {
+        this._mainScrollY = document.scrollingElement.scrollTop;
+        document.scrollingElement.scrollTop = 0;
+        this.container.style.transform = '';
+    }
+
+    restoreScroll() {
+        document.scrollingElement.scrollTop = this._mainScrollY;
     }
 
 }

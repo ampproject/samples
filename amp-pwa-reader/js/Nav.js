@@ -60,6 +60,9 @@ class Nav {
         }));
       }
 
+      // reset scroll position
+      document.scrollingElement.scrollTop = 0;
+
     });
 
   }
@@ -68,11 +71,24 @@ class Nav {
     return document.querySelector('.navigation a[data-tag="' + category + '"]');
   }
 
+  show() {
+    document.body.classList.add('nav-shown');
+  }
+
   hide() {
-    document.getElementById('nav-trigger').checked = false;
+    document.body.classList.remove('nav-shown');
+  }
+
+  toggle() {
+    return this[document.body.classList.contains('nav-shown') ? 'hide' : 'show']();
   }
 
   bind() {
+
+    document.querySelector('.hamburger').addEventListener('click', event => {
+      this.toggle();
+      event.preventDefault();
+    }), false;
 
     document.querySelector('.navigation').addEventListener('click', event => {
       event.target.nodeName === 'A' && this.navigate(event.target.dataset.tag, event.target.parentNode);

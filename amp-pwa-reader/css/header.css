@@ -18,11 +18,9 @@ header svg {
   margin-top: 6px;
 }
 
-label[for="nav-trigger"] {
-    /* critical positioning styles */
+.hamburger {
     position: absolute;
     z-index: 2;
-
     border: 0;
     outline: none;
     border-radius: 50%;
@@ -32,6 +30,8 @@ label[for="nav-trigger"] {
     left: 1em;
     top: auto;
     box-shadow: 0 0 0 0.0625rem rgba(0,0,0,0.08);
+    padding: 15px 15px;
+    display: inline-block;
 }
 
 /*!
@@ -42,19 +42,15 @@ label[for="nav-trigger"] {
  * @link https://github.com/jonsuh/hamburgers
  */
 .hamburger {
-  padding: 15px 15px;
-  display: inline-block;
-  cursor: pointer;
   transition-property: opacity, filter;
   transition-duration: var(--animation-speed);
   transition-timing-function: linear;
   font: inherit;
   color: inherit;
   text-transform: none;
-  background-color: transparent;
-  border: 0;
   margin: 0;
-  overflow: visible;}
+  overflow: visible;
+}
 
 .hamburger-box {
   width: 32px;
@@ -88,9 +84,9 @@ label[for="nav-trigger"] {
    * Arrow
    */
 .article-shown .hamburger .hamburger-inner::before,
-#nav-trigger:checked ~ header .hamburger .hamburger-inner::before {
+.nav-shown .hamburger .hamburger-inner::before {
   transform: translate3d(-8px, 3px, 0) rotate(-45deg) scale(0.7, 1); }
 
 .article-shown .hamburger .hamburger-inner::after,
-#nav-trigger:checked ~ header .hamburger .hamburger-inner::after {
+.nav-shown .hamburger .hamburger-inner::after {
   transform: translate3d(-8px, -3px, 0) rotate(45deg) scale(0.7, 1); }
