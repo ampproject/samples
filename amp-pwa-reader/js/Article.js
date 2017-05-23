@@ -43,9 +43,8 @@ class Article {
         doc.getElementsByTagName('header')[0].remove();
         doc.getElementsByTagName('amp-sidebar')[0].remove();
         doc.querySelector('header.content__head').remove();
-
-        // only hide featured image, as we still need to measure it
-        this.doc.querySelector('.media-primary amp-img').style.display = 'none';
+        let featuredImage = this.doc.querySelector('.media-primary amp-img');
+        featuredImage && featuredImage.remove();
 
         // insert stylesheet that styles the featured image
         // TODO; copy stylesheet from host over directly
@@ -54,12 +53,6 @@ class Article {
         stylesheet.setAttribute('href', 'css/card.css');
         this.doc.body.append(stylesheet);
 
-    }
-
-    getFeaturedImageHeight() {
-        var img = this.doc.querySelector('.media-primary amp-img');
-        var height = (parseInt(img.getAttribute('height')) / parseInt(img.getAttribute('width'))) * window.innerWidth;
-        return height;
     }
 
     createShadowRoot() {

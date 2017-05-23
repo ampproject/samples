@@ -55,7 +55,7 @@ class Card {
 
   }
 
-  animate(imageHeight) {
+  animate() {
 
     this.elem.classList.remove('loading');
     this.elem.classList.add('full');
@@ -85,7 +85,7 @@ class Card {
 
   }
 
-  animateBack(imageHeight) {
+  animateBack() {
 
     this.elem.classList.remove('full');
 
@@ -165,7 +165,7 @@ class Card {
   activate() {
     this.wait();
     this.article.load().then(doc => {
-      this.animate(this.article.getFeaturedImageHeight());
+      this.animate();
       this.article.show();
       this.hijackMenuButton();
     });
