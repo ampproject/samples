@@ -16,6 +16,7 @@
     will-change: transform;
     contain: content;
     transform-origin: top center;
+    user-select: none;
 }
 
 .card > * {

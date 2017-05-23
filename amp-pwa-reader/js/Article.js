@@ -123,15 +123,15 @@ class Article {
             var card = this.cloneCard();
             this.ampDoc.ampdoc.getBody().prepend(card);
 
-            // add class to html element for global CSS stuff
-            document.documentElement.classList.add('article-shown');
-
             return new Promise((resolve, reject) => {
                 this.animateIn().onfinish = () => {
 
                     // Hide the original card, show the cloned one
                     this.card.elem.style.opacity = '0';
                     card.style.opacity = '1';
+
+                    // add class to html element for global CSS stuff
+                    document.documentElement.classList.add('article-shown');
 
                     // Set the visibility state of the AMP doc to visible
                     this.ampDoc.setVisibilityState('visible');
