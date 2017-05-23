@@ -1,0 +1,15 @@
+/* Article */
+
+.article-shown body {
+    overflow: hidden;
+}
+
+article {
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    overflow: auto;
+}

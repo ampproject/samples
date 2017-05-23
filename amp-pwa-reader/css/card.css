@@ -1,0 +1,117 @@
+.card {
+
+    /* need to redefine font stack again since it will be copied into the shadow */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.4;
+    display: flex;
+
+    background-color: #253650;
+    color: #fff;
+    margin: 1em;
+    box-shadow: 0px 2px 9px rgba(0, 0, 0, 0.18);
+    border-radius: 2px;
+    position: relative;
+    transition: transform var(--animation-speed) ease-out;
+    box-sizing: border-box;
+    will-change: transform;
+    contain: content;
+    transform-origin: top center;
+}
+
+.card > * {
+    position: relative;
+    z-index: 1;
+    transition: transform var(--animation-speed) ease-out;
+}
+
+
+.card .inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1em;
+    position: relative;
+    z-index: 3;
+    transform-origin: bottom left;
+}
+
+.amp-shadow .card .inner {
+    padding-right: 3em; /* needed to make it look the same between cloned and non-cloned */
+}
+
+.card img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+}
+
+.amp-shadow .card img {
+    width: 100%;
+    height: auto;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+.card.full:hover {
+    cursor: auto;
+}
+
+.card::before {
+  display: block;
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: 2px;
+  background: linear-gradient(to top, rgb(9, 22, 33), rgba(0,0,0,0) 60%, rgba(0,0,0,0));
+  z-index: 2;
+}
+
+.card.loading::after {
+  display: block;
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: 2px;
+  z-index: 5;
+  background-color: rgba(0,0,0,0.5);
+  background-image: url(../loader.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2;
+}
+
+.card.full {
+    z-index: 5;
+}
+
+.card p {
+  display: none;
+  margin: 1em 0;
+  font-weight: normal;
+}
+
+.card:first-child {
+    background-color: #253650;
+    color: #fff;
+    height: 50vh;
+}
+
+.card:first-child p {
+  display: block;
+}
+
+.card h2 {
+  margin: 3em 0 0 0;
+  font-weight: normal;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+}
