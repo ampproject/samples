@@ -15,6 +15,7 @@
     box-sizing: border-box;
     will-change: transform;
     contain: content;
+    overflow: hidden;
     transform-origin: top center;
     user-select: none;
 }
@@ -85,7 +86,7 @@
   border-radius: 2px;
   z-index: 5;
   background-color: rgba(0,0,0,0.5);
-  background-image: url(../loader.svg);
+  background-image: url(/img/loader.svg);
   background-repeat: no-repeat;
   background-position: center;
   z-index: 2;

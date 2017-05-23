@@ -5,7 +5,7 @@ class Nav {
     this.cards = [];
 
     this.bind();
-    this.navigate(category);
+    this.switchCategory(category);
   }
 
   fetchRSS(url) {
@@ -20,7 +20,17 @@ class Nav {
 
   }
 
-  navigate(category) {
+  navigateTo(articleUrl) {
+
+    // set the correct document title
+    document.title = 'The Shadow Guardian – ' + this.categoryTitle;
+
+    // set a new browser history entry and update the URL
+    //history.pushState({}, '', "/test");
+
+  }
+
+  switchCategory(category) {
 
     // mark old menu element as inactive
     if (this.category) {
@@ -28,12 +38,16 @@ class Nav {
     }
 
     // mark menu element as active
+    let navElement = this.getNavElement(category);
     this.category = category;
-    let navElement = this.getNavElement(this.category);
+    this.categoryTitle = navElement.textContent;
     navElement.classList.add('active');
 
     // change category title
-    document.querySelector('.category span').textContent = navElement.textContent;
+    document.querySelector('.category span').textContent = this.categoryTitle;
+
+    // set entry in the browser history, navigate URL bar
+    this.navigateTo(null);
 
     // set current cards to loading
     for (let card of this.cards) {
@@ -86,12 +100,12 @@ class Nav {
   bind() {
 
     document.querySelector('.hamburger').addEventListener('click', event => {
-      this.toggle();
+      !document.documentElement.classList.contains('article-shown') && this.toggle();
       event.preventDefault();
     }), false;
 
     document.querySelector('.navigation').addEventListener('click', event => {
-      event.target.nodeName === 'A' && this.navigate(event.target.dataset.tag, event.target.parentNode);
+      event.target.nodeName === 'A' && this.switchCategory(event.target.dataset.tag, event.target.parentNode);
       event.preventDefault();
     }), false;
 

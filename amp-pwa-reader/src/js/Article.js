@@ -50,7 +50,7 @@ class Article {
         // TODO; copy stylesheet from host over directly
         var stylesheet = document.createElement('link');
         stylesheet.setAttribute('rel', 'stylesheet');
-        stylesheet.setAttribute('href', 'css/card.css');
+        stylesheet.setAttribute('href', '/inline.css');
         this.doc.body.append(stylesheet);
 
     }

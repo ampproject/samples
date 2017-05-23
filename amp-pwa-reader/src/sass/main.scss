@@ -1,11 +1,10 @@
+@import '_config.scss';
+@import '_helpers.scss';
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     margin: 0;
     background: #182840;
-}
-
-.disable-transitions, .disable-transitions * {
-    transition: none !important;
 }
 
 .wrapper {
@@ -37,4 +36,11 @@ body {
 main {
   line-height: 1.4;
 }
+
+@import '_article.scss';
+@import '_card.scss';
+@import '_header.scss';
+@import '_nav.scss';
+
+
 

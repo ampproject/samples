@@ -1,0 +1,24 @@
+{
+  "name": "amp-pwa-reader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paul Bakaus",
+  "license": "MIT",
+  "dependencies": {
+    "gulp": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-plumber": "*",
+    "gulp-sass": "*",
+    "gulp-concat": "*",
+    "uglify-es": "*",
+    "gulp-uglify": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-replace": "*",
+    "browser-sync": "*",
+    "del": "*"
+  }
+}

@@ -1,6 +1,6 @@
 var itemsContainer = document.querySelector('main');
 var header = document.querySelector('header');
-var menuButton = document.querySelector('label.hamburger');
+var menuButton = document.querySelector('.hamburger');
 
 /*
  * Card
