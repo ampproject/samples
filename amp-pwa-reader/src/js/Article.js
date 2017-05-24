@@ -3,6 +3,7 @@ class Article {
     constructor(url, card) {
         this.url = url.replace('www.', 'amp.');
         this.card = card;
+        Article.articles[this.url] = this;
     }
 
     fetch(url) {
@@ -43,8 +44,13 @@ class Article {
         doc.getElementsByTagName('header')[0].remove();
         doc.getElementsByTagName('amp-sidebar')[0].remove();
         doc.querySelector('header.content__head').remove();
-        let featuredImage = this.doc.querySelector('.media-primary amp-img');
-        featuredImage && featuredImage.remove();
+
+        // if we're coming from an existing card, we don't need to keep
+        // the featured image of the AMP article
+        if (this.card) {
+            let featuredImage = this.doc.querySelector('.media-primary amp-img');
+            featuredImage && featuredImage.remove();
+        }
 
         // insert stylesheet that styles the featured image
         // TODO; copy stylesheet from host over directly
@@ -86,27 +92,43 @@ class Article {
 
     animateIn() {
 
+        // No animation if there's no card to animate from
+        if (!this.card) {
+            return new Promise(resolve => resolve());
+        }
+
         let offset = (innerWidth * this.card.imageData.ratio) / 2;
         this.container.style.transform = 'translateY(' + scrollY + 'px)';
-        return this.container.animate([
-            { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' },
-            { opacity: 1, transform: 'translateY(' + scrollY + 'px)' }
-        ], { duration: getAnimationSpeed(), easing: 'ease-out' });
+
+        return new Promise(resolve => {
+            this.container.animate([
+                { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' },
+                { opacity: 1, transform: 'translateY(' + scrollY + 'px)' }
+            ], { duration: getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+        });
 
     }
 
     animateOut() {
 
+        // No animation if there's no card to animate from
+        if (!this.card) {
+            return new Promise(resolve => resolve());
+        }
+
         let offset = (innerWidth * this.card.imageData.ratio) / 2;
         this.container.style.transform = 'translateY(' + (offset + scrollY) + 'px)';
-        return this.container.animate([
-            { opacity: 1, transform: 'translateY(' + (scrollY) + 'px)' },
-            { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' }
-        ], { duration: getAnimationSpeed(), easing: 'ease-out' });
+
+        return new Promise(resolve => {
+            return this.container.animate([
+                { opacity: 1, transform: 'translateY(' + (scrollY) + 'px)' },
+                { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' }
+            ], { duration: getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+        });
 
     }
 
-    show() {
+    show(replace) {
 
         // Create an empty container for the AMP page
         this.container = this.createShadowRoot();
@@ -120,15 +142,19 @@ class Article {
 
             // We need to clone the header
             // into the Shadow DOM so it scrolls along
-            var card = this.cloneCard();
-            this.ampDoc.ampdoc.getBody().prepend(card);
+            if (this.card) {
+                var card = this.cloneCard();
+                this.ampDoc.ampdoc.getBody().prepend(card);
+            }
 
             return new Promise((resolve, reject) => {
-                this.animateIn().onfinish = () => {
+                this.animateIn().then(() => {
 
                     // Hide the original card, show the cloned one
-                    this.card.elem.style.opacity = '0';
-                    card.style.opacity = '1';
+                    if (this.card) {
+                        this.card.elem.style.opacity = '0';
+                        card.style.opacity = '1';
+                    }
 
                     // add class to html element for global CSS stuff
                     document.documentElement.classList.add('article-shown');
@@ -138,8 +164,13 @@ class Article {
                     // Set the visibility state of the AMP doc to visible
                     this.ampDoc.setVisibilityState('visible');
 
+                    // Finally, add new history entry
+                    // Note: We're doing this deliberately late due to an AMP
+                    // Bug that overrides the history state object early on
+                    nav.setOpenArticle(this, replace);
+
                     resolve();
-                };
+                });
             });
 
         });
@@ -153,18 +184,18 @@ class Article {
 
         this.restoreScroll();
 
-        // Show the card header
-        this.card.elem.style.opacity = '1';
-
-        // Hide the cloned header
-        this.clonedCard.style.opacity = '0';
+        // Show the card header, hide the cloned one
+        if (this.card) {
+            this.card.elem.style.opacity = '1';
+            this.clonedCard.style.opacity = '0';
+        }
 
         return new Promise((resolve, reject) => {
-            this.animateOut().onfinish = () => {
+            this.animateOut().then(() => {
 
                 this.clear();
                 resolve();
-            };
+            });
         });
 
     }
@@ -179,4 +210,9 @@ class Article {
         document.scrollingElement.scrollTop = this._mainScrollY;
     }
 
+}
+
+Article.articles = {};
+Article.getArticleByURL = function (url) {
+    return Article.articles[url];
 }

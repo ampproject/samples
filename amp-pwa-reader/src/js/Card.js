@@ -156,9 +156,15 @@ class Card {
 
   hijackMenuButton() {
     menuButton.onclick = event => {
+
+      // Go back in history stack, but only if we don't trigger the method
+      // manually, coming from popstate
+      if(event) history.back();
+
       this.deactivate();
       menuButton.onclick = null;
       return false;
+
     };
   }
 

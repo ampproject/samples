@@ -8,6 +8,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
+const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
 const scriptsGlob = [ 'src/js/**/*.js', 'src/js/init.js' ];
@@ -54,18 +55,23 @@ gulp.task('scripts', function() {
       .pipe(gulp.dest('dist/tmp/'));
 });
 
+gulp.task('reload', ['clean-tmp'], function() {
+  return browserSync.reload();
+});
+
 // Watch files For changes
 gulp.task('watch', function() {
 
   browserSync.init({
     server: {
-      baseDir: 'dist/'
+      baseDir: 'dist/',
+      middleware: [historyApiFallback()]
     }
   });
 
-  gulp.watch(scriptsGlob, [ 'scripts', 'clean-tmp' ]);
-  gulp.watch(stylesGlob, [ 'sass', 'clean-tmp' ]);
-  gulp.watch(pagesGlob, ['copy']).on('change', browserSync.reload);
+  gulp.watch(scriptsGlob, [ 'scripts', 'clean-tmp', 'reload' ]);
+  gulp.watch(stylesGlob, [ 'sass', 'clean-tmp', 'reload' ]);
+  gulp.watch(pagesGlob, [ 'copy', 'clean-tmp', 'reload' ]);
 
 });
 

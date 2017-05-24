@@ -1,8 +1,5 @@
 header {
-  background: linear-gradient(to bottom, #005689, #00558c);
-  color: #fff;
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.7);
-  font-weight: 300;
+  /* Layout */
   position: fixed;
   height: var(--header-height);
   top: 0;
@@ -12,44 +9,42 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* Styling */
+  background: linear-gradient(to bottom, #005689, #00558c);
+  color: #fff;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.7);
+  font-weight: 300;
+
+  /* Children */
+  svg {
+    margin-top: 6px;
+  }
+
 }
 
-header svg {
-  margin-top: 6px;
-}
 
 .hamburger {
-    position: absolute;
-    z-index: 2;
-    border: 0;
-    outline: none;
-    border-radius: 50%;
-    background-color: #4bc6df;
-    cursor: pointer;
-    bottom: -1em;
-    left: 1em;
-    top: auto;
-    box-shadow: 0 0 0 0.0625rem rgba(0,0,0,0.08);
-    padding: 15px 15px;
-    display: inline-block;
-}
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+  bottom: -1em;
+  left: 1em;
+  top: auto;
+  padding: 15px 15px;
+  display: inline-block;
 
-/*!
- * Hamburgers
- * @description Tasty CSS-animated hamburgers
- * @author Jonathan Suh @jonsuh
- * @site https://jonsuh.com/hamburgers
- * @link https://github.com/jonsuh/hamburgers
- */
-.hamburger {
+  border: 0;
+  outline: none;
+  border-radius: 50%;
+  background-color: #4bc6df;
+  box-shadow: 0 0 0 0.0625rem rgba(0,0,0,0.08);
+
   transition-property: opacity, filter;
   transition-duration: var(--animation-speed);
   transition-timing-function: linear;
   font: inherit;
   color: inherit;
-  text-transform: none;
-  margin: 0;
-  overflow: visible;
 }
 
 .hamburger-box {
@@ -61,32 +56,39 @@ header svg {
 .hamburger-inner {
   display: block;
   top: 50%;
-  margin-top: -2px; }
-  .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-    width: 32px;
-    height: 4px;
-    background-color: #fff;
-    border-radius: 4px;
-    position: absolute;
-    transition-property: transform;
-    transition-duration: var(--animation-speed);
-    transition-timing-function: ease; }
-  .hamburger-inner::before, .hamburger-inner::after {
-    content: "";
-    display: block; }
-  .hamburger-inner::before {
-    top: -10px; }
-  .hamburger-inner::after {
-    bottom: -10px; }
+  margin-top: -2px;
+}
 
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 32px;
+  height: 4px;
+  background-color: #fff;
+  border-radius: 4px;
+  position: absolute;
+  transition-property: transform;
+  transition-duration: var(--animation-speed);
+  transition-timing-function: ease;
+}
+.hamburger-inner::before,
+.hamburger-inner::after {
+  content: "";
+  display: block;
+}
+.hamburger-inner::before {
+  top: -10px;
+}
+.hamburger-inner::after {
+  bottom: -10px;
+}
 
-/*
-   * Arrow
-   */
 .article-shown .hamburger .hamburger-inner::before,
 .nav-shown .hamburger .hamburger-inner::before {
-  transform: translate3d(-8px, 3px, 0) rotate(-45deg) scale(0.7, 1); }
+  transform: translate3d(-8px, 3px, 0) rotate(-45deg) scale(0.7, 1);
+}
 
 .article-shown .hamburger .hamburger-inner::after,
 .nav-shown .hamburger .hamburger-inner::after {
-  transform: translate3d(-8px, -3px, 0) rotate(45deg) scale(0.7, 1); }
+  transform: translate3d(-8px, -3px, 0) rotate(45deg) scale(0.7, 1);
+}

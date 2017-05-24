@@ -15,4 +15,4 @@ function getAnimationSpeed() {
 }
 
 // setup nav
-const nav = new Nav('us/travel');
+const nav = new Nav();

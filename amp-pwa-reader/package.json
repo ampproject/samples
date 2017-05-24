@@ -9,16 +9,17 @@
   "author": "Paul Bakaus",
   "license": "MIT",
   "dependencies": {
+    "browser-sync": "*",
+    "connect-history-api-fallback": "^1.3.0",
+    "del": "*",
     "gulp": "*",
     "gulp-autoprefixer": "*",
-    "gulp-plumber": "*",
-    "gulp-sass": "*",
     "gulp-concat": "*",
-    "uglify-es": "*",
-    "gulp-uglify": "*",
-    "gulp-sourcemaps": "*",
+    "gulp-plumber": "*",
     "gulp-replace": "*",
-    "browser-sync": "*",
-    "del": "*"
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-uglify": "*",
+    "uglify-es": "*"
   }
 }
