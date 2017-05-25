@@ -87,7 +87,7 @@ class Nav {
 
               // if the card is somewhere outside the scroll position, we need
               // to set it to a place where the card is actually visible.
-              article._mainScrollY = card.elem.offsetTop - innerHeight / 3;
+              article._mainScrollY = Math.max(0, card.elem.offsetTop - innerHeight / 3);
 
               // apply the 'zoomed-in' state on the card behind the scenes, so
               // we can animate back when the user clicks back
@@ -118,7 +118,7 @@ class Nav {
     this.openArticle = article;
 
     // Set new history entry
-    shadowReader.history.navigate(article.url, replace);
+    shadowReader.history.navigate(article.url, replace, article.ampDoc.title);
   }
 
   setNavElement(category) {

@@ -42,10 +42,14 @@ class HistoryStack {
 
   }
 
-  navigate(articleUrl, replace) {
+  setDocTitle(subTitle) {
+    document.title = 'ShadowReader' + ' – ' + shadowReader.nav.categoryTitle + (subTitle ? ' – ' + subTitle : '');
+  }
+
+  navigate(articleUrl, replace, subTitle) {
 
     // set the correct document title
-    document.title = 'Shadow ' + this.backend.appTitle + ' – ' + shadowReader.nav.categoryTitle;
+    this.setDocTitle(subTitle);
 
     var newUrl = this.constructUrl(articleUrl);
 
