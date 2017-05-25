@@ -228,6 +228,7 @@ class Article {
   }
 
   restoreScroll() {
+    console.log('restore scroll..', this._mainScrollY);
     document.scrollingElement.scrollTop = this._mainScrollY;
   }
 

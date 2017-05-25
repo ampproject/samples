@@ -55,12 +55,12 @@ class Card {
 
   }
 
-  animate() {
+  animate(dontAnimate, scrollOffset) {
 
     this.elem.classList.remove('loading');
     this.elem.classList.add('full');
 
-    var offsetTop = this.elem.offsetTop - shadowReader.headerElement.offsetHeight - scrollY;
+    var offsetTop = this.elem.offsetTop - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
     var currentWidth = this.naturalDimensions.width;
     var currentHeight = this.naturalDimensions.height;
     var newWidth = innerWidth;
@@ -81,7 +81,7 @@ class Card {
     this.resizeChildren({
       width: newWidth,
       height: newHeight
-    }, true);
+    }, !dontAnimate);
 
   }
 
@@ -136,6 +136,7 @@ class Card {
         };
 
         this.resizeChildren(this.naturalDimensions, false);
+        this.setReady();
 
       };
 
@@ -162,6 +163,25 @@ class Card {
     this.elem.classList.add('loading');
   }
 
+  setReady() {
+    this._ready = true;
+    if (this._readyQueue) {
+      for (let cb of this._readyQueue) {
+        cb();
+      }
+      this._readyQueue = [];
+    }
+  }
+
+  ready(cb) {
+    if (!this._ready) {
+      this._readyQueue = this._readyQueue || [];
+      this._readyQueue.push(cb);
+    } else {
+      cb();
+    }
+  }
+
   hijackMenuButton() {
     shadowReader.hamburgerElement.onclick = event => {
 
@@ -186,7 +206,7 @@ class Card {
   }
 
   deactivate() {
-    this.animateBack(this._naturalCardHeight);
+    this.animateBack();
     this.article.hide();
   }
 

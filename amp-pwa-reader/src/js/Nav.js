@@ -67,13 +67,36 @@ class Nav {
 
       // the return button in this state is a special case, and can't animate (yet)
       shadowReader.hamburgerElement.onclick = () => {
+        article.card && article.card.animateBack();
         article.hide();
         shadowReader.history.navigate(null);
         shadowReader.hamburgerElement.onclick = null;
       };
 
       // switch to the correct category only after the article is loaded for max perf
-      this.switchCategory(state && state.category ? state.category : shadowReader.backend.defaultCategory);
+      this.switchCategory(state.category).then(() => {
+        // now that the cards have been lazily loaded, attempt to reconnect the
+        // already loaded article with the proper card
+        for (let card of this.cards) {
+          if (card.article.url === article.url) {
+            card.ready(() => {
+
+              // link our custom initialized article with our card
+              article.card = card;
+              card.article = article;
+
+              // if the card is somewhere outside the scroll position, we need
+              // to set it to a place where the card is actually visible.
+              article._mainScrollY = card.elem.offsetTop - innerHeight / 3;
+
+              // apply the 'zoomed-in' state on the card behind the scenes, so
+              // we can animate back when the user clicks back
+              // TODO: stupid to call this method animate..
+              article.card.animate(false, -article._mainScrollY);
+            });
+          }
+        }
+      });
 
     });
 
