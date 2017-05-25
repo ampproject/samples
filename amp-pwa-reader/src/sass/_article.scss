@@ -19,14 +19,14 @@ article,
     bottom: 0;
     display: none;
 
-    &.visible {
-        display: block;
-    }
-
     &::before {
         display: block;
         content: '';
         background: #eee;
         padding-top: 60%;
     }
+}
+
+.show-article-skeleton .article-skeleton-ui {
+    display: block;
 }

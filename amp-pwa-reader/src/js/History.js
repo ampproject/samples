@@ -1,11 +1,23 @@
 class HistoryStack {
 
-  constructor() {
+  constructor(backend) {
+    this.backend = backend;
     this.state = (history.state && history.state.category) ? history.state : this.parseUrlIntoState();
+
+    /*
+     * You'll notice there's no other DOM foolery in this file. So why here?
+     * This file is initialized right after the body opens, so if there's an
+     * article to show later on, we want to intitialize the skeleton UI for
+     * perceived performance as soon as possible.
+     */
+    if (this.state.articleUrl) {
+      document.body.classList.add('show-article-skeleton');
+    }
+
   }
 
   constructUrl(articleUrl) {
-    return '/' + (articleUrl ? articleUrl.replace(shadowReader.backend.getAMPEndpoint(), '') : shadowReader.nav.category);
+    return '/' + (articleUrl ? articleUrl.replace(this.backend.getAMPEndpoint(), '') : shadowReader.nav.category);
   }
 
   parseUrlIntoState() {
@@ -13,17 +25,17 @@ class HistoryStack {
     // grab the pathname from the url (minus slashes at the beginning and end)
     var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '');
     var state = {
-      category: shadowReader.backend.defaultCategory,
+      category: this.backend.defaultCategory,
       articleUrl: null
     };
 
-    if (shadowReader.backend.getCategoryTitle(path)) {
+    if (this.backend.getCategoryTitle(path)) {
       // if the pathname is an actual category, use that
       state.category = path;
     } else if (path) {
       // now we can be reasonably sure the path is a full article url
-      state.articleUrl = shadowReader.backend.getAMPEndpoint() + path;
-      state.category = shadowReader.backend.getCategoryFromAMPUrl(state.articleUrl);
+      state.articleUrl = this.backend.getAMPEndpoint() + path;
+      state.category = this.backend.getCategoryFromAMPUrl(state.articleUrl);
     }
 
     return state;
@@ -33,7 +45,7 @@ class HistoryStack {
   navigate(articleUrl, replace) {
 
     // set the correct document title
-    document.title = 'Shadow ' + shadowReader.backend.appTitle + ' – ' + shadowReader.nav.categoryTitle;
+    document.title = 'Shadow ' + this.backend.appTitle + ' – ' + shadowReader.nav.categoryTitle;
 
     var newUrl = this.constructUrl(articleUrl);
 

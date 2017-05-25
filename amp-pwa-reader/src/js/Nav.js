@@ -45,10 +45,6 @@ class Nav {
 
   startWithArticle(state) {
 
-    // show Skeleton UI for article, right away
-    var skeleton = document.querySelector('.article-skeleton-ui');
-    skeleton.style.display = 'block';
-
     let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl);
 
     // if we have a card, things are easy: simply pretend we click on the card!
@@ -62,7 +58,11 @@ class Nav {
       // passing true here ensures that the state is overwritten again..
       article.show(true).then(() => {
         // hide the skeleton UI
-        skeleton.style.display = 'none';
+        // INVESTIGATE: For some reason needs a delay..
+        setTimeout(() => {
+          document.body.classList.remove('show-article-skeleton');
+        }, 100);
+
       });
 
       // the return button in this state is a special case, and can't animate (yet)

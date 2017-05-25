@@ -97,6 +97,15 @@ class Article {
 
   }
 
+  getAnimationSpeed() {
+    if (this._animationSpeed)
+      return this._animationSpeed;
+
+    let htmlStyles = window.getComputedStyle(document.querySelector("html"));
+    this._animationSpeed = parseFloat(htmlStyles.getPropertyValue("--animation-speed")) * 1000;
+    return this._animationSpeed;
+  }
+
   animateIn() {
 
     // No animation if there's no card to animate from
@@ -111,7 +120,7 @@ class Article {
       this.container.animate([
         { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' },
         { opacity: 1, transform: 'translateY(' + scrollY + 'px)' }
-      ], { duration: shadowReader.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+      ], { duration: this.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
     });
 
   }
@@ -130,7 +139,7 @@ class Article {
       return this.container.animate([
         { opacity: 1, transform: 'translateY(' + (scrollY) + 'px)' },
         { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' }
-      ], { duration: shadowReader.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+      ], { duration: this.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
     });
 
   }
