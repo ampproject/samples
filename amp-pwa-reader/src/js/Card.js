@@ -21,37 +21,37 @@ class Card {
 
   resizeChildren(elemDimensions, animate) {
 
-      var width = this.imageData.width;
-      var height = this.imageData.height;
-      var elemWidth = elemDimensions.width;
-      var elemHeight = elemDimensions.height;
-      var scaleY = elemHeight / height;
-      var scaleX = elemWidth / width;
+    let width = this.imageData.width;
+    let height = this.imageData.height;
+    let elemWidth = elemDimensions.width;
+    let elemHeight = elemDimensions.height;
+    let scaleY = elemHeight / height;
+    let scaleX = elemWidth / width;
 
-      var fitHorizontally = scaleX > scaleY;
+    let fitHorizontally = scaleX > scaleY;
 
-      var centerX = 'translateX(' + (-(((width * scaleY) - elemWidth) / 2)) + 'px)';
-      var centerY = 'translateY(' + (-(((height * scaleX) - elemHeight) / 2)) + 'px)';
+    let centerX = 'translateX(' + (-(((width * scaleY) - elemWidth) / 2)) + 'px)';
+    let centerY = 'translateY(' + (-(((height * scaleX) - elemHeight) / 2)) + 'px)';
 
-      if (animate === false) {
-        this.elem.classList.add('disable-transitions');
-      }
+    if (animate === false) {
+      this.elem.classList.add('disable-transitions');
+    }
 
-      // rescale image
-      this.img.style.transform = 'scaleX(' + (1 / this.currentTransform.scaleX) + ')' // normalizing
-        + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')' // normalizing
-        + 'scaleX(' + (fitHorizontally ? scaleX : scaleY) + ')' // fill the whole card
-        + 'scaleY(' + (fitHorizontally ? scaleX : scaleY) + ')' // fill the whole card
-        + (fitHorizontally ? centerY : centerX); // center
+    // rescale image
+    this.img.style.transform = 'scaleX(' + (1 / this.currentTransform.scaleX) + ')' // normalizing
+      + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')' // normalizing
+      + 'scaleX(' + (fitHorizontally ? scaleX : scaleY) + ')' // fill the whole card
+      + 'scaleY(' + (fitHorizontally ? scaleX : scaleY) + ')' // fill the whole card
+      + (fitHorizontally ? centerY : centerX); // center
 
-      // rescale inner element
-      this.innerElem.style.transform = 'scaleX(' + (1 / this.currentTransform.scaleX) + ')' // normalizing
-        + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')'; // normalizing
+    // rescale inner element
+    this.innerElem.style.transform = 'scaleX(' + (1 / this.currentTransform.scaleX) + ')' // normalizing
+      + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')'; // normalizing
 
-      // back to transitions after next render tick if prev disabled..
-      requestAnimationFrame(() => {
-        this.elem.classList.remove('disable-transitions');
-      });
+    // back to transitions after next render tick if prev disabled..
+    requestAnimationFrame(() => {
+      this.elem.classList.remove('disable-transitions');
+    });
 
   }
 
@@ -131,7 +131,7 @@ class Card {
 
       this.resizeChildren(this.naturalDimensions, false);
 
-    }
+    };
 
     innerElem.appendChild(h2);
     innerElem.appendChild(p);
@@ -145,7 +145,7 @@ class Card {
   }
 
   bind() {
-    this.elem.addEventListener('pointerup', event => {
+    this.elem.addEventListener('pointerup', () => {
       !this.elem.classList.contains('full') && this.activate();
     });
   }
@@ -170,7 +170,7 @@ class Card {
 
   activate() {
     this.wait();
-    this.article.load().then(doc => {
+    this.article.load().then(() => {
       this.animate();
       this.article.show();
       this.hijackMenuButton();

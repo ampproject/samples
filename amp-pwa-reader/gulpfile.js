@@ -1,3 +1,5 @@
+
+/* Dependencies */
 let uglifyes = require('uglify-es');
 let composer = require('gulp-uglify/composer');
 const uglify = composer(uglifyes, console);
@@ -5,13 +7,23 @@ const gulp = require('gulp');
 const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
+const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
-const scriptsGlob = [ 'src/js/**/*.js', 'src/js/init.js' ];
+
+/* Working Files */
+const scriptsGlob = [
+  'src/js/Nav.js',
+  'src/js/History.js',
+  'src/js/Card.js',
+  'src/js/Article.js',
+  'src/js/backends/TheGuardian.js',
+  'src/js/init.js'
+];
 const stylesGlob = 'src/sass/**/*.scss';
 const imagesGlob = 'src/img/**/*';
 const pagesGlob = 'src/*.html';
@@ -42,6 +54,16 @@ gulp.task('clean-tmp', ['inline'], function() {
 gulp.task('sass', function() {
   return gulp.src(stylesGlob)
     .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(sass())
+    .pipe(autoprefixer({ browsers: ['> 10%'] }))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('sass-dist', function() {
+  return gulp.src(stylesGlob)
+    .pipe(plumber())
     .pipe(sass({ outputStyle: 'compressed' }))
     .pipe(autoprefixer({ browsers: ['> 10%'] }))
     .pipe(gulp.dest('dist/'));
@@ -49,10 +71,17 @@ gulp.task('sass', function() {
 
 gulp.task('scripts', function() {
   return gulp.src(scriptsGlob)
-      .pipe(plumber())
-      .pipe(concat('app.js'))
-      .pipe(uglify())
-      .pipe(gulp.dest('dist/tmp/'));
+    .pipe(plumber())
+    .pipe(concat('app.js'))
+    .pipe(gulp.dest('dist/tmp/'));
+});
+
+gulp.task('scripts-dist', function() {
+  return gulp.src(scriptsGlob)
+    .pipe(plumber())
+    .pipe(concat('app.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/tmp/'));
 });
 
 gulp.task('reload', ['clean-tmp'], function() {
@@ -77,4 +106,4 @@ gulp.task('watch', function() {
 
 // Default Task
 gulp.task('default', [ 'copy', 'sass', 'scripts' , 'inline', 'clean-tmp', 'watch' ]);
-gulp.task('dist', [ 'copy', 'sass', 'scripts', 'inline', 'clean-tmp' ]);
+gulp.task('dist', [ 'copy', 'sass-dist', 'scripts-dist', 'inline', 'clean-tmp' ]);

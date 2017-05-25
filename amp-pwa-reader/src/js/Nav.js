@@ -6,15 +6,18 @@ class Nav {
 
     this.bind();
 
-    // Open the correct article, even before switching to the category
-    // TODO: AMP for some reason overrides the history state object, argh
-    if (history.state && history.state.articleUrl) {
-      this.startWithArticle(history.state);
+    // The history module resolves the initial state from either the history API
+    // or the loaded URL, in case there's no history entry.
+    var state = shadowReader.history.state;
+
+    if (state.articleUrl) {
+      // Open the correct article, even before switching to the category, if we
+      // have one.
+      this.startWithArticle(state);
     } else {
-
-      // switch to the correct category immediately
-      this.switchCategory(history.state && history.state.category ? history.state.category : 'us/travel');
-
+      // If there's no article to be loaded, just load the default or
+      // selected category.
+      this.switchCategory(state.category);
     }
 
   }
@@ -37,12 +40,12 @@ class Nav {
       // the return button in this state is a special case, and can't animate (yet)
       menuButton.onclick = () => {
         article.hide();
-        this.navigateTo(null);
+        shadowReader.history.navigate(null);
         menuButton.onclick = null;
       };
 
       // switch to the correct category only after the article is loaded for max perf
-      this.switchCategory(state && state.category ? state.category : 'us/travel');
+      this.switchCategory(state && state.category ? state.category : shadowReader.backend.getDefaultCategory());
 
     });
 
@@ -60,47 +63,11 @@ class Nav {
 
   }
 
-  navigateTo(articleUrl, replace) {
-
-    // set the correct document title
-    document.title = 'The Shadow Guardian – ' + this.categoryTitle;
-
-    var newUrl = "/" + this.category + (articleUrl ? articleUrl.replace(/https?\:\/\/[^\/]+/, '') : '');
-
-    // bail if nothing would change
-    if (newUrl === document.location.pathname) {
-
-      if (replace) {
-
-        // we need to replace the state anyway due to that nasty AMP bug.
-        history.replaceState({
-          category: this.category,
-          categoryTitle: this.categoryTitle,
-          articleUrl: articleUrl
-        }, '', newUrl);
-
-      } else {
-        return;
-      }
-
-    }
-
-    // set a new browser history entry and update the URL
-    history.pushState({
-      category: this.category,
-      categoryTitle: this.categoryTitle,
-      articleUrl: articleUrl
-    }, '', newUrl);
-
-  }
-
   setOpenArticle(article, replace) {
-
     this.openArticle = article;
 
     // Set new history entry
-    this.navigateTo(article.url, replace);
-
+    shadowReader.history.navigate(article.url, replace);
   }
 
   switchCategory(category) {
@@ -173,7 +140,6 @@ class Nav {
 
       var state = {
         category: event.state && event.state.category ? event.state.category : this.category,
-        categoryTitle: event.state && event.state.categoryTitle ? event.state.categoryTitle : this.categoryTitle,
         articleUrl: event.state ? event.state.articleUrl : null
       };
 
@@ -203,16 +169,15 @@ class Nav {
 
     document.querySelector('.navigation').addEventListener('click', event => {
 
-      if (event.target.nodeName !== 'A') {
+      // we're doing event delegation, and only want to trigger action on links
+      if (event.target.nodeName !== 'A')
         return;
-      }
 
-      // switch category
+      // switch to the clicked category
       this.switchCategory(event.target.dataset.tag, event.target.parentNode);
 
       // set entry in the browser history, navigate URL bar
-      this.navigateTo(null);
-
+      shadowReader.history.navigate(null);
 
       event.preventDefault();
     }), false;

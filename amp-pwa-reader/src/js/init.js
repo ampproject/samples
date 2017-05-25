@@ -1,18 +1,36 @@
 var itemsContainer = document.querySelector('main');
-var articleContainer = document.querySelector('article');
-var _animationSpeed;
 
-function getAnimationSpeed() {
+class ShadowReader {
 
-  if (_animationSpeed) {
-    return _animationSpeed;
+  constructor(config) {
+    this._animationSpeed = null;
+    this.backend = new config.backend();
   }
 
-  let htmlStyles = window.getComputedStyle(document.querySelector("html"));
-  _animationSpeed = parseFloat(htmlStyles.getPropertyValue("--animation-speed")) * 1000;
+  init() {
+    this.history = new HistoryStack();
+    this.nav = new Nav();
+  }
 
-  return _animationSpeed;
+  getAnimationSpeed() {
+
+    if (this._animationSpeed) {
+      return this._animationSpeed;
+    }
+
+    let htmlStyles = window.getComputedStyle(document.querySelector("html"));
+    this._animationSpeed = parseFloat(htmlStyles.getPropertyValue("--animation-speed")) * 1000;
+
+    return this._animationSpeed;
+
+  }
+
 }
 
-// setup nav
-const nav = new Nav();
+// Create app singleton
+var shadowReader = new ShadowReader({
+  backend: TheGuardian
+});
+
+// Initialize
+shadowReader.init();
