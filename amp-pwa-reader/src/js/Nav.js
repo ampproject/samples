@@ -38,14 +38,14 @@ class Nav {
       article.show(true);
 
       // the return button in this state is a special case, and can't animate (yet)
-      menuButton.onclick = () => {
+      shadowReader.hamburgerElement.onclick = () => {
         article.hide();
         shadowReader.history.navigate(null);
-        menuButton.onclick = null;
+        shadowReader.hamburgerElement.onclick = null;
       };
 
       // switch to the correct category only after the article is loaded for max perf
-      this.switchCategory(state && state.category ? state.category : shadowReader.backend.getDefaultCategory());
+      this.switchCategory(state && state.category ? state.category : shadowReader.backend.defaultCategory);
 
     });
 
@@ -54,8 +54,8 @@ class Nav {
   fetchRSS(url) {
 
     let rssUrl = url;
-    let yqlQuery = "select * from feed where url = '" + encodeURIComponent(rssUrl) + "'";
-    let yqlUrl = "https://query.yahooapis.com/v1/public/yql?q=" + yqlQuery + "&format=json";
+    let yqlQuery = 'select * from feed where url = \'' + encodeURIComponent(rssUrl) + '\'';
+    let yqlUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + yqlQuery + '&format=json';
 
     return fetch(yqlUrl)
       .then(response => response.json() )
@@ -70,21 +70,30 @@ class Nav {
     shadowReader.history.navigate(article.url, replace);
   }
 
-  switchCategory(category) {
+  setNavElement(category) {
 
     // mark old menu element as inactive
     if (this.category) {
       this.getNavElement(this.category).classList.remove('active');
     }
 
-    // mark menu element as active
+    // mark new one as active
     let navElement = this.getNavElement(category);
-    this.category = category;
-    this.categoryTitle = navElement.textContent;
     navElement.classList.add('active');
 
     // change category title
     document.querySelector('.category span').textContent = this.categoryTitle;
+
+  }
+
+  switchCategory(category) {
+
+    // set the new category (and title)
+    this.category = category;
+    this.categoryTitle = shadowReader.backend.getCategoryTitle(category);
+
+    // mark menu element as active
+    this.setNavElement(category);
 
     // set current cards to loading
     for (let card of this.cards) {
@@ -95,10 +104,10 @@ class Nav {
     this.hide();
 
     // fetch new nav entries via RSS via YQL
-    return this.fetchRSS('https://www.theguardian.com/' + category + '/rss').then(entries => {
+    return this.fetchRSS(shadowReader.backend.getRSSUrl(category)).then(entries => {
 
       // empty items container (lazy..)
-      itemsContainer.innerHTML = '';
+      shadowReader.itemsElement.innerHTML = '';
       this.cards = [];
 
       // render new entries
@@ -150,8 +159,8 @@ class Nav {
 
       // if we go to a state where no article was open, and we have a
       // currently-opened one, close it again
-      if (this.openArticle && !state.articleUrl && menuButton.onclick) {
-        menuButton.onclick();
+      if (this.openArticle && !state.articleUrl && shadowReader.hamburgerElement.onclick) {
+        shadowReader.hamburgerElement.onclick();
         this.openArticle = null;
       }
 

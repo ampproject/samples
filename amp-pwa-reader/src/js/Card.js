@@ -1,22 +1,22 @@
-var itemsContainer = document.querySelector('main');
-var header = document.querySelector('header');
-var menuButton = document.querySelector('.hamburger');
-
 /*
  * Card
  */
 class Card {
 
-  constructor(data) {
+  constructor(data, headless) {
 
     this.data = data;
-    this.article = new Article(this.data.link, this);
     this.currentTransform = { scaleX: 1, scaleY: 1 };
     this.naturalDimensions = { width: 0, height: 0 };
 
-    this.create();
-    this.bind();
-    this.render();
+    this.create(headless);
+
+    if (!headless) {
+      this.article = new Article(this.data.link, this);
+      this.bind();
+      this.render();
+    }
+
   }
 
   resizeChildren(elemDimensions, animate) {
@@ -60,7 +60,7 @@ class Card {
     this.elem.classList.remove('loading');
     this.elem.classList.add('full');
 
-    var offsetTop = this.elem.offsetTop - header.offsetHeight - scrollY;
+    var offsetTop = this.elem.offsetTop - shadowReader.headerElement.offsetHeight - scrollY;
     var currentWidth = this.naturalDimensions.width;
     var currentHeight = this.naturalDimensions.height;
     var newWidth = innerWidth;
@@ -103,7 +103,7 @@ class Card {
 
   }
 
-  create() {
+  create(headless) {
 
     var elem = document.createElement('div'),
       innerElem = document.createElement('div'),
@@ -116,22 +116,30 @@ class Card {
     innerElem.className = 'inner';
     elem.className = 'card';
     img.src = this.data.image;
-    img.onload = () => {
 
-      this.imageData = {
-        ratio: img.offsetHeight / img.offsetWidth,
-        width: img.offsetWidth,
-        height: img.offsetHeight
+    // if we're in headless mode, that means the Card is initialized purely to
+    // render out the featured image in the Shadow DOM, not for the list view,
+    // thus we don't need to fancy it up for animations.
+    if (!headless) {
+
+      img.onload = () => {
+
+        this.imageData = {
+          ratio: img.offsetHeight / img.offsetWidth,
+          width: img.offsetWidth,
+          height: img.offsetHeight
+        };
+
+        this.naturalDimensions = {
+          width: this.elem.offsetWidth,
+          height: this.elem.offsetHeight
+        };
+
+        this.resizeChildren(this.naturalDimensions, false);
+
       };
 
-      this.naturalDimensions = {
-        width: this.elem.offsetWidth,
-        height: this.elem.offsetHeight
-      };
-
-      this.resizeChildren(this.naturalDimensions, false);
-
-    };
+    }
 
     innerElem.appendChild(h2);
     innerElem.appendChild(p);
@@ -155,14 +163,14 @@ class Card {
   }
 
   hijackMenuButton() {
-    menuButton.onclick = event => {
+    shadowReader.hamburgerElement.onclick = event => {
 
       // Go back in history stack, but only if we don't trigger the method
       // manually, coming from popstate
       if(event) history.back();
 
       this.deactivate();
-      menuButton.onclick = null;
+      shadowReader.hamburgerElement.onclick = null;
       return false;
 
     };
@@ -183,7 +191,7 @@ class Card {
   }
 
   render() {
-    itemsContainer.appendChild(this.elem);
+    shadowReader.itemsElement.appendChild(this.elem);
   }
 
 }

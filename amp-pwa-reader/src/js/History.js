@@ -2,7 +2,6 @@ class HistoryStack {
 
   constructor() {
     this.state = (history.state && history.state.category) ? history.state : this.parseUrlIntoState();
-    console.log(this.state);
   }
 
   constructUrl(articleUrl) {
@@ -14,11 +13,12 @@ class HistoryStack {
     // grab the pathname from the url (minus slashes at the beginning and end)
     var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '');
     var state = {
-      category: shadowReader.backend.getDefaultCategory(),
+      category: shadowReader.backend.defaultCategory,
       articleUrl: null
     };
 
-    if (shadowReader.backend.isCategory(path)) {
+    if (shadowReader.backend.getCategoryTitle(path)) {
+      // if the pathname is an actual category, use that
       state.category = path;
     } else if (path) {
       // now we can be reasonably sure the path is a full article url
@@ -33,7 +33,7 @@ class HistoryStack {
   navigate(articleUrl, replace) {
 
     // set the correct document title
-    document.title = 'Shadow ' + shadowReader.backend.getAppTitle() + ' – ' + shadowReader.nav.categoryTitle;
+    document.title = 'Shadow ' + shadowReader.backend.appTitle + ' – ' + shadowReader.nav.categoryTitle;
 
     var newUrl = this.constructUrl(articleUrl);
 

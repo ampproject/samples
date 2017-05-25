@@ -118,6 +118,11 @@
 .amp-shadow {
   .card {
 
+    &:hover {
+      transform: none;
+      cursor: inherit;
+    }
+
     .inner {
       padding-right: 3em; /* needed to make it look the same between cloned and non-cloned */
     }

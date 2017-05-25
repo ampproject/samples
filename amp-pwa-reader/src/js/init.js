@@ -1,9 +1,10 @@
-var itemsContainer = document.querySelector('main');
-
 class ShadowReader {
 
   constructor(config) {
-    this._animationSpeed = null;
+    this.itemsElement = document.querySelector('main');
+    this.headerElement = document.querySelector('header');
+    this.hamburgerElement = document.querySelector('.hamburger');
+
     this.backend = new config.backend();
   }
 
@@ -13,16 +14,12 @@ class ShadowReader {
   }
 
   getAnimationSpeed() {
-
-    if (this._animationSpeed) {
+    if (this._animationSpeed)
       return this._animationSpeed;
-    }
 
     let htmlStyles = window.getComputedStyle(document.querySelector("html"));
     this._animationSpeed = parseFloat(htmlStyles.getPropertyValue("--animation-speed")) * 1000;
-
     return this._animationSpeed;
-
   }
 
 }

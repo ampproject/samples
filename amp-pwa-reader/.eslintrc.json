@@ -4,6 +4,13 @@
         "es6": true,
         "node": true
     },
+    "globals": {
+        "shadowReader": true,
+        "Nav": true,
+        "Article": true,
+        "Card": true,
+        "HistoryStack": true
+    },
     "extends": "eslint:recommended",
     "rules": {
         "indent": [

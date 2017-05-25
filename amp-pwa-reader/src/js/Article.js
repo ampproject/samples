@@ -70,13 +70,27 @@ class Article {
 
     // clear all transforms
     card.style.transform = '';
-    card.style.margin = '0';
     card.children[0].style.transform = '';
     card.children[1].style.transform = '';
 
     // resize card to image ratio
     card.style.height = (innerWidth * this.card.imageData.ratio) + 'px';
     card.style.opacity = '0';
+    card.style.margin = '0';
+
+    this.clonedCard = card;
+    return card;
+
+  }
+
+  generateCard() {
+
+    let articleData = shadowReader.backend.getArticleData();
+    let card = new Card(articleData, true).elem;
+
+    // resize card to image ratio
+    card.style.height = (innerWidth * articleData.imageRatio) + 'px';
+    card.style.margin = '0';
 
     this.clonedCard = card;
     return card;
@@ -133,12 +147,10 @@ class Article {
     // Wait until the doc is ready to be used
     this.ampDoc.ampdoc.whenReady().then(() => {
 
-      // We need to clone the header
+      // We need to clone the featured image
       // into the Shadow DOM so it scrolls along
-      if (this.card) {
-        var card = this.cloneCard();
-        this.ampDoc.ampdoc.getBody().prepend(card);
-      }
+      var card = this.card ? this.cloneCard() : this.generateCard();
+      this.ampDoc.ampdoc.getBody().prepend(card);
 
       return new Promise(resolve => {
         this.animateIn().then(() => {
