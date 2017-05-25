@@ -5,10 +5,28 @@
     overflow: hidden;
 }
 
-article {
+article,
+.article-skeleton-ui {
     position: absolute;
     top: var(--header-height);
     left: 0;
     right: 0;
     z-index: 2;
+}
+
+.article-skeleton-ui {
+    background: #fff;
+    bottom: 0;
+    display: none;
+
+    &.visible {
+        display: block;
+    }
+
+    &::before {
+        display: block;
+        content: '';
+        background: #eee;
+        padding-top: 60%;
+    }
 }

@@ -6,6 +6,9 @@ class Nav {
 
     this.bind();
 
+    // Create the nav items from categories
+    this.create();
+
     // The history module resolves the initial state from either the history API
     // or the loaded URL, in case there's no history entry.
     var state = shadowReader.history.state;
@@ -22,7 +25,29 @@ class Nav {
 
   }
 
+  create() {
+
+    let fragment = document.createDocumentFragment();
+
+    for (let category in shadowReader.backend.categories) {
+      let item = document.createElement('li');
+      let link = document.createElement('a');
+      link.href = '#';
+      link.dataset.tag = category;
+      link.textContent = shadowReader.backend.categories[category];
+      item.appendChild(link);
+      fragment.appendChild(item);
+    }
+
+    document.querySelector('ul.navigation').appendChild(fragment);
+
+  }
+
   startWithArticle(state) {
+
+    // show Skeleton UI for article, right away
+    var skeleton = document.querySelector('.article-skeleton-ui');
+    skeleton.style.display = 'block';
 
     let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl);
 
@@ -35,7 +60,10 @@ class Nav {
     article.load().then(() => {
 
       // passing true here ensures that the state is overwritten again..
-      article.show(true);
+      article.show(true).then(() => {
+        // hide the skeleton UI
+        skeleton.style.display = 'none';
+      });
 
       // the return button in this state is a special case, and can't animate (yet)
       shadowReader.hamburgerElement.onclick = () => {

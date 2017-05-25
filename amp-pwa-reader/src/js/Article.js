@@ -145,7 +145,7 @@ class Article {
     this.ampDoc.setVisibilityState('prerender');
 
     // Wait until the doc is ready to be used
-    this.ampDoc.ampdoc.whenReady().then(() => {
+    return this.ampDoc.ampdoc.whenReady().then(() => {
 
       // We need to clone the featured image
       // into the Shadow DOM so it scrolls along
