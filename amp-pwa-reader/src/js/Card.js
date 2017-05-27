@@ -19,7 +19,7 @@ class Card {
 
   }
 
-  resizeChildren(elemDimensions, animate) {
+  resizeChildren(elemDimensions, animate, toFullView) {
 
     let width = this.imageData.width;
     let height = this.imageData.height;
@@ -47,6 +47,13 @@ class Card {
     // rescale inner element
     this.innerElem.style.transform = 'scaleX(' + (1 / this.currentTransform.scaleX) + ')' // normalizing
       + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')'; // normalizing
+
+    // if the paragraph was hidden before, we need to slide it in..
+    if (!this.elem.matches('.card:first-child') && toFullView) {
+      let paragraph = this.elem.children[1].children[1];
+      this.innerElem.style.transform += ' translateY(-' + (paragraph.offsetHeight+16) + 'px)'; // 16px = 1em
+    }
+
 
     // back to transitions after next render tick if prev disabled..
     requestAnimationFrame(() => {
@@ -81,7 +88,7 @@ class Card {
     this.resizeChildren({
       width: newWidth,
       height: newHeight
-    }, !dontAnimate);
+    }, !dontAnimate, true);
 
   }
 
@@ -99,7 +106,7 @@ class Card {
     };
 
     // counter-animate all children
-    this.resizeChildren(this.naturalDimensions, true);
+    this.resizeChildren(this.naturalDimensions, true, false);
 
   }
 
@@ -154,7 +161,7 @@ class Card {
   }
 
   bind() {
-    this.elem.addEventListener('pointerup', () => {
+    this.elem.addEventListener('click', () => {
       !this.elem.classList.contains('full') && this.activate();
     });
   }

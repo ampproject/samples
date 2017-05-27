@@ -92,3 +92,19 @@ header {
 .nav-shown .hamburger .hamburger-inner::after {
   transform: translate3d(-8px, -3px, 0) rotate(45deg) scale(0.7, 1);
 }
+
+/* non-mobile styling */
+@media (min-width: $mobile-breakpoint) {
+
+  .hamburger {
+    display: none;
+  }
+
+  .article-shown .hamburger {
+    display: block;
+  }
+
+  header {
+      padding-left: 200px;
+  }
+}

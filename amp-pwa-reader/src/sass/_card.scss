@@ -13,6 +13,7 @@
   overflow: hidden;
   transform-origin: top center;
   user-select: none;
+  max-height: 12em;
 
   /* Styling */
   background-color: #253650;
@@ -70,9 +71,15 @@
       background-color: #253650;
       color: #fff;
       height: 50vh;
+      max-height: none;
+
+      .inner {
+
+      }
 
       .inner p {
         display: block;
+        margin-bottom: 0;
       }
   }
 
@@ -99,9 +106,10 @@
     }
 
     p {
-      display: none;
       margin: 1em 0;
+      height: 4em;
       font-weight: normal;
+      margin-bottom: -5em;
     }
 
   }
