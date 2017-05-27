@@ -125,6 +125,7 @@ class Nav {
 
     // mark old menu element as inactive
     if (this.category) {
+      console.log(this.category, this.getNavElement(this.category));
       this.getNavElement(this.category).classList.remove('active');
     }
 
@@ -139,12 +140,14 @@ class Nav {
 
   switchCategory(category) {
 
-    // set the new category (and title)
-    this.category = category;
+    // set the new title
     this.categoryTitle = shadowReader.backend.getCategoryTitle(category);
 
     // mark menu element as active
     this.setNavElement(category);
+
+    // set the category
+    this.category = category;
 
     // set current cards to loading
     for (let card of this.cards) {

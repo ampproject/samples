@@ -67,7 +67,8 @@ class Card {
     this.elem.classList.remove('loading');
     this.elem.classList.add('full');
 
-    var offsetTop = this.elem.offsetTop - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
+    var offsetLeft = this.elem.offsetLeft + this.elem.offsetParent.offsetLeft;
+    var offsetTop = (this.elem.offsetTop + this.elem.offsetParent.offsetTop) - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
     var currentWidth = this.naturalDimensions.width;
     var currentHeight = this.naturalDimensions.height;
     var newWidth = innerWidth;
@@ -76,11 +77,13 @@ class Card {
     this.currentTransform = {
       scaleX: (newWidth / currentWidth),
       scaleY: (newHeight / currentHeight),
+      translateX: -offsetLeft,
       translateY: -offsetTop
     };
 
     // animate the card to the natural ratio of the featured image
     this.elem.style.transform = 'translateY(' + this.currentTransform.translateY + 'px)'
+                                + 'translateX(' + this.currentTransform.translateX + 'px)'
                                 + 'scaleX(' + this.currentTransform.scaleX + ')'
                                 + 'scaleY(' + this.currentTransform.scaleY + ')';
 
