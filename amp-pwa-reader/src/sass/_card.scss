@@ -13,7 +13,6 @@
   overflow: hidden;
   transform-origin: top center;
   user-select: none;
-  max-height: 12em;
 
   /* Styling */
   background-color: #253650;
@@ -71,7 +70,6 @@
       background-color: #253650;
       color: #fff;
       height: 50vh;
-      max-height: none;
 
       .inner {
 
@@ -110,6 +108,15 @@
       height: 4em;
       font-weight: normal;
       margin-bottom: -5em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+      * {
+        display: inline !important;
+        margin: 0;
+        height: auto;
+        margin-right: 1em;
+      }
     }
 
   }

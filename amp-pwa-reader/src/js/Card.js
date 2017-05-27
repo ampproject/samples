@@ -119,7 +119,7 @@ class Card {
       p = document.createElement('p');
 
     h2.textContent = this.data.title;
-    p.innerHTML = this.data.description.replace(/\<\/?p\>/g, '').substr(0, 120) + '...';
+    p.innerHTML = this.data.description;
     innerElem.className = 'inner';
     elem.className = 'card';
     img.src = this.data.image;
