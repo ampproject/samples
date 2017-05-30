@@ -67,7 +67,6 @@ class Nav {
 
       // the return button in this state is a special case, and can't animate (yet)
       this.hamburgerReturnAction = () => {
-        console.log("WARK");
         article.card && article.card.animateBack();
         article.hide();
         shadowReader.history.navigate(null);
@@ -212,8 +211,9 @@ class Nav {
 
       // if we go to a state where no article was open, and we have a
       // currently-opened one, close it again
-      if (this.openArticle && !state.articleUrl && shadowReader.hamburgerElement['on' + shadowReader.clickEvent]) {
-        shadowReader.hamburgerElement['on' + shadowReader.clickEvent]();
+      if (this.openArticle && !state.articleUrl && this.hamburgerReturnAction) {
+        this.hamburgerReturnAction();
+        this.hamburgerReturnAction = null;
         this.openArticle = null;
       }
 

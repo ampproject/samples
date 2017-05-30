@@ -27,7 +27,7 @@ const mainScriptsGlob = [
 ];
 const stylesGlob = 'src/sass/**/*.scss';
 const imagesGlob = 'src/img/**/*';
-const pagesGlob = 'src/*.html';
+const pagesGlob = 'src/*.*';
 
 gulp.task('copy', function() {
   gulp.src(pagesGlob)
@@ -38,7 +38,7 @@ gulp.task('copy', function() {
 });
 
 gulp.task('inline', [ 'sass', 'scripts-init', 'scripts-main', 'copy' ], function() {
-  gulp.src(pagesGlob)
+  gulp.src('src/index.html')
     .pipe(replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')))
     .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./dist/tmp/init.js', 'utf8')))
     .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./dist/tmp/main.js', 'utf8')))
@@ -46,7 +46,7 @@ gulp.task('inline', [ 'sass', 'scripts-init', 'scripts-main', 'copy' ], function
 });
 
 gulp.task('inline-dist', [ 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'copy' ], function() {
-  gulp.src(pagesGlob)
+  gulp.src('src/index.html')
     .pipe(replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')))
     .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./dist/tmp/init.js', 'utf8')))
     .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./dist/tmp/main.js', 'utf8')))
@@ -137,4 +137,4 @@ gulp.task('watch', function() {
 
 // Default Task
 gulp.task('default', [ 'copy', 'sass', 'scripts-init', 'scripts-main', 'inline', 'clean-tmp', 'watch' ]);
-gulp.task('dist', ['copy', 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'inline-dist', 'clean-tmp-dist']);
+gulp.task('dist', [ 'copy', 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'inline-dist', 'clean-tmp-dist' ]);

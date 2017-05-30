@@ -146,6 +146,8 @@ class Article {
 
   show(replace) {
 
+    document.documentElement.classList.add('article-showing');
+
     // Create an empty container for the AMP page
     this.container = this.createShadowRoot();
 
@@ -170,7 +172,8 @@ class Article {
             card.style.opacity = '1';
           }
 
-          // add class to html element for global CSS stuff
+          // add class to html element for to contain the scroll
+          document.documentElement.classList.remove('article-showing');
           document.documentElement.classList.add('article-shown');
 
           this.takeoverScroll();
