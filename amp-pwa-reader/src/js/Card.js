@@ -164,7 +164,7 @@ class Card {
   }
 
   bind() {
-    this.elem.addEventListener('click', () => {
+    this.elem.addEventListener(shadowReader.clickEvent, () => {
       !this.elem.classList.contains('full') && this.activate();
     });
   }
@@ -193,16 +193,12 @@ class Card {
   }
 
   hijackMenuButton() {
-    shadowReader.hamburgerElement.onclick = event => {
-
+    shadowReader.nav.hamburgerReturnAction = event => {
       // Go back in history stack, but only if we don't trigger the method
       // manually, coming from popstate
       if(event) history.back();
 
       this.deactivate();
-      shadowReader.hamburgerElement.onclick = null;
-      return false;
-
     };
   }
 

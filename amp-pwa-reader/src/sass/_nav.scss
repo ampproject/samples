@@ -89,22 +89,4 @@ main,
         grid-gap: 1em;
     }
 
-    .card {
-        margin: 0;
-    }
-
-    .card:first-child {
-        grid-column: 1 / 3;
-        grid-row: 1 / 3;
-    }
-
-    .card .inner p {
-        /*display: block;
-        background: #00568a;
-        color: #fff;
-        margin: 1em -1em;
-        margin-bottom: -1em;
-        padding: 1em;*/
-    }
-
 }

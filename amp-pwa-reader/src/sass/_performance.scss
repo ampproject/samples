@@ -1,0 +1,29 @@
+.navigation {
+  contain: strict;
+  will-change: transform;
+}
+
+.category {
+  contain: style;
+  will-change: transform;
+}
+
+main {
+  will-change: transform;
+}
+
+.card,
+.card img {
+  contain: content;
+  will-change: transform;
+}
+
+.card .inner {
+  will-change: transform;
+}
+
+.hamburger {
+  contain: content;
+  will-change: transform;
+}
+

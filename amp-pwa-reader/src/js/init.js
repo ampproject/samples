@@ -3,6 +3,7 @@ class ShadowReader {
   constructor(config) {
     this.backend = new config.backend();
     this.history = new HistoryStack(this.backend);
+    this.clickEvent = 'ontouchend' in window ? 'touchend' : 'click';
   }
 
   init() {

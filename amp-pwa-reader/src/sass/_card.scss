@@ -8,8 +8,6 @@
   display: flex;
   position: relative;
   box-sizing: border-box;
-  contain: content;
-  will-change: transform;
   overflow: hidden;
   transform-origin: top left;
   user-select: none;
@@ -148,4 +146,27 @@
     }
 
   }
+}
+
+/* Desktop/Tablet */
+@media (min-width: $mobile-breakpoint) {
+
+    .card {
+        margin: 0;
+    }
+
+    .card:first-child {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+    }
+
+    .card .inner p {
+        /*display: block;
+        background: #00568a;
+        color: #fff;
+        margin: 1em -1em;
+        margin-bottom: -1em;
+        padding: 1em;*/
+    }
+
 }

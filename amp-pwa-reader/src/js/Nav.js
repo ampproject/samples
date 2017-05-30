@@ -66,11 +66,11 @@ class Nav {
       });
 
       // the return button in this state is a special case, and can't animate (yet)
-      shadowReader.hamburgerElement.onclick = () => {
+      this.hamburgerReturnAction = () => {
+        console.log("WARK");
         article.card && article.card.animateBack();
         article.hide();
         shadowReader.history.navigate(null);
-        shadowReader.hamburgerElement.onclick = null;
       };
 
       // switch to the correct category only after the article is loaded for max perf
@@ -125,7 +125,6 @@ class Nav {
 
     // mark old menu element as inactive
     if (this.category) {
-      console.log(this.category, this.getNavElement(this.category));
       this.getNavElement(this.category).classList.remove('active');
     }
 
@@ -213,8 +212,8 @@ class Nav {
 
       // if we go to a state where no article was open, and we have a
       // currently-opened one, close it again
-      if (this.openArticle && !state.articleUrl && shadowReader.hamburgerElement.onclick) {
-        shadowReader.hamburgerElement.onclick();
+      if (this.openArticle && !state.articleUrl && shadowReader.hamburgerElement['on' + shadowReader.clickEvent]) {
+        shadowReader.hamburgerElement['on' + shadowReader.clickEvent]();
         this.openArticle = null;
       }
 
@@ -225,12 +224,20 @@ class Nav {
 
     }, false);
 
-    document.querySelector('.hamburger').addEventListener('click', event => {
+    document.querySelector('.hamburger').addEventListener(shadowReader.clickEvent, event => {
+
+      // default menu toggle (only executes when not in article view)
       !document.documentElement.classList.contains('article-shown') && this.toggle();
-      event.preventDefault();
+
+      // use as temporary back button
+      if (this.hamburgerReturnAction) {
+        this.hamburgerReturnAction();
+        this.hamburgerReturnAction = null;
+      }
+
     }), false;
 
-    document.querySelector('.navigation').addEventListener('click', event => {
+    document.querySelector('.navigation').addEventListener(shadowReader.clickEvent, event => {
 
       // we're doing event delegation, and only want to trigger action on links
       if (event.target.nodeName !== 'A')

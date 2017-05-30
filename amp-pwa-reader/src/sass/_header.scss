@@ -40,9 +40,6 @@ header {
   background-color: #4bc6df;
   box-shadow: 0 0 0 0.0625rem rgba(0,0,0,0.08);
 
-  transition-property: opacity, filter;
-  transition-duration: var(--animation-speed);
-  transition-timing-function: linear;
   font: inherit;
   color: inherit;
 }
