@@ -3,6 +3,7 @@ class Nav {
   constructor() {
     this.category = null;
     this.cards = [];
+    this.feedReader = new FeedReader;
 
     this.bind();
 
@@ -23,6 +24,10 @@ class Nav {
       this.switchCategory(state.category);
     }
 
+  }
+
+  clear() {
+    document.querySelector('ul.navigation').innerHTML = '';
   }
 
   create() {
@@ -101,18 +106,6 @@ class Nav {
 
   }
 
-  fetchRSS(url) {
-
-    let rssUrl = url;
-    let yqlQuery = 'select * from feed where url = \'' + encodeURIComponent(rssUrl) + '\'';
-    let yqlUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + yqlQuery + '&format=json';
-
-    return fetch(yqlUrl)
-      .then(response => response.json() )
-      .then(rss => rss.query.results.item );
-
-  }
-
   setOpenArticle(article, replace) {
     this.openArticle = article;
 
@@ -120,11 +113,16 @@ class Nav {
     shadowReader.history.navigate(article.url, replace, article.ampDoc.title);
   }
 
+  getNavElement(category) {
+    return document.querySelector('.navigation a[data-tag="' + category + '"]');
+  }
+
   setNavElement(category) {
 
     // mark old menu element as inactive
     if (this.category) {
-      this.getNavElement(this.category).classList.remove('active');
+      let oldNavElement = this.getNavElement(this.category);
+      oldNavElement && oldNavElement.classList.remove('active');
     }
 
     // mark new one as active
@@ -156,7 +154,7 @@ class Nav {
     this.hide();
 
     // fetch new nav entries via RSS via YQL
-    return this.fetchRSS(shadowReader.backend.getRSSUrl(category)).then(entries => {
+    return this.feedReader.fetch(category).then(entries => {
 
       // empty items container (lazy..)
       shadowReader.itemsElement.innerHTML = '';
@@ -164,12 +162,7 @@ class Nav {
 
       // render new entries
       for (let entry of entries) {
-        this.cards.push(new Card({
-          title: entry.title,
-          description: entry.description,
-          link: entry.link,
-          image: entry.content ? entry.content[entry.content.length - 1].url : ''
-        }));
+        this.cards.push(new Card(entry));
       }
 
       // reset scroll position
@@ -177,10 +170,6 @@ class Nav {
 
     });
 
-  }
-
-  getNavElement(category) {
-    return document.querySelector('.navigation a[data-tag="' + category + '"]');
   }
 
   show() {
@@ -197,6 +186,7 @@ class Nav {
 
   bind() {
 
+    /* history navigation */
     window.addEventListener('popstate', event => {
 
       var state = {
@@ -224,6 +214,7 @@ class Nav {
 
     }, false);
 
+    /* clicks on the hamburger menu icon */
     document.querySelector('.hamburger').addEventListener(shadowReader.clickEvent, event => {
 
       // default menu toggle (only executes when not in article view)
@@ -231,12 +222,13 @@ class Nav {
 
       // use as temporary back button
       if (this.hamburgerReturnAction) {
-        this.hamburgerReturnAction();
+        this.hamburgerReturnAction(event);
         this.hamburgerReturnAction = null;
       }
 
     }), false;
 
+    /* clicks on menu links */
     document.querySelector('.navigation').addEventListener(shadowReader.clickEvent, event => {
 
       // we're doing event delegation, and only want to trigger action on links
@@ -250,6 +242,28 @@ class Nav {
       shadowReader.history.navigate(null);
 
       event.preventDefault();
+    }), false;
+
+    // click on backend switcher
+    document.querySelector('.backend-switcher').addEventListener(shadowReader.clickEvent, event => {
+      document.documentElement.classList.toggle('backend-selector-visible');
+      event.preventDefault();
+    }), false;
+
+    // clicks on the actual backends in the selector
+    document.querySelector('.backend-selector').addEventListener(shadowReader.clickEvent, event => {
+      event.preventDefault();
+
+      // we're doing event delegation, and only want to trigger action on links
+      if (event.target.parentNode.nodeName !== 'A')
+        return;
+
+      // hide itself..
+      document.documentElement.classList.toggle('backend-selector-visible');
+
+      var backend = event.target.parentNode.dataset.backend;
+      shadowReader.switchBackend(Backend.get(backend));
+
     }), false;
 
   }

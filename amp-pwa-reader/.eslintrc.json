@@ -6,6 +6,8 @@
     },
     "globals": {
         "shadowReader": true,
+        "ShadowReader": true,
+        "Backend": true,
         "Nav": true,
         "Article": true,
         "Card": true,

@@ -1,0 +1,13 @@
+.backend-guardian {
+  header {
+    img.guardian {
+      display: block;
+      margin-top: 6px;
+    }
+  }
+  .backend-selector {
+    img:not(.guardian) {
+      display: block;
+    }
+  }
+}

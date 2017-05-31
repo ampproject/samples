@@ -4,6 +4,15 @@ class HistoryStack {
     this.backend = backend;
     this.state = (history.state && history.state.category) ? history.state : this.parseUrlIntoState();
 
+    // if the category doesn't exist (e.g. we came from a different backend)
+    // return the default one.
+    if (!this.backend.categories[this.state.category]) {
+      this.state.category = this.backend.defaultCategory;
+      history.replaceState({
+        category: this.state.category
+      }, '', '/' + this.state.category);
+    }
+
     /*
      * You'll notice there's no other DOM foolery in this file. So why here?
      * This file is initialized right after the body opens, so if there's an
@@ -17,7 +26,7 @@ class HistoryStack {
   }
 
   constructUrl(articleUrl) {
-    return '/' + (articleUrl ? articleUrl.replace(this.backend.getAMPEndpoint(), '') : shadowReader.nav.category);
+    return '/' + (articleUrl ? articleUrl.replace(this.backend.ampEndpoint, '') : shadowReader.nav.category);
   }
 
   parseUrlIntoState() {
@@ -34,7 +43,7 @@ class HistoryStack {
       state.category = path;
     } else if (path) {
       // now we can be reasonably sure the path is a full article url
-      state.articleUrl = this.backend.getAMPEndpoint() + path;
+      state.articleUrl = this.backend.ampEndpoint + path;
       state.category = this.backend.getCategoryFromAMPUrl(state.articleUrl);
     }
 

@@ -1,0 +1,47 @@
+.backend-cnet {
+
+  body {
+    background: #fff;
+  }
+
+  .category {
+    color: #333;
+    h1 {
+      border-bottom: 2px solid rgba(177, 177, 177, 0.39);
+    }
+  }
+
+  .backend-selector {
+    img:not(.cnet) {
+      display: block;
+    }
+  }
+
+  header {
+    background: linear-gradient(to bottom, #d60000, #ad0101);
+    img.cnet {
+      display: block;
+    }
+  }
+
+  .navigation {
+    background: #444444;
+    li a.active {
+      color: #ffffff;
+      background: #cf0000;
+    }
+  }
+
+  .hamburger {
+    background-color: #000000;
+  }
+
+  .card {
+    background-color: #fff;
+    box-shadow: 0px 2px 9px rgba(0, 0, 0, 0.42);
+    &:first-child {
+      background-color: #fff;
+    }
+  }
+
+}

@@ -1,7 +1,10 @@
-class TheGuardian {
+class TheGuardian extends Backend {
 
   constructor() {
+    super();
+
     this.appTitle = 'Guardian';
+    this.ampEndpoint = 'https://amp.theguardian.com/';
     this.defaultCategory = 'us/travel';
     this.categories = {
       'us': 'Top News',
@@ -17,20 +20,28 @@ class TheGuardian {
     };
   }
 
-  getCategoryTitle(category) {
-    return this.categories[category];
-  }
+  /*
+   * RSS Feed related getters and functions.
+   */
 
   getRSSUrl(category) {
     return 'https://www.theguardian.com/' + category + '/rss';
   }
 
-  getAMPUrl(url) {
-    return url.replace('www.', 'amp.');
+  getRSSTitle(entry) {
+    return entry.title;
   }
 
-  getAMPEndpoint() {
-    return 'https://amp.theguardian.com/';
+  getRSSImage(entry) {
+    return entry.content ? entry.content[entry.content.length - 1].url : '';
+  }
+
+  /*
+   * AMP Doc related functions.
+   */
+
+  getAMPUrl(url) {
+    return url.replace('www.', 'amp.');
   }
 
   getCategoryFromAMPUrl(url) {
@@ -64,15 +75,6 @@ class TheGuardian {
     return null;
   }
 
-  getArticleData(doc) {
-    return {
-      description: this._description,
-      title: this._title,
-      image: this._image,
-      imageRatio: this._imageRatio
-    };
-  }
-
   sanitize(doc) {
 
     // remove stuff we don't need in embed mode
@@ -104,3 +106,5 @@ class TheGuardian {
   }
 
 }
+
+Backend.classes['TheGuardian'] = TheGuardian;

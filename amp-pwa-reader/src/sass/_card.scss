@@ -131,6 +131,9 @@
 .amp-shadow {
   .card {
 
+    /* need to force font-size, since inner styles might not play nice..*/
+    font-size: 16px;
+
     &:hover {
       transform: none;
       cursor: inherit;

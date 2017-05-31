@@ -17,10 +17,14 @@ const del = require('del');
 /* Working Files */
 const initScriptsGlob = [
   'src/js/History.js',
+  'src/js/Backend.js',
   'src/js/backends/TheGuardian.js',
+  'src/js/backends/CNET.js',
+  'src/js/ShadowReader.js',
   'src/js/init.js'
 ];
 const mainScriptsGlob = [
+  'src/js/FeedReader.js',
   'src/js/Nav.js',
   'src/js/Card.js',
   'src/js/Article.js'
@@ -132,6 +136,7 @@ gulp.task('watch', function() {
   gulp.watch(mainScriptsGlob, [ 'scripts-init', 'scripts-main', 'clean-tmp', 'reload' ]);
   gulp.watch(stylesGlob, [ 'sass', 'clean-tmp', 'reload' ]);
   gulp.watch(pagesGlob, [ 'copy', 'clean-tmp', 'reload' ]);
+  gulp.watch(imagesGlob, [ 'copy', 'clean-tmp', 'reload' ]);
 
 });
 

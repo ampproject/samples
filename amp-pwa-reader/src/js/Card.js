@@ -121,7 +121,7 @@ class Card {
       h2 = document.createElement('h2'),
       p = document.createElement('p');
 
-    h2.textContent = this.data.title;
+    h2.innerHTML = this.data.title;
     p.innerHTML = this.data.description;
     innerElem.className = 'inner';
     elem.className = 'card';
@@ -164,7 +164,8 @@ class Card {
   }
 
   bind() {
-    this.elem.addEventListener(shadowReader.clickEvent, () => {
+    /* use click event on purpose here, to not interfere with panning */
+    this.elem.addEventListener('click', () => {
       !this.elem.classList.contains('full') && this.activate();
     });
   }

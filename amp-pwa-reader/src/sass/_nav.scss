@@ -43,7 +43,7 @@
 main,
 .category,
 .navigation {
-    transition: transform var(--animation-speed);
+    transition: transform var(--animation-speed) ease-out;
 }
 
 .nav-shown .category,
