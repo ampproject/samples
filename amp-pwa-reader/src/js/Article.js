@@ -144,9 +144,7 @@ class Article {
 
   }
 
-  show(replace) {
-
-    document.documentElement.classList.add('article-showing');
+  render() {
 
     // Create an empty container for the AMP page
     this.container = this.createShadowRoot();
@@ -155,41 +153,44 @@ class Article {
     this.ampDoc = AMP.attachShadowDoc(this.container, this.doc, this.url);
     this.ampDoc.setVisibilityState('prerender');
 
-    // Wait until the doc is ready to be used
-    return this.ampDoc.ampdoc.whenReady().then(() => {
+    return this.ampDoc.ampdoc.whenReady();
 
-      // We need to clone the featured image
-      // into the Shadow DOM so it scrolls along
-      var card = this.card ? this.cloneCard() : this.generateCard();
-      this.ampDoc.ampdoc.getBody().prepend(card);
+  }
 
-      return new Promise(resolve => {
-        this.animateIn().then(() => {
+  show(replace) {
 
-          // Hide the original card, show the cloned one
-          if (this.card) {
-            this.card.elem.style.opacity = '0';
-            card.style.opacity = '1';
-          }
+    document.documentElement.classList.add('article-showing');
 
-          // add class to html element for to contain the scroll
-          document.documentElement.classList.remove('article-showing');
-          document.documentElement.classList.add('article-shown');
+    // We need to clone the featured image
+    // into the Shadow DOM so it scrolls along
+    var card = this.card ? this.cloneCard() : this.generateCard();
+    this.ampDoc.ampdoc.getBody().prepend(card);
 
-          this.takeoverScroll();
+    return new Promise(resolve => {
+      this.animateIn().then(() => {
 
-          // Set the visibility state of the AMP doc to visible
-          this.ampDoc.setVisibilityState('visible');
+        // Hide the original card, show the cloned one
+        if (this.card) {
+          this.card.elem.style.opacity = '0';
+          card.style.opacity = '1';
+        }
 
-          // Finally, add new history entry
-          // Note: We're doing this deliberately late due to an AMP
-          // Bug that overrides the history state object early on
-          shadowReader.nav.setOpenArticle(this, replace);
+        // add class to html element for to contain the scroll
+        document.documentElement.classList.remove('article-showing');
+        document.documentElement.classList.add('article-shown');
 
-          resolve();
-        });
+        this.takeoverScroll();
+
+        // Set the visibility state of the AMP doc to visible
+        this.ampDoc.setVisibilityState('visible');
+
+        // Finally, add new history entry
+        // Note: We're doing this deliberately late due to an AMP
+        // Bug that overrides the history state object early on
+        shadowReader.nav.setOpenArticle(this, replace);
+
+        resolve();
       });
-
     });
 
   }

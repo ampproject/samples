@@ -204,12 +204,18 @@ class Card {
   }
 
   activate() {
+    console.time('ready');
     this.wait();
-    this.article.load().then(() => {
-      this.animate();
-      this.article.show();
-      this.hijackMenuButton();
-    });
+    this.article.load()
+      .then(() => {
+        return this.article.render();
+      })
+      .then(() => {
+        console.timeEnd('ready');
+        this.animate();
+        this.article.show();
+        this.hijackMenuButton();
+      });
   }
 
   deactivate() {
