@@ -129,7 +129,8 @@ gulp.task('watch', function() {
     server: {
       baseDir: 'dist/',
       middleware: [historyApiFallback()]
-    }
+    },
+    ui: false
   });
 
   gulp.watch(initScriptsGlob, [ 'scripts-init', 'scripts-main', 'clean-tmp', 'reload' ]);

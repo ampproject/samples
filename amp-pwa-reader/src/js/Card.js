@@ -3,7 +3,7 @@
  */
 class Card {
 
-  constructor(data, headless) {
+  constructor(data, headless, prerender) {
 
     this.data = data;
     this.currentTransform = { scaleX: 1, scaleY: 1 };
@@ -15,6 +15,10 @@ class Card {
       this.article = new Article(this.data.link, this);
       this.bind();
       this.render();
+    }
+
+    if (prerender) {
+      this.article.load();
     }
 
   }
@@ -204,14 +208,14 @@ class Card {
   }
 
   activate() {
-    console.time('ready');
+    //console.time('activate');
     this.wait();
     this.article.load()
       .then(() => {
         return this.article.render();
       })
       .then(() => {
-        console.timeEnd('ready');
+        //console.timeEnd('activate');
         this.animate();
         this.article.show();
         this.hijackMenuButton();

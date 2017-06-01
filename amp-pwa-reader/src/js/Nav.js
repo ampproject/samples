@@ -58,7 +58,9 @@ class Nav {
     }
 
     // otherwise things are a little more complicated, as we have no card to click on..
-    article.load().then(() => {
+    article.load()
+      .then(() => article.render())
+      .then(() => {
 
       // passing true here ensures that the state is overwritten again..
       article.show(true).then(() => {
@@ -161,8 +163,9 @@ class Nav {
       this.cards = [];
 
       // render new entries
+      let prerender = 3;
       for (let entry of entries) {
-        this.cards.push(new Card(entry));
+        this.cards.push(new Card(entry, /*headless*/false, /*prerender*/--prerender >= 0));
       }
 
       // reset scroll position
