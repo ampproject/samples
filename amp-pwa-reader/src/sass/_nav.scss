@@ -48,7 +48,8 @@ main,
 
 .nav-shown .category,
 .nav-shown main {
-    transform: translateX(200px);
+    /* nice animation, but sadly too slow on mobile..*/
+    /* transform: translateX(200px); */
 }
 
 .nav-shown .navigation {
