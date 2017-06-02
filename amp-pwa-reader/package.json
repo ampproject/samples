@@ -20,6 +20,8 @@
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
-    "uglify-es": "*"
+    "uglify-es": "*",
+    "workbox-build": "^1.0.1",
+    "workbox-sw": "^1.0.1"
   }
 }

@@ -13,6 +13,7 @@ const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
+const workboxBuild = require('workbox-build');
 
 /* Working Files */
 const initScriptsGlob = [
@@ -32,6 +33,36 @@ const mainScriptsGlob = [
 const stylesGlob = 'src/sass/**/*.scss';
 const imagesGlob = 'src/img/**/*';
 const pagesGlob = 'src/*.*';
+
+gulp.task('inject-asset-manifest', ['clean-tmp'], function (cb) {
+
+  workboxBuild.injectManifest({
+    globDirectory: './dist/',
+    globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
+    globIgnores: ['admin.html'],
+    swSrc: './src/sw.js',
+    swDest: './dist/sw.js'
+  })
+  .then(() => {
+    cb();
+  });
+
+});
+
+gulp.task('inject-asset-manifest-dist', ['clean-tmp-dist'], function (cb) {
+
+  workboxBuild.injectManifest({
+    globDirectory: './dist/',
+    globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
+    globIgnores: ['admin.html'],
+    swSrc: './src/sw.js',
+    swDest: './dist/sw.js'
+  })
+  .then(() => {
+    cb();
+  });
+
+});
 
 gulp.task('copy', function() {
   gulp.src(pagesGlob)
@@ -142,5 +173,5 @@ gulp.task('watch', function() {
 });
 
 // Default Task
-gulp.task('default', [ 'copy', 'sass', 'scripts-init', 'scripts-main', 'inline', 'clean-tmp', 'watch' ]);
-gulp.task('dist', [ 'copy', 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'inline-dist', 'clean-tmp-dist' ]);
+gulp.task('default', [ 'copy', 'sass', 'scripts-init', 'scripts-main', 'inline', 'clean-tmp', 'inject-asset-manifest', 'watch' ]);
+gulp.task('dist', [ 'copy', 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'inline-dist', 'clean-tmp-dist', 'inject-asset-manifest-dist' ]);
