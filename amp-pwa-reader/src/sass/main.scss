@@ -36,6 +36,33 @@ main {
   line-height: 1.4;
 }
 
+/* Desktop/Tablet */
+@media (min-width: $mobile-breakpoint) {
+
+    .category,
+    main {
+        transform: translateX(0);
+        margin-left: 200px;
+    }
+
+    .category h1 {
+        font-size: 2em;
+        padding-top: 0.6em;
+    }
+
+    .wrapper {
+        max-width: none;
+    }
+
+    main {
+        padding: 0 1em;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-gap: 1em;
+    }
+
+}
+
 @import '_performance.scss';
 @import '_article.scss';
 @import '_card.scss';

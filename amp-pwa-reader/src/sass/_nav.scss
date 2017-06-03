@@ -59,34 +59,9 @@ main,
 /* Desktop/Tablet */
 @media (min-width: $mobile-breakpoint) {
 
-    .category,
-    main {
-        transform: translateX(0);
-        margin-left: 200px;
-    }
-
-    .category h1 {
-        font-size: 2em;
-        padding-top: 0.6em;
-    }
-
-    main {
-        padding: 0 1em;
-    }
-
     .navigation {
         transform: translateX(0);
         z-index: auto;
-    }
-
-    .wrapper {
-        max-width: none;
-    }
-
-    main {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr) ) ;
-        grid-gap: 1em;
     }
 
 }
