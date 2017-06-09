@@ -1,10 +1,11 @@
 class Backend {
 
-  constructor() {
-    this.appTitle = '';
-    this.ampEndpoint = ''; // AMP Endpoint
-    this.defaultCategory = '';
-    this.categories = {};
+  constructor(config) {
+    this.appTitle = config.appTitle;
+    this.ampEndpoint = config.ampEndpoint; // AMP Endpoint
+    this.defaultCategory = config.defaultCategory;
+    this.categories = config.categories;
+    this.create();
   }
 
   /*
@@ -17,6 +18,14 @@ class Backend {
 
   getCategoryTitle(category) {
     return this.categories[category];
+  }
+
+  create() {
+    document.documentElement.classList.add('backend-' + this.appTitle.toLowerCase());
+  }
+
+  destroy() {
+    document.documentElement.classList.remove('backend-' + this.appTitle.toLowerCase());
   }
 
   /*

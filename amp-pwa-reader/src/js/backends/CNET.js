@@ -1,14 +1,14 @@
 class CNET extends Backend {
 
   constructor() {
-    super();
-
-    this.appTitle = 'CNET';
-    this.ampEndpoint = 'https://www.cnet.com/google-amp/';
-    this.defaultCategory = 'news';
-    this.categories = {
-      'news': 'News'
-    };
+    super({
+      appTitle: 'CNET',
+      ampEndpoint: 'https://www.cnet.com/google-amp/',
+      defaultCategory: 'news',
+      categories: {
+        'news': 'News'
+      }
+    });
   }
 
   /*

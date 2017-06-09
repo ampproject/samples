@@ -3,6 +3,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
     margin: 0;
     background: #182840;
 }

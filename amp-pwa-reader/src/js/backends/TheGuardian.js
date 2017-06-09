@@ -1,23 +1,23 @@
 class TheGuardian extends Backend {
 
   constructor() {
-    super();
-
-    this.appTitle = 'Guardian';
-    this.ampEndpoint = 'https://amp.theguardian.com/';
-    this.defaultCategory = 'us/travel';
-    this.categories = {
-      'us': 'Top News',
-      'us-news/us-politics': 'Politics',
-      'world': 'World',
-      'commentisfree': 'Opinion',
-      'us/technology': 'Tech',
-      'us/culture': 'Arts',
-      'us/lifeandstyle': 'Lifestyle',
-      'fashion': 'Fashion',
-      'us/business': 'Business',
-      'us/travel': 'Travel'
-    };
+    super({
+      appTitle: 'Guardian',
+      ampEndpoint: 'https://amp.theguardian.com/',
+      defaultCategory: 'us/travel',
+      categories: {
+        'us': 'Top News',
+        'us-news/us-politics': 'Politics',
+        'world': 'World',
+        'commentisfree': 'Opinion',
+        'us/technology': 'Tech',
+        'us/culture': 'Arts',
+        'us/lifeandstyle': 'Lifestyle',
+        'fashion': 'Fashion',
+        'us/business': 'Business',
+        'us/travel': 'Travel'
+      }
+    });
   }
 
   /*

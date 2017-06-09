@@ -19,9 +19,8 @@ class ShadowReader {
   switchBackend(backend) {
 
     // initialize the new backend
-    document.documentElement.classList.remove('backend-' + this.backend.appTitle.toLowerCase());
+    this.backend.destroy();
     this.backend = new backend();
-    document.documentElement.classList.add('backend-' + this.backend.appTitle.toLowerCase());
     this.history.backend = this.backend;
 
     // reinitialize the nav

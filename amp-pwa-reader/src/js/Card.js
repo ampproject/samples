@@ -122,7 +122,7 @@ class Card {
 
   }
 
-  create(headless) {
+  create() {
 
     var elem = document.createElement('div'),
       innerElem = document.createElement('div'),
@@ -135,13 +135,13 @@ class Card {
     innerElem.className = 'inner';
     elem.className = 'card';
     img.src = this.data.image;
-    img.style.opacity = 0;
 
     // if we're in headless mode, that means the Card is initialized purely to
     // render out the featured image in the Shadow DOM, not for the list view,
     // thus we don't need to fancy it up for animations.
     if (!this.headless) {
 
+      img.style.opacity = 0;
       img.onload = () => {
 
         this.imageData = {
