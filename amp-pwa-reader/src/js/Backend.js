@@ -23,7 +23,7 @@ class Backend {
    * RSS Feed related getters and functions.
    */
 
-  getRSSUrl(category) {
+  getRSSUrl(/*category*/) {
     return '';
   }
 
@@ -39,15 +39,15 @@ class Backend {
    * AMP Doc related functions.
    */
 
-  getAMPUrl(url) {
-    return url.replace('www.', 'amp.');
+  getAMPUrl(/*url*/) {
+    /*return url.replace('www.', 'amp.');*/
   }
 
-  getCategoryFromAMPUrl(url) {
+  getCategoryFromAMPUrl(/*url*/) {
     return this.defaultCategory;
   }
 
-  getArticleData(doc) {
+  getArticleData(/*doc*/) {
     return {
       description: this._description,
       title: this._title,

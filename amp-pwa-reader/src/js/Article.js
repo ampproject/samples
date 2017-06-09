@@ -16,10 +16,7 @@ class Article {
       xhr.open('GET', 'https://seed-octagon.glitch.me/' + encodeURIComponent(this.url), true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
-      xhr.onload = function() {
-        // .responseXML contains a ready-to-use Document object
-        resolve(xhr.responseXML);
-      };
+      xhr.onload = () => resolve(xhr.responseXML); // .responseXML contains a ready-to-use Document object
       xhr.send();
     });
 
@@ -46,10 +43,9 @@ class Article {
     shadowReader.backend.sanitize(doc, hasCard);
 
     // insert stylesheet that styles the featured image
-    // TODO; copy stylesheet from host over directly
     var stylesheet = document.createElement('link');
     stylesheet.setAttribute('rel', 'stylesheet');
-    stylesheet.setAttribute('href', '/inline.css');
+    stylesheet.href = '/inline.css';
     this.doc.body.append(stylesheet);
 
   }
@@ -86,7 +82,7 @@ class Article {
   generateCard() {
 
     let articleData = shadowReader.backend.getArticleData();
-    let card = new Card(articleData, true).elem;
+    let card = new Card(articleData, /*headless*/true).elem;
 
     // resize card to image ratio
     card.style.height = (innerWidth * articleData.imageRatio) + 'px';
@@ -157,26 +153,29 @@ class Article {
 
   }
 
-  show(replace) {
+  show(replaceHistoryState) {
 
-    document.documentElement.classList.add('article-showing');
-
-    // We need to clone the featured image
-    // into the Shadow DOM so it scrolls along
+    // We need to clone the featured image into the Shadow DOM so it scrolls
+    // along. There are cases were we don't have a linked card from the list
+    // view (e.g. we load directly into the article), in which case we need to
+    // generate a new one.
     var card = this.card ? this.cloneCard() : this.generateCard();
     this.ampDoc.ampdoc.getBody().prepend(card);
 
     return new Promise(resolve => {
+
+      // animate the article in. Only makes sense when there's a card transition
+      // at the same time, within animateIn, we check for the availability of a
+      // connected card, and don't animate if it's not around.
       this.animateIn().then(() => {
 
-        // Hide the original card, show the cloned one
+        // Hide the original card, show the cloned one (this also animates)
         if (this.card) {
-          this.card.elem.style.opacity = '0';
           card.style.opacity = '1';
         }
 
-        // add class to html element for to contain the scroll
-        document.documentElement.classList.remove('article-showing');
+        // add class to html element for to contain the scroll, and transform
+        // the hamburger into a 'back' button.
         document.documentElement.classList.add('article-shown');
 
         this.takeoverScroll();
@@ -187,7 +186,7 @@ class Article {
         // Finally, add new history entry
         // Note: We're doing this deliberately late due to an AMP
         // Bug that overrides the history state object early on
-        shadowReader.nav.setOpenArticle(this, replace);
+        shadowReader.nav.setOpenArticle(this, replaceHistoryState);
 
         resolve();
       });
@@ -208,7 +207,6 @@ class Article {
 
       // Show the card header, hide the cloned one
       if (this.card) {
-        this.card.elem.style.opacity = '1';
         this.clonedCard.style.opacity = '0';
       }
 

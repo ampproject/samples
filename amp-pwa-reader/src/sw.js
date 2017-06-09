@@ -6,12 +6,31 @@ const workboxSW = new WorkboxSW();
 // Static precaching of images
 workboxSW.precache([]);
 
-workboxSW.router.registerNavigationRoute('index.html');
+// Register main route for all navigation links to pages
+workboxSW.router.registerNavigationRoute('index.html', {
+  whitelist: [/./],
+  blacklist: [/img\/.*/, /\.(js|css)/]
+});
+
+// Cache AMP libraries
 workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
 
-// Runtime caching
+// Cache a number of YQL queries, but only for 5 minutes
 workboxSW.router.registerRoute(
-  'https://i.guim.co.uk/img/media/(.*)',
+  'https://query.yahooapis.com/v1/public/(.*)',
+  workboxSW.strategies.cacheFirst({
+    cacheName: 'feeds',
+    cacheExpiration: {
+      maxEntries: 20,
+      maxAgeSeconds: 5 * 60
+    },
+    cacheableResponse: {statuses: [ 0, 200 ]}
+  })
+);
+
+// Cache a number of images
+workboxSW.router.registerRoute(
+  'https://i.guim.co.uk/img/(.*)',
   workboxSW.strategies.cacheFirst({
     cacheName: 'images',
     cacheExpiration: {
@@ -22,11 +41,11 @@ workboxSW.router.registerRoute(
   })
 );
 
+// Make sure new versions of the Service Worker activate immediately
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', () => {
-  // immediately claim the currently connected clients
   self.clients.claim();
 });

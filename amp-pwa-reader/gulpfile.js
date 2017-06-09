@@ -1,9 +1,11 @@
+const DIST_MODE = process.argv[process.argv.length-1] === 'dist';
 
 /* Dependencies */
 let uglifyes = require('uglify-es');
 let composer = require('gulp-uglify/composer');
 const uglify = composer(uglifyes, console);
 const gulp = require('gulp');
+const gutil = require('gulp-util');
 const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
@@ -15,146 +17,110 @@ const fs = require('fs');
 const del = require('del');
 const workboxBuild = require('workbox-build');
 
-/* Working Files */
-const initScriptsGlob = [
-  'src/js/History.js',
-  'src/js/Backend.js',
-  'src/js/backends/TheGuardian.js',
-  'src/js/backends/CNET.js',
-  'src/js/ShadowReader.js',
-  'src/js/init.js'
-];
-const mainScriptsGlob = [
-  'src/js/FeedReader.js',
-  'src/js/Nav.js',
-  'src/js/Card.js',
-  'src/js/Article.js'
-];
-const stylesGlob = 'src/sass/**/*.scss';
-const imagesGlob = 'src/img/**/*';
-const pagesGlob = 'src/*.*';
 
-gulp.task('inject-asset-manifest', ['clean-tmp'], function (cb) {
+const paths = {
+  styles: {
+    src: 'src/sass/**/*.scss',
+    dest: 'dist/'
+  },
+  page: {
+    src: 'src/*.*',
+    dest: 'dist/'
+  },
+  init: {
+    src: [
+      'src/js/History.js',
+      'src/js/Backend.js',
+      'src/js/backends/TheGuardian.js',
+      'src/js/backends/CNET.js',
+      'src/js/ShadowReader.js',
+      'src/js/init.js'
+    ],
+    dest: '.tmp/'
+  },
+  main: {
+    src: [
+      'src/js/FeedReader.js',
+      'src/js/Nav.js',
+      'src/js/Card.js',
+      'src/js/Article.js'
+    ],
+    dest: '.tmp/'
+  },
+  images: {
+    src: 'src/img/**/*',
+    dest: 'dist/img'
+  }
+}
 
-  workboxBuild.injectManifest({
+function copy() {
+  gulp.src(paths.images.src)
+    .pipe(gulp.dest(paths.images.dest));
+  return gulp.src(paths.page.src)
+    .pipe(gulp.dest(paths.page.dest));
+}
+
+function styles() {
+  return gulp.src(paths.styles.src)
+    .pipe(plumber())
+    .pipe(sass(DIST_MODE ? { outputStyle: 'compressed' } : {}))
+    .pipe(autoprefixer({ browsers: ['> 10%'] }))
+    .pipe(gulp.dest(paths.styles.dest));
+}
+
+function scriptsInit() {
+  return gulp.src(paths.init.src)
+    .pipe(plumber())
+    .pipe(concat('init.js'))
+    .pipe(DIST_MODE ? uglify() : gutil.noop())
+    .pipe(gulp.dest(paths.init.dest));
+}
+
+function scriptsMain() {
+  return gulp.src(paths.main.src)
+    .pipe(plumber())
+    .pipe(concat('main.js'))
+    .pipe(DIST_MODE ? uglify() : gutil.noop())
+    .pipe(gulp.dest(paths.main.dest));
+}
+
+function inline() {
+
+  let css = fs.existsSync('./dist/main.css');
+  let init = fs.existsSync('./.tmp/init.js');
+  let main = fs.existsSync('./.tmp/main.js');
+
+  return gulp.src('src/index.html')
+    .pipe(css ?
+      replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')) :
+      gutil.noop())
+    .pipe(init ?
+      replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./.tmp/init.js', 'utf8')) :
+      gutil.noop())
+    .pipe(main ?
+      replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./.tmp/main.js', 'utf8')) :
+      gutil.noop())
+    .pipe(gulp.dest('dist/'));
+}
+
+function clean() {
+  return del([
+    '.tmp',
+    'dist/main.css'
+  ]);
+}
+
+function injectManifest() {
+  return workboxBuild.injectManifest({
     globDirectory: './dist/',
     globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
     globIgnores: ['admin.html'],
     swSrc: './src/sw.js',
     swDest: './dist/sw.js'
-  })
-  .then(() => {
-    cb();
   });
+}
 
-});
-
-gulp.task('inject-asset-manifest-dist', ['clean-tmp-dist'], function (cb) {
-
-  workboxBuild.injectManifest({
-    globDirectory: './dist/',
-    globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
-    globIgnores: ['admin.html'],
-    swSrc: './src/sw.js',
-    swDest: './dist/sw.js'
-  })
-  .then(() => {
-    cb();
-  });
-
-});
-
-gulp.task('copy', function() {
-  gulp.src(pagesGlob)
-    .pipe(gulp.dest('dist/'));
-
-  gulp.src(imagesGlob)
-    .pipe(gulp.dest('dist/img'));
-});
-
-gulp.task('inline', [ 'sass', 'scripts-init', 'scripts-main', 'copy' ], function() {
-  gulp.src('src/index.html')
-    .pipe(replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')))
-    .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./dist/tmp/init.js', 'utf8')))
-    .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./dist/tmp/main.js', 'utf8')))
-    .pipe(gulp.dest('dist/'));
-});
-
-gulp.task('inline-dist', [ 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'copy' ], function() {
-  gulp.src('src/index.html')
-    .pipe(replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')))
-    .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./dist/tmp/init.js', 'utf8')))
-    .pipe(replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./dist/tmp/main.js', 'utf8')))
-    .pipe(gulp.dest('dist/'));
-});
-
-gulp.task('clean-tmp', ['inline'], function() {
-  return del([
-    'dist/tmp',
-    'dist/main.css'
-  ]);
-});
-
-gulp.task('clean-tmp-dist', ['inline-dist'], function() {
-  return del([
-    'dist/tmp',
-    'dist/main.css'
-  ]);
-});
-
-// Sass
-gulp.task('sass', function() {
-  return gulp.src(stylesGlob)
-    .pipe(plumber())
-    .pipe(sass())
-    .pipe(autoprefixer({ browsers: ['> 10%'] }))
-    .pipe(gulp.dest('dist/'));
-});
-
-gulp.task('sass-dist', function() {
-  return gulp.src(stylesGlob)
-    .pipe(plumber())
-    .pipe(sass({ outputStyle: 'compressed' }))
-    .pipe(autoprefixer({ browsers: ['> 10%'] }))
-    .pipe(gulp.dest('dist/'));
-});
-
-gulp.task('scripts-init', function() {
-  return gulp.src(initScriptsGlob)
-    .pipe(plumber())
-    .pipe(concat('init.js'))
-    .pipe(gulp.dest('dist/tmp/'));
-});
-
-gulp.task('scripts-init-dist', function() {
-  return gulp.src(initScriptsGlob)
-    .pipe(plumber())
-    .pipe(concat('init.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist/tmp/'));
-});
-
-gulp.task('scripts-main', function() {
-  return gulp.src(mainScriptsGlob)
-    .pipe(plumber())
-    .pipe(concat('main.js'))
-    .pipe(gulp.dest('dist/tmp/'));
-});
-
-gulp.task('scripts-main-dist', function() {
-  return gulp.src(mainScriptsGlob)
-    .pipe(plumber())
-    .pipe(concat('main.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist/tmp/'));
-});
-
-gulp.task('reload', ['clean-tmp'], function() {
-  return browserSync.reload();
-});
-
-// Watch files For changes
-gulp.task('watch', function() {
+function watch() {
 
   browserSync.init({
     server: {
@@ -164,14 +130,17 @@ gulp.task('watch', function() {
     ui: false
   });
 
-  gulp.watch(initScriptsGlob, [ 'scripts-init', 'scripts-main', 'clean-tmp', 'reload' ]);
-  gulp.watch(mainScriptsGlob, [ 'scripts-init', 'scripts-main', 'clean-tmp', 'reload' ]);
-  gulp.watch(stylesGlob, [ 'sass', 'clean-tmp', 'reload' ]);
-  gulp.watch(pagesGlob, [ 'copy', 'clean-tmp', 'reload' ]);
-  gulp.watch(imagesGlob, [ 'copy', 'clean-tmp', 'reload' ]);
+  gulp.watch(paths.init.src, gulp.series(scriptsInit, inline));
+  gulp.watch(paths.main.src, gulp.series(scriptsMain, inline));
+  gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
+  gulp.watch(paths.page.src, dist);
+  gulp.watch(paths.images.src, copy);
 
-});
+}
 
-// Default Task
-gulp.task('default', [ 'copy', 'sass', 'scripts-init', 'scripts-main', 'inline', 'clean-tmp', 'inject-asset-manifest', 'watch' ]);
-gulp.task('dist', [ 'copy', 'sass-dist', 'scripts-init-dist', 'scripts-main-dist', 'inline-dist', 'clean-tmp-dist', 'inject-asset-manifest-dist' ]);
+var dist = gulp.series(gulp.parallel(copy, styles, scriptsInit, scriptsMain), inline, injectManifest);
+var dev = gulp.series(dist, watch);
+
+gulp.task('dev', dev);
+gulp.task('dist', dist);
+gulp.task('default', dev);

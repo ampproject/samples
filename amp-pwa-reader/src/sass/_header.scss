@@ -80,14 +80,12 @@ header {
 }
 
 .show-article-skeleton .hamburger .hamburger-inner::before,
-.article-showing .hamburger .hamburger-inner::before,
 .article-shown .hamburger .hamburger-inner::before,
 .nav-shown .hamburger .hamburger-inner::before {
   transform: translate3d(-8px, 3px, 0) rotate(-45deg) scale(0.7, 1);
 }
 
 .show-article-skeleton .hamburger .hamburger-inner::after,
-.article-showing .hamburger .hamburger-inner::after,
 .article-shown .hamburger .hamburger-inner::after,
 .nav-shown .hamburger .hamburger-inner::after {
   transform: translate3d(-8px, -3px, 0) rotate(45deg) scale(0.7, 1);
@@ -118,7 +116,8 @@ header {
     height: 3em;
     align-items: flex-end;
     justify-content: center;
-    margin-top: -2.3em;
+    margin-top: -1.3em;
+    transform: translateY(-1em);
     transition: transform var(--animation-speed) ease-out;
 
   img {
@@ -142,7 +141,6 @@ header {
     display: none;
   }
 
-  .article-showing .hamburger,
   .article-shown .hamburger {
     display: block;
   }

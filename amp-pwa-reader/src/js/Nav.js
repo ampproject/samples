@@ -149,7 +149,7 @@ class Nav {
 
     // set current cards to loading
     for (let card of this.cards) {
-      card.wait();
+      card.elem.classList.add('loading');
     }
 
     // hide menu

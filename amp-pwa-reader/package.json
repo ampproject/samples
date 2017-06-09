@@ -1,6 +1,6 @@
 {
-  "name": "amp-pwa-reader",
-  "version": "1.0.0",
+  "name": "ShadowReader",
+  "version": "0.0.1",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "browser-sync": "*",
-    "connect-history-api-fallback": "^1.3.0",
+    "connect-history-api-fallback": "*",
     "del": "*",
     "gulp": "*",
     "gulp-autoprefixer": "*",
@@ -22,6 +22,7 @@
     "gulp-uglify": "*",
     "uglify-es": "*",
     "workbox-build": "^1.0.1",
-    "workbox-sw": "^1.0.1"
+    "workbox-sw": "^1.0.1",
+    "gulp": "github:gulpjs/gulp#4.0"
   }
 }
