@@ -94,6 +94,9 @@
     transition: transform var(--animation-speed) ease-out,
                 opacity var(--animation-speed) ease-out;
 
+    color: inherit;
+    text-decoration: inherit;
+
     h2 {
       margin: 3em 0 0 0;
       font-weight: normal;

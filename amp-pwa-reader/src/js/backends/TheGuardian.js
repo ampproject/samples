@@ -4,7 +4,7 @@ class TheGuardian extends Backend {
     super({
       appTitle: 'Guardian',
       ampEndpoint: 'https://amp.theguardian.com/',
-      defaultCategory: 'us/travel',
+      defaultCategory: 'us',
       categories: {
         'us': 'Top News',
         'us-news/us-politics': 'Politics',

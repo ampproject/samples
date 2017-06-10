@@ -76,12 +76,12 @@ class Card {
     let elem = this.elem;
     elem.classList.add('full');
 
-    var offsetLeft = elem.offsetLeft + elem.offsetParent.offsetLeft;
-    var offsetTop = (elem.offsetTop + elem.offsetParent.offsetTop) - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
-    var currentWidth = this.naturalDimensions.width;
-    var currentHeight = this.naturalDimensions.height;
-    var newWidth = innerWidth;
-    var newHeight = newWidth * this.imageData.ratio;
+    let offsetLeft = elem.offsetLeft + elem.offsetParent.offsetLeft;
+    let offsetTop = (elem.offsetTop + elem.offsetParent.offsetTop) - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
+    let currentWidth = this.naturalDimensions.width;
+    let currentHeight = this.naturalDimensions.height;
+    let newWidth = innerWidth;
+    let newHeight = newWidth * this.imageData.ratio;
 
     this.currentTransform = {
       scaleX: (newWidth / currentWidth),
@@ -125,7 +125,7 @@ class Card {
   create() {
 
     var elem = document.createElement('div'),
-      innerElem = document.createElement('div'),
+      innerElem = document.createElement('a'),
       img = document.createElement('img'),
       h2 = document.createElement('h2'),
       p = document.createElement('p');
@@ -133,6 +133,7 @@ class Card {
     h2.innerHTML = this.data.title;
     p.innerHTML = this.data.description;
     innerElem.className = 'inner';
+    innerElem.href = this.data.link;
     elem.className = 'card';
     img.src = this.data.image;
 
@@ -211,8 +212,14 @@ class Card {
 
   bind() {
     /* use click event on purpose here, to not interfere with panning */
-    this.elem.addEventListener('click', () => {
-      !this.elem.classList.contains('full') && this.activate();
+    this.innerElem.addEventListener('click', (event) => {
+      // we only activate a card if we're on a narrow resolution, otherwise
+      // we simply navigate to the link for now.
+      // TODO: Do fancy grid based animation for Desktop.
+      if (!this.elem.classList.contains('full') && innerWidth < 768) {
+        this.activate();
+        event.preventDefault();
+      }
     });
   }
 
