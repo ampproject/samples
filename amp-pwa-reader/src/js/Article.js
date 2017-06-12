@@ -16,17 +16,24 @@ class Article {
       xhr.open('GET', 'https://seed-octagon.glitch.me/' + encodeURIComponent(this.url), true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
-      xhr.onload = () => resolve(xhr.responseXML); // .responseXML contains a ready-to-use Document object
+      xhr.onload = () => {
+        var isAMP = xhr.responseXML.documentElement.hasAttribute('amp') || xhr.responseXML.documentElement.hasAttribute('⚡');
+        if (isAMP) {
+          resolve(xhr.responseXML);
+        } else {
+          reject('Article does not have an AMP version.');
+        }
+      }; // .responseXML contains a ready-to-use Document object
       xhr.send();
     });
 
   }
 
   load() {
-    return this.doc ? new Promise(resolve => resolve()) : this.fetch().then(doc => {
+    return (this.doc ? new Promise(resolve => resolve()) : this.fetch().then(doc => {
       this.doc = doc;
       this.sanitize();
-    });
+    }));
   }
 
   clear() {

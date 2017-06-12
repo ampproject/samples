@@ -202,6 +202,10 @@ class Card {
         this.animate();
         this.article.show();
         this.hijackMenuButton();
+      })
+      .catch(error => {
+        this.elem.classList.remove('loading');
+        this.elem.classList.add('error');
       });
   }
 
