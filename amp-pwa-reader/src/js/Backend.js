@@ -13,7 +13,7 @@ class Backend {
    */
 
   static get(className) {
-    return Backend.classes[className];
+    return Backend.classes[className.toLowerCase()];
   }
 
   getCategoryTitle(category) {
@@ -40,6 +40,10 @@ class Backend {
     return entry.title;
   }
 
+  getRSSDescription(entry) {
+    return entry.description.replace(/<[^>]+>/ig,'');
+  }
+
   getRSSImage(entry) {
     return entry.thumbnail;
   }
@@ -52,8 +56,8 @@ class Backend {
     /*return url.replace('www.', 'amp.');*/
   }
 
-  getCategoryFromAMPUrl(/*url*/) {
-    return this.defaultCategory;
+  getAMPUrlComponent(articleUrl) {
+    return articleUrl.replace(this.ampEndpoint, '');
   }
 
   getArticleData(/*doc*/) {

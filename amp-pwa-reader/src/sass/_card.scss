@@ -62,8 +62,6 @@
   }
 
   &:first-child {
-      background-color: #253650;
-      color: #fff;
       min-height: 50vh;
 
       &::before {
@@ -138,6 +136,7 @@
 
     /* need to force font-size, since inner styles might not play nice..*/
     font-size: 16px;
+    background-color: #eee;
 
     &:hover {
       transform: none;

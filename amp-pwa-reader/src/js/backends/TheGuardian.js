@@ -2,20 +2,20 @@ class TheGuardian extends Backend {
 
   constructor() {
     super({
-      appTitle: 'Guardian',
+      appTitle: 'TheGuardian',
       ampEndpoint: 'https://amp.theguardian.com/',
       defaultCategory: 'us',
       categories: {
         'us': 'Top News',
-        'us-news/us-politics': 'Politics',
+        'us-news--us-politics': 'Politics',
         'world': 'World',
         'commentisfree': 'Opinion',
-        'us/technology': 'Tech',
-        'us/culture': 'Arts',
-        'us/lifeandstyle': 'Lifestyle',
+        'us--technology': 'Tech',
+        'us--culture': 'Arts',
+        'us--lifeandstyle': 'Lifestyle',
         'fashion': 'Fashion',
-        'us/business': 'Business',
-        'us/travel': 'Travel'
+        'us--business': 'Business',
+        'us--travel': 'Travel'
       }
     });
   }
@@ -25,7 +25,7 @@ class TheGuardian extends Backend {
    */
 
   getRSSUrl(category) {
-    return 'https://www.theguardian.com/' + category + '/rss';
+    return 'https://www.theguardian.com/' + category.replace('--', '/') + '/rss';
   }
 
   getRSSTitle(entry) {
@@ -44,35 +44,8 @@ class TheGuardian extends Backend {
     return url.replace('www.', 'amp.');
   }
 
-  getCategoryFromAMPUrl(url) {
-    var path = url.replace(this.getAMPEndpoint(), '').replace(/^\/*/, '').replace(/\/*$/, '');
-
-    if (path.startsWith('us-news/'))
-      return 'us-news/us-politics';
-
-    if (path.startsWith('commentisfree/'))
-      return 'commentisfree';
-
-    if (path.startsWith('technology/'))
-      return 'us/technology';
-
-    if (/^(tv-and-radio|film|music|culture)/.test(path)) {
-      return 'us/culture';
-    }
-
-    if (/^(lifeandstyle|football)/.test(path))
-      return 'us/lifeandstyle';
-
-    if (path.startsWith('fashion/'))
-      return 'fashion';
-
-    if (path.startsWith('business/'))
-      return 'us/business';
-
-    if (path.startsWith('travel/'))
-      return 'us/travel';
-
-    return null;
+  constructAMPUrl(category, path) {
+    return this.ampEndpoint + path;
   }
 
   sanitize(doc) {
@@ -107,4 +80,4 @@ class TheGuardian extends Backend {
 
 }
 
-Backend.classes['TheGuardian'] = TheGuardian;
+Backend.classes['theguardian'] = TheGuardian;

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <link rel="manifest" href="/manifest.json">
-  <title>The Shadow Guardian</title>
+  <title>The Shadow Reader</title>
   <style>/* REPLACED-INLINE-STYLESHEET */</style>
 
   <!-- Asynchronously load the AMP-with-Shadow-DOM runtime library. -->
@@ -13,7 +13,9 @@
 <body>
 
 <!-- Load critical state-parsing JS to show the right skeleton UI at the right time -->
-<script>/* REPLACED-INLINE-JAVASCRIPT-INIT */</script>
+<script>
+/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('show-article-skeleton');
+</script>
 
   <div class="wrapper">
 
@@ -25,15 +27,15 @@
         </span>
       </button>
 
-      <img class="guardian" src="/img/guardian.svg" alt="Guardian Logo" width="160" height="30">
-      <img class="cnet" src="https://www.cnet.com/bundles/cnetcss/images/core/redball/logo_192.png" alt="Guardian Logo" width="40" height="40">
+      <img class="theguardian" src="/img/guardian.svg" alt="Guardian" width="160" height="30">
+      <img class="lifehacker" src="/img/lifehacker.svg" alt="Lifehacker" width="128" height="32">
 
       <button class="backend-switcher"></button>
     </header>
 
     <div class="backend-selector">
-      <a href="#" data-backend="TheGuardian"><img class="guardian" src="/img/guardian.svg" alt="Guardian Logo" width="160" height="30"></a>
-      <a href="#" data-backend="CNET"><img class="cnet" src="https://www.cnet.com/bundles/cnetcss/images/core/redball/logo_192.png" alt="Guardian Logo" width="40" height="40"></a>
+      <a href="#" data-backend="TheGuardian"><img class="theguardian" src="/img/guardian.svg" alt="Guardian Logo" width="160" height="30"></a>
+      <a href="#" data-backend="Lifehacker"><img class="lifehacker" src="/img/lifehacker.svg" alt="Lifehacker" width="128" height="32"></a>
     </div>
 
     <ul class="navigation">
@@ -73,6 +75,6 @@
 
   </div>
 
-<script>/* REPLACED-INLINE-JAVASCRIPT-MAIN */</script>
+<script>/* REPLACED-INLINE-JAVASCRIPT */</script>
 </body>
 </html>

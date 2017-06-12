@@ -62,49 +62,49 @@ class Nav {
       .then(() => article.render())
       .then(() => {
 
-      // passing true here ensures that the state is overwritten again..
-      article.show(true).then(() => {
-        // hide the skeleton UI
-        // INVESTIGATE: For some reason needs a delay..
-        setTimeout(() => {
-          document.body.classList.remove('show-article-skeleton');
-        }, 100);
+        // passing true here ensures that the state is overwritten again..
+        article.show(true).then(() => {
+          // hide the skeleton UI
+          // INVESTIGATE: For some reason needs a delay..
+          setTimeout(() => {
+            document.body.classList.remove('show-article-skeleton');
+          }, 100);
 
-      });
+        });
 
-      // the return button in this state is a special case, and can't animate (yet)
-      this.hamburgerReturnAction = () => {
-        article.card && article.card.animateBack();
-        article.hide();
-        shadowReader.history.navigate(null);
-      };
+        // the return button in this state is a special case, and can't animate (yet)
+        this.hamburgerReturnAction = () => {
+          article.card && article.card.animateBack();
+          article.hide();
+          shadowReader.history.navigate(null);
+        };
 
-      // switch to the correct category only after the article is loaded for max perf
-      this.switchCategory(state.category).then(() => {
-        // now that the cards have been lazily loaded, attempt to reconnect the
-        // already loaded article with the proper card
-        for (let card of this.cards) {
-          if (card.article.url === article.url) {
-            card.ready(() => {
+        // switch to the correct category only after the article is loaded for max perf
+        this.switchCategory(state.category).then(() => {
+          // now that the cards have been lazily loaded, attempt to reconnect the
+          // already loaded article with the proper card
+          for (let card of this.cards) {
+            if (card.article.url === article.url) {
+              card.ready(() => {
 
-              // link our custom initialized article with our card
-              article.card = card;
-              card.article = article;
+                // link our custom initialized article with our card
+                article.card = card;
+                card.article = article;
 
-              // if the card is somewhere outside the scroll position, we need
-              // to set it to a place where the card is actually visible.
-              article._mainScrollY = Math.max(0, card.elem.offsetTop - innerHeight / 3);
+                // if the card is somewhere outside the scroll position, we need
+                // to set it to a place where the card is actually visible.
+                article._mainScrollY = Math.max(0, card.elem.offsetTop - innerHeight / 3);
 
-              // apply the 'zoomed-in' state on the card behind the scenes, so
-              // we can animate back when the user clicks back
-              // TODO: stupid to call this method animate..
-              article.card.animate(false, -article._mainScrollY);
-            });
+                // apply the 'zoomed-in' state on the card behind the scenes, so
+                // we can animate back when the user clicks back
+                // TODO: stupid to call this method animate..
+                article.card.animate(false, -article._mainScrollY);
+              });
+            }
           }
-        }
-      });
+        });
 
-    });
+      });
 
   }
 

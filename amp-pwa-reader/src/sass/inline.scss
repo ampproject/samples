@@ -1,5 +1,9 @@
 @import '_config.scss';
 @import '_helpers.scss';
 
+body > *:not(.card) {
+    background-color: #fff;
+}
+
 @import '_performance.scss';
 @import '_card.scss';

@@ -1,4 +1,7 @@
-.backend-cnet {
+$name: lifehacker;
+$primary-color: #94b330;
+
+.backend-#{$name} {
 
   body {
     background: #fff;
@@ -12,28 +15,34 @@
   }
 
   .backend-selector {
-    img:not(.cnet) {
+    background: #b1b1b1;
+    img:not(.#{$name}) {
       display: block;
     }
   }
 
   header {
-    background: linear-gradient(to bottom, #d60000, #ad0101);
-    img.cnet {
+    background: linear-gradient(to bottom, #ffffff, #efefef);
+    box-shadow: 0px 2px 12px rgba(169, 169, 169, 0.7);
+    img.#{$name} {
       display: block;
     }
   }
 
   .navigation {
-    background: #444444;
+    background: #fff;
+    border-right: 1px solid #000;
+    li a {
+      color: #000;
+    }
     li a.active {
-      color: #ffffff;
-      background: #cf0000;
+      color: #303c09;
+      background: $primary-color;
     }
   }
 
   .hamburger {
-    background-color: #000000;
+    background-color: $primary-color;
   }
 
   .card {

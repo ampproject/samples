@@ -92,17 +92,31 @@ header {
 }
 
 .backend-switcher {
-  width: 0;
-  height: 0;
   border: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-top: 16px solid rgba(0, 0, 0, 0.26);
   background: 0;
   margin: 0;
   padding: 0;
   position: absolute;
-  right: 2em;
+  right: 1em;
+  width: 4em;
+  height: 4em;
+  display: flex;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    border: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 16px solid rgba(0, 0, 0, 0.26);
+  }
+}
+
+.article-shown {
+  .backend-switcher {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .backend-selector {

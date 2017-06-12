@@ -1,12 +1,14 @@
-.backend-guardian {
+$name: theguardian;
+
+.backend-#{$name} {
   header {
-    img.guardian {
+    img.#{$name} {
       display: block;
       margin-top: 6px;
     }
   }
   .backend-selector {
-    img:not(.guardian) {
+    img:not(.#{$name}) {
       display: block;
     }
   }

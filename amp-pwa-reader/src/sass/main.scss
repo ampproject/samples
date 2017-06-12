@@ -70,8 +70,7 @@ main {
 @import '_header.scss';
 @import '_nav.scss';
 
-@import 'backends/_cnet.scss';
-@import 'backends/_guardian.scss';
+@import 'backends/*.scss';
 
 
 

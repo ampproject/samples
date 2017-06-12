@@ -1,6 +1,9 @@
-// Create app singleton
-var shadowReader = new ShadowReader({
-  backend: TheGuardian
+// Detect the currently used 'backend'
+let detectedBackend = location.pathname.match(/^\/([^\/]+)/);
+
+// Create app singleton as global
+window.shadowReader = new ShadowReader({
+  backend: detectedBackend ? Backend.get(detectedBackend[1]) : Lifehacker
 });
 
 // Initialize fully when DOM is ready

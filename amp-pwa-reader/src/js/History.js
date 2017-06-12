@@ -2,7 +2,7 @@ class HistoryStack {
 
   constructor(backend) {
     this.backend = backend;
-    this.state = (history.state && history.state.category) ? history.state : this.parseUrlIntoState();
+    this.state = /*(history.state && history.state.category) ? history.state : */this.parseUrlIntoState();
 
     // if the category doesn't exist (e.g. we came from a different backend)
     // return the default one.
@@ -10,29 +10,18 @@ class HistoryStack {
       this.state.category = this.backend.defaultCategory;
       history.replaceState({
         category: this.state.category
-      }, '', '/' + this.state.category);
+      }, '', this.constructUrl());
     }
-
-    /*
-     * You'll notice there's no other DOM foolery in this file. So why here?
-     * This file is initialized right after the body opens, so if there's an
-     * article to show later on, we want to intitialize the skeleton UI for
-     * perceived performance as soon as possible.
-     */
-    if (this.state.articleUrl) {
-      document.body.classList.add('show-article-skeleton');
-    }
-
   }
 
   constructUrl(articleUrl) {
-    return '/' + (articleUrl ? articleUrl.replace(this.backend.ampEndpoint, '') : shadowReader.nav.category);
+    return '/' + this.backend.appTitle.toLowerCase() + '/' + ((window.shadowReader && shadowReader.nav.category) || this.state.category) + (articleUrl ? '/' + this.backend.getAMPUrlComponent(articleUrl) : '');
   }
 
   parseUrlIntoState() {
 
-    // grab the pathname from the url (minus slashes at the beginning and end)
-    var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '');
+    // grab the pathname from the url (minus slashes at the beginning and end, and the backend)
+    var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '').replace(this.backend.appTitle.toLowerCase() + '/', '');
     var state = {
       category: this.backend.defaultCategory,
       articleUrl: null
@@ -43,8 +32,8 @@ class HistoryStack {
       state.category = path;
     } else if (path) {
       // now we can be reasonably sure the path is a full article url
-      state.articleUrl = this.backend.ampEndpoint + path;
-      state.category = this.backend.getCategoryFromAMPUrl(state.articleUrl);
+      state.category = path.split('/')[0];
+      state.articleUrl = this.backend.constructAMPUrl(state.category, path.substr(state.category.length+1));
     }
 
     return state;
@@ -70,9 +59,8 @@ class HistoryStack {
           category: shadowReader.nav.category,
           articleUrl: articleUrl
         }, '', newUrl);
-      } else {
-        return;
       }
+      return;
     }
 
     // set a new browser history entry and update the URL

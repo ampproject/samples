@@ -10,6 +10,7 @@ const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
+const sassGlob = require('gulp-sass-glob');
 const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
@@ -27,19 +28,13 @@ const paths = {
     src: 'src/*.*',
     dest: 'dist/'
   },
-  init: {
+  scripts: {
     src: [
       'src/js/History.js',
       'src/js/Backend.js',
-      'src/js/backends/TheGuardian.js',
-      'src/js/backends/CNET.js',
+      'src/js/backends/*.js',
       'src/js/ShadowReader.js',
-      'src/js/init.js'
-    ],
-    dest: '.tmp/'
-  },
-  main: {
-    src: [
+      'src/js/init.js',
       'src/js/FeedReader.js',
       'src/js/Nav.js',
       'src/js/Card.js',
@@ -63,42 +58,31 @@ function copy() {
 function styles() {
   return gulp.src(paths.styles.src)
     .pipe(plumber())
+    .pipe(sassGlob())
     .pipe(sass(DIST_MODE ? { outputStyle: 'compressed' } : {}))
     .pipe(autoprefixer({ browsers: ['> 10%'] }))
     .pipe(gulp.dest(paths.styles.dest));
 }
 
-function scriptsInit() {
-  return gulp.src(paths.init.src)
+function scripts() {
+  return gulp.src(paths.scripts.src)
     .pipe(plumber())
-    .pipe(concat('init.js'))
+    .pipe(concat('scripts.js'))
     .pipe(DIST_MODE ? uglify() : gutil.noop())
-    .pipe(gulp.dest(paths.init.dest));
-}
-
-function scriptsMain() {
-  return gulp.src(paths.main.src)
-    .pipe(plumber())
-    .pipe(concat('main.js'))
-    .pipe(DIST_MODE ? uglify() : gutil.noop())
-    .pipe(gulp.dest(paths.main.dest));
+    .pipe(gulp.dest(paths.scripts.dest));
 }
 
 function inline() {
 
   let css = fs.existsSync('./dist/main.css');
-  let init = fs.existsSync('./.tmp/init.js');
-  let main = fs.existsSync('./.tmp/main.js');
+  let scripts = fs.existsSync('./.tmp/scripts.js');
 
   return gulp.src('src/index.html')
     .pipe(css ?
       replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')) :
       gutil.noop())
-    .pipe(init ?
-      replace('/* REPLACED-INLINE-JAVASCRIPT-INIT */', fs.readFileSync('./.tmp/init.js', 'utf8')) :
-      gutil.noop())
-    .pipe(main ?
-      replace('/* REPLACED-INLINE-JAVASCRIPT-MAIN */', fs.readFileSync('./.tmp/main.js', 'utf8')) :
+    .pipe(scripts ?
+      replace('/* REPLACED-INLINE-JAVASCRIPT */', fs.readFileSync('./.tmp/scripts.js', 'utf8')) :
       gutil.noop())
     .pipe(gulp.dest('dist/'));
 }
@@ -130,15 +114,14 @@ function watch() {
     ui: false
   });
 
-  gulp.watch(paths.init.src, gulp.series(scriptsInit, inline));
-  gulp.watch(paths.main.src, gulp.series(scriptsMain, inline));
+  gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, copy);
 
 }
 
-var dist = gulp.series(gulp.parallel(copy, styles, scriptsInit, scriptsMain), inline, injectManifest);
+var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, injectManifest);
 var dev = gulp.series(dist, watch);
 
 gulp.task('dev', dev);

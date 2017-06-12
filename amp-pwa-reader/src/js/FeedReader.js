@@ -18,7 +18,7 @@ class FeedReader {
         return entries.map(entry => {
           return {
             title: shadowReader.backend.getRSSTitle(entry),
-            description: entry.description,
+            description: shadowReader.backend.getRSSDescription(entry),
             link: entry.link,
             image: shadowReader.backend.getRSSImage(entry)
           };
