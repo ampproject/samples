@@ -70,9 +70,12 @@ class Backend {
   }
 
   extractSchemaData(doc) {
-    var schemaData = doc.querySelector('script[type="application/ld+json"]');
-    if (schemaData) {
-      return JSON.parse(schemaData.textContent);
+    var schemaData = doc.querySelectorAll('script[type="application/ld+json"]');
+    for (let schema of schemaData) {
+      let parsedSchema = JSON.parse(schema.textContent);
+      if (/WebPage|NewsArticle/.test(parsedSchema['@type'])) {
+        return parsedSchema;
+      }
     }
     return null;
   }

@@ -2,7 +2,7 @@ class HistoryStack {
 
   constructor(backend) {
     this.backend = backend;
-    this.state = /*(history.state && history.state.category) ? history.state : */this.parseUrlIntoState();
+    this.state = (history.state && history.state.category) ? history.state : this.parseUrlIntoState();
 
     // if the category doesn't exist (e.g. we came from a different backend)
     // return the default one.
