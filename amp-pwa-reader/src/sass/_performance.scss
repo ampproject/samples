@@ -1,13 +1,13 @@
-.navigation {
+.sr-navigation {
   contain: strict;
   will-change: transform;
 }
 
-.backend-selector {
+.sr-backend-selector {
   will-change: transform;
 }
 
-.category {
+.sr-category {
   contain: style;
   will-change: transform;
 }
@@ -16,17 +16,17 @@ main {
   will-change: transform;
 }
 
-.card,
-.card img {
+.sr-card,
+.sr-card img {
   contain: content;
   will-change: transform;
 }
 
-.card .inner {
+.sr-card .sr-inner {
   will-change: transform;
 }
 
-.hamburger {
+.sr-hamburger {
   contain: content;
   will-change: transform;
 }

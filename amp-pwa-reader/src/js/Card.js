@@ -41,7 +41,7 @@ class Card {
     let centerY = 'translateY(' + (-(((height * scaleX) - elemHeight) / 2)) + 'px)';
 
     if (animate === false) {
-      this.elem.classList.add('disable-transitions');
+      this.elem.classList.add('sr-disable-transitions');
     }
 
     // rescale image
@@ -57,7 +57,7 @@ class Card {
       + 'scaleY(' + (1 / this.currentTransform.scaleY) + ')'; // normalizing
 
     // if the paragraph was hidden before, we need to slide it in..
-    if (!this.elem.matches('.card:first-child') && toFullView) {
+    if (!this.elem.matches('.sr-card:first-child') && toFullView) {
       let paragraph = this.elem.children[1].children[1];
       this.innerElem.style.transform += ' translateY(-' + (paragraph.offsetHeight+16) + 'px)'; // 16px = 1em
     }
@@ -65,7 +65,7 @@ class Card {
     // back to transitions after next render tick if prev disabled..
     if (animate === false) {
       requestAnimationFrame(() => {
-        this.elem.classList.remove('disable-transitions');
+        this.elem.classList.remove('sr-disable-transitions');
       });
     }
 
@@ -74,7 +74,7 @@ class Card {
   animate(dontAnimate, scrollOffset) {
 
     let elem = this.elem;
-    elem.classList.add('full');
+    elem.classList.add('sr-full');
 
     let offsetLeft = elem.offsetLeft + elem.offsetParent.offsetLeft;
     let offsetTop = (elem.offsetTop + elem.offsetParent.offsetTop) - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
@@ -106,7 +106,7 @@ class Card {
 
   animateBack() {
 
-    this.elem.classList.remove('full');
+    this.elem.classList.remove('sr-full');
 
     // animate to the right height
     this.elem.style.transform = '';
@@ -132,9 +132,9 @@ class Card {
 
     h2.innerHTML = this.data.title;
     p.innerHTML = this.data.description;
-    innerElem.className = 'inner';
+    innerElem.className = 'sr-inner';
     innerElem.href = this.data.link;
-    elem.className = 'card';
+    elem.className = 'sr-card';
     img.src = this.data.image;
 
     // if we're in headless mode, that means the Card is initialized purely to
@@ -188,24 +188,21 @@ class Card {
   activate() {
 
     // add loading spinner
-    this.elem.classList.add('loading');
+    this.elem.classList.add('sr-loading');
 
     this.article.load()
+      .then(() => this.article.render())
       .then(() => {
-        return this.article.render();
-      })
-      .then(() => {
-
         // remove loading spinner
-        this.elem.classList.remove('loading');
+        this.elem.classList.remove('sr-loading');
 
         this.animate();
         this.article.show();
         this.hijackMenuButton();
       })
       .catch(error => {
-        this.elem.classList.remove('loading');
-        this.elem.classList.add('error');
+        this.elem.classList.remove('sr-loading');
+        this.elem.classList.add('sr-error');
       });
   }
 
@@ -220,7 +217,7 @@ class Card {
       // we only activate a card if we're on a narrow resolution, otherwise
       // we simply navigate to the link for now.
       // TODO: Do fancy grid based animation for Desktop.
-      if (!this.elem.classList.contains('full') && innerWidth < 768) {
+      if (!this.elem.classList.contains('sr-full') && innerWidth < 768) {
         this.activate();
         event.preventDefault();
       }

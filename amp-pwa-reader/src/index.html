@@ -14,55 +14,55 @@
 
 <!-- Load critical state-parsing JS to show the right skeleton UI at the right time -->
 <script>
-/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('show-article-skeleton');
+/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('sr-show-article-skeleton');
 </script>
 
-  <div class="wrapper">
+  <div class="sr-wrapper">
 
     <header>
 
-      <button class="hamburger">
-        <span class="hamburger-box">
-          <span class="hamburger-inner"></span>
+      <button class="sr-hamburger">
+        <span class="sr-hamburger-box">
+          <span class="sr-hamburger-inner"></span>
         </span>
       </button>
 
       <img class="theguardian" src="/img/guardian.svg" alt="Guardian" width="160" height="30">
       <img class="lifehacker" src="/img/lifehacker.svg" alt="Lifehacker" width="128" height="32">
 
-      <button class="backend-switcher"></button>
+      <button class="sr-backend-switcher"></button>
     </header>
 
-    <div class="backend-selector">
+    <div class="sr-backend-selector">
       <a href="#" data-backend="TheGuardian"><img class="theguardian" src="/img/guardian.svg" alt="Guardian Logo" width="160" height="30"></a>
       <a href="#" data-backend="Lifehacker"><img class="lifehacker" src="/img/lifehacker.svg" alt="Lifehacker" width="128" height="32"></a>
     </div>
 
-    <ul class="navigation">
+    <ul class="sr-navigation">
     </ul>
 
-    <div class="category">
+    <div class="sr-category">
       <h1>Latest in <span>CATEGORY<span></h1>
     </div>
 
     <main>
 
-      <div class="card featured">
-        <div class="inner">
+      <div class="sr-card">
+        <div class="sr-inner">
           <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
           <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
         </div>
       </div>
 
-      <div class="card">
-        <div class="inner">
+      <div class="sr-card">
+        <div class="sr-inner">
           <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
           <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
         </div>
       </div>
 
-      <div class="card">
-        <div class="inner">
+      <div class="sr-card">
+        <div class="sr-inner">
           <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
           <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
         </div>
@@ -70,7 +70,7 @@
 
     </main>
 
-    <div class="article-skeleton-ui">
+    <div class="sr-article-skeleton-ui">
     </div>
 
   </div>

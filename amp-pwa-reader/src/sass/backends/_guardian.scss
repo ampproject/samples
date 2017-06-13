@@ -1,13 +1,13 @@
 $name: theguardian;
 
-.backend-#{$name} {
+.sr-backend-#{$name} {
   header {
     img.#{$name} {
       display: block;
       margin-top: 6px;
     }
   }
-  .backend-selector {
+  .sr-backend-selector {
     img:not(.#{$name}) {
       display: block;
     }

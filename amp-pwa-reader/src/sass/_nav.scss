@@ -1,5 +1,5 @@
 /* Navigation Menu */
-.navigation {
+.sr-navigation {
     width: 80vw;
     height: 100vh;
     max-width: 200px;
@@ -41,25 +41,25 @@
 }
 
 main,
-.category,
-.navigation {
+.sr-category,
+.sr-navigation {
     transition: transform var(--animation-speed) ease-out;
 }
 
-.nav-shown .category,
-.nav-shown main {
+.sr-nav-shown .sr-category,
+.sr-nav-shown main {
     /* nice animation, but sadly too slow on mobile..*/
     /* transform: translateX(200px); */
 }
 
-.nav-shown .navigation {
+.sr-nav-shown .sr-navigation {
     transform: translateX(0);
 }
 
 /* Desktop/Tablet */
 @media (min-width: $mobile-breakpoint) {
 
-    .navigation {
+    .sr-navigation {
         transform: translateX(0);
         z-index: auto;
     }

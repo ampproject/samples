@@ -1,12 +1,16 @@
 /* Article */
 
-.article-shown main {
+.sr-article-shown main {
     max-height: 100vh;
     overflow: hidden;
 }
 
-article,
-.article-skeleton-ui {
+.sr-article {
+
+}
+
+.sr-article,
+.sr-article-skeleton-ui {
     position: absolute;
     top: var(--header-height);
     left: 0;
@@ -14,7 +18,7 @@ article,
     z-index: 5;
 }
 
-.article-skeleton-ui {
+.sr-article-skeleton-ui {
     background: #fff;
     bottom: 0;
     display: none;
@@ -27,6 +31,6 @@ article,
     }
 }
 
-.show-article-skeleton .article-skeleton-ui {
+.sr-show-article-skeleton .sr-article-skeleton-ui {
     display: block;
 }

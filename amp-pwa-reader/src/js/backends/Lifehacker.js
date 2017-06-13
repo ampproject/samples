@@ -56,7 +56,7 @@ class Lifehacker extends Backend {
   }
 
   getAMPUrlComponent(articleUrl) {
-    return articleUrl.replace(/http\:\/\/[a-z]*\.*(lifehacker|kinja)\.com\//, '').replace(/\/amp$/, '');
+    return articleUrl.replace(/http\:\/\/[a-z]*\.*(lifehacker|kinja|jezebel)\.com\//, '').replace(/\/amp$/, '');
   }
 
   sanitize(doc) {

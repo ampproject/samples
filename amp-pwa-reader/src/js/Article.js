@@ -59,6 +59,7 @@ class Article {
 
   createShadowRoot() {
     var shadowRoot = document.createElement('article');
+    shadowRoot.classList.add('sr-article');
     document.body.appendChild(shadowRoot);
     return shadowRoot;
   }
@@ -118,6 +119,7 @@ class Article {
 
     let offset = (innerWidth * this.card.imageData.ratio) / 2;
     this.container.style.transform = 'translateY(' + scrollY + 'px)';
+    this.container.style.opacity = 1;
 
     return new Promise(resolve => {
       this.container.animate([
@@ -183,7 +185,7 @@ class Article {
 
         // add class to html element for to contain the scroll, and transform
         // the hamburger into a 'back' button.
-        document.documentElement.classList.add('article-shown');
+        document.documentElement.classList.add('sr-article-shown');
 
         this.takeoverScroll();
 
@@ -204,7 +206,7 @@ class Article {
   hide() {
 
     // remove class to html element for global CSS stuff
-    document.documentElement.classList.remove('article-shown');
+    document.documentElement.classList.remove('sr-article-shown');
 
     // for some reason the browser restores scroll lazily, so we need
     // to wait a few ms until scrollTop can be set again..
@@ -245,4 +247,4 @@ class Article {
 Article.articles = {};
 Article.getArticleByURL = function (url) {
   return Article.articles[url];
-}
+};

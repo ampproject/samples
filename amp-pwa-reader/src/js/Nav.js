@@ -27,7 +27,7 @@ class Nav {
   }
 
   clear() {
-    document.querySelector('ul.navigation').innerHTML = '';
+    document.querySelector('ul.sr-navigation').innerHTML = '';
   }
 
   create() {
@@ -44,7 +44,7 @@ class Nav {
       fragment.appendChild(item);
     }
 
-    document.querySelector('ul.navigation').appendChild(fragment);
+    document.querySelector('ul.sr-navigation').appendChild(fragment);
 
   }
 
@@ -67,7 +67,7 @@ class Nav {
           // hide the skeleton UI
           // INVESTIGATE: For some reason needs a delay..
           setTimeout(() => {
-            document.body.classList.remove('show-article-skeleton');
+            document.body.classList.remove('sr-show-article-skeleton');
           }, 100);
 
         });
@@ -116,7 +116,7 @@ class Nav {
   }
 
   getNavElement(category) {
-    return document.querySelector('.navigation a[data-tag="' + category + '"]');
+    return document.querySelector('.sr-navigation a[data-tag="' + category + '"]');
   }
 
   setNavElement(category) {
@@ -132,7 +132,7 @@ class Nav {
     navElement.classList.add('active');
 
     // change category title
-    document.querySelector('.category span').textContent = this.categoryTitle;
+    document.querySelector('.sr-category span').textContent = this.categoryTitle;
 
   }
 
@@ -149,7 +149,7 @@ class Nav {
 
     // set current cards to loading
     for (let card of this.cards) {
-      card.elem.classList.add('loading');
+      card.elem.classList.add('sr-loading');
     }
 
     // hide menu
@@ -176,15 +176,15 @@ class Nav {
   }
 
   show() {
-    document.body.classList.add('nav-shown');
+    document.body.classList.add('sr-nav-shown');
   }
 
   hide() {
-    document.body.classList.remove('nav-shown');
+    document.body.classList.remove('sr-nav-shown');
   }
 
   toggle() {
-    return this[document.body.classList.contains('nav-shown') ? 'hide' : 'show']();
+    return this[document.body.classList.contains('sr-nav-shown') ? 'hide' : 'show']();
   }
 
   bind() {
@@ -218,10 +218,10 @@ class Nav {
     }, false);
 
     /* clicks on the hamburger menu icon */
-    document.querySelector('.hamburger').addEventListener(shadowReader.clickEvent, event => {
+    document.querySelector('.sr-hamburger').addEventListener(shadowReader.clickEvent, event => {
 
       // default menu toggle (only executes when not in article view)
-      !document.documentElement.classList.contains('article-shown') && this.toggle();
+      !document.documentElement.classList.contains('sr-article-shown') && this.toggle();
 
       // use as temporary back button
       if (this.hamburgerReturnAction) {
@@ -232,7 +232,7 @@ class Nav {
     }), false;
 
     /* clicks on menu links */
-    document.querySelector('.navigation').addEventListener(shadowReader.clickEvent, event => {
+    document.querySelector('.sr-navigation').addEventListener(shadowReader.clickEvent, event => {
 
       // we're doing event delegation, and only want to trigger action on links
       if (event.target.nodeName !== 'A')
@@ -248,13 +248,13 @@ class Nav {
     }), false;
 
     // click on backend switcher
-    document.querySelector('.backend-switcher').addEventListener(shadowReader.clickEvent, event => {
-      document.documentElement.classList.toggle('backend-selector-visible');
+    document.querySelector('.sr-backend-switcher').addEventListener(shadowReader.clickEvent, event => {
+      document.documentElement.classList.toggle('sr-backend-selector-visible');
       event.preventDefault();
     }), false;
 
     // clicks on the actual backends in the selector
-    document.querySelector('.backend-selector').addEventListener(shadowReader.clickEvent, event => {
+    document.querySelector('.sr-backend-selector').addEventListener(shadowReader.clickEvent, event => {
       event.preventDefault();
 
       // we're doing event delegation, and only want to trigger action on links
@@ -262,7 +262,7 @@ class Nav {
         return;
 
       // hide itself..
-      document.documentElement.classList.toggle('backend-selector-visible');
+      document.documentElement.classList.toggle('sr-backend-selector-visible');
 
       var backend = event.target.parentNode.dataset.backend;
       shadowReader.switchBackend(Backend.get(backend));

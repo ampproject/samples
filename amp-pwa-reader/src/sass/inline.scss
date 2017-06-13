@@ -1,7 +1,7 @@
 @import '_config.scss';
 @import '_helpers.scss';
 
-body > *:not(.card) {
+.amp-shadow > *:not(.sr-card) {
     background-color: #fff;
 }
 

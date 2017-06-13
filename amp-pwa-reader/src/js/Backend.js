@@ -21,11 +21,11 @@ class Backend {
   }
 
   create() {
-    document.documentElement.classList.add('backend-' + this.appTitle.toLowerCase());
+    document.documentElement.classList.add('sr-backend-' + this.appTitle.toLowerCase());
   }
 
   destroy() {
-    document.documentElement.classList.remove('backend-' + this.appTitle.toLowerCase());
+    document.documentElement.classList.remove('sr-backend-' + this.appTitle.toLowerCase());
   }
 
   /*

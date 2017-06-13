@@ -3,7 +3,7 @@ let detectedBackend = location.pathname.match(/^\/([^\/]+)/);
 
 // Create app singleton as global
 window.shadowReader = new ShadowReader({
-  backend: detectedBackend ? Backend.get(detectedBackend[1]) : Lifehacker
+  backend: detectedBackend ? Backend.get(detectedBackend[1]) : TheGuardian
 });
 
 // Initialize fully when DOM is ready
