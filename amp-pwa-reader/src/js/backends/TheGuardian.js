@@ -22,16 +22,16 @@ class TheGuardian extends Backend {
       ampEndpoint: 'https://amp.theguardian.com/',
       defaultCategory: 'us',
       categories: {
-        'us': 'Top News',
-        'us-news--us-politics': 'Politics',
-        'world': 'World',
-        'commentisfree': 'Opinion',
-        'us--technology': 'Tech',
-        'us--culture': 'Arts',
-        'us--lifeandstyle': 'Lifestyle',
-        'fashion': 'Fashion',
-        'us--business': 'Business',
-        'us--travel': 'Travel'
+        'us': 'top News',
+        'us-news--us-politics': 'politics',
+        'world': 'world',
+        'commentisfree': 'opinion',
+        'us--technology': 'tech',
+        'us--culture': 'arts',
+        'us--lifeandstyle': 'lifestyle',
+        'fashion': 'fashion',
+        'us--business': 'business',
+        'us--travel': 'travel'
       }
     });
   }

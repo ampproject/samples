@@ -9,30 +9,36 @@
     transform: translateX(-100%);
 
     list-style: none;
-    background: #0c182b;
+    background: #00456E;
     margin: 0;
     padding: 0;
     z-index: 5;
+    box-sizing: border-box;
+    padding-left: 18px;
+    padding-top: 30px;
 
     li {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.22);
+        border-top: 1px solid #005689;
 
         a {
             display: block;
-            padding: 1em;
+            height: 34px;
+            padding-top: 2px;
             color: white;
-            font-size: 1.2em;
+            font-size: 22px;
             text-decoration: none;
             transition: color var(--animation-speed), background var(--animation-speed);
 
             &:hover {
-                color: #1565c0;
+                color: #4BC6DF;
                 background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
             }
+        }
 
-            &.active {
-                color: #1565c0;
-                background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
+        &.active {
+            a {
+                border-top: 1px solid #4BC6DF;
+                color: #4BC6DF;
             }
         }
 

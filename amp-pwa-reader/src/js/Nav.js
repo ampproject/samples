@@ -140,12 +140,12 @@ class Nav {
     // mark old menu element as inactive
     if (this.category) {
       let oldNavElement = this.getNavElement(this.category);
-      oldNavElement && oldNavElement.classList.remove('active');
+      oldNavElement && oldNavElement.parentNode.classList.remove('active');
     }
 
     // mark new one as active
     let navElement = this.getNavElement(category);
-    navElement.classList.add('active');
+    navElement.parentNode.classList.add('active');
 
     // change category title
     document.querySelector('.sr-category span').textContent = this.categoryTitle;
