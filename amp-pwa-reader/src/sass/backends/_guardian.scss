@@ -197,9 +197,13 @@ $name: theguardian;
     font-weight: 500;
   }
 
-  .sr-backend-selector {
-    img:not(.#{$name}) {
-      display: block;
+  .sr-category {
+    h1 {
+      font-family:"Guardian Egyptian Headline";
+      color: #197caa;
+      font-weight: 500;
+      font-size: 22px;
+      text-align: left;
     }
   }
 

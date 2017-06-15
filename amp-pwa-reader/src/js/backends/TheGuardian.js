@@ -22,7 +22,7 @@ class TheGuardian extends Backend {
       ampEndpoint: 'https://amp.theguardian.com/',
       defaultCategory: 'us',
       categories: {
-        'us': 'top News',
+        'us': 'top news',
         'us-news--us-politics': 'politics',
         'world': 'world',
         'commentisfree': 'opinion',

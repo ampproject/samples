@@ -12,9 +12,6 @@ header {
 
   /* Styling */
   background: linear-gradient(to bottom, #005689, #00558c);
-  color: #fff;
-  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.7);
-  font-weight: 300;
 
   /* Children */
   img {
@@ -27,7 +24,7 @@ header {
   position: absolute;
   z-index: 2;
   cursor: pointer;
-  bottom: -1em;
+  bottom: -8px;
   left: 1em;
   top: auto;
   height: 54px;
