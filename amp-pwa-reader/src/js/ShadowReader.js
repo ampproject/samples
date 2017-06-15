@@ -42,21 +42,4 @@ class ShadowReader {
 
   }
 
-  switchBackend(backend) {
-
-    // initialize the new backend
-    this.backend.destroy();
-    this.backend = new backend();
-    this.history.backend = this.backend;
-
-    // reinitialize the nav
-    this.nav.clear();
-    this.nav.create();
-
-    // reinitialize
-    this.nav.switchCategory(this.backend.defaultCategory);
-    shadowReader.history.navigate(null);
-
-  }
-
 }

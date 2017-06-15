@@ -247,28 +247,6 @@ class Nav {
       event.preventDefault();
     }), false;
 
-    // click on backend switcher
-    document.querySelector('.sr-backend-switcher').addEventListener(shadowReader.clickEvent, event => {
-      document.documentElement.classList.toggle('sr-backend-selector-visible');
-      event.preventDefault();
-    }), false;
-
-    // clicks on the actual backends in the selector
-    document.querySelector('.sr-backend-selector').addEventListener(shadowReader.clickEvent, event => {
-      event.preventDefault();
-
-      // we're doing event delegation, and only want to trigger action on links
-      if (event.target.parentNode.nodeName !== 'A')
-        return;
-
-      // hide itself..
-      document.documentElement.classList.toggle('sr-backend-selector-visible');
-
-      var backend = event.target.parentNode.dataset.backend;
-      shadowReader.switchBackend(Backend.get(backend));
-
-    }), false;
-
   }
 
 }
