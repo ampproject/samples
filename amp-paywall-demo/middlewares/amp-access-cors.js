@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 "use strict";
 
 var url = require('url');
@@ -22,11 +23,11 @@ var VALID_SOURCE_ORIGINS = [/ampbyexample\.com/g, /amp-by-example-staging\.appsp
     /rocky-sierra-1919\.herokuapp\.com/g, /limitless-tundra-65881\.herokuapp\.com/g];
 
 /**
- * Enable CORS for all AMP API requests. More information here: 
- * https://github.com/ampproject/amphtml/blob/master/spec/amp-cors-requests.md 
+ * Enable CORS for all AMP API requests. More information here:
+ * https://github.com/ampproject/amphtml/blob/master/spec/amp-cors-requests.md
  */
 module.exports = function(req, res, next) {
-  // Enable CORS only for API requests 
+  // Enable CORS only for API requests
   if (req.url.indexOf('/api/') > -1) {
     // Verify the origin (AMP and publisher domain)
     var requestingOrigin = req.headers.origin;
@@ -45,20 +46,20 @@ module.exports = function(req, res, next) {
       return;
     }
     console.log('---- valid requesting origins');
-    // Return the allowed requesting origin 
+    // Return the allowed requesting origin
     res.header('Access-Control-Allow-Origin', requestingOrigin);
     // Allow CORS credentials
     res.header('Access-Control-Allow-Credentials', 'true');
     // Allow the CORS response to contain the "AMP-Access-Control-Allow-Source-Origin" header.
     res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
-    // The source origin that is allowed to read the authorization response 
+    // The source origin that is allowed to read the authorization response
     res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
   }
   next();
 };
 
 /**
- * Check requesting origin. This has to be restricted to only allow 
+ * Check requesting origin. This has to be restricted to only allow
  * the following origins:
  *
  * - *.ampproject.org
@@ -88,7 +89,7 @@ function isValidSourceOrigin(req, sourceOrigin) {
 }
 
 /**
- * Returns true if any of the validOrigins patterns matches the given 
+ * Returns true if any of the validOrigins patterns matches the given
  * origin.
  */
 function matchesAnyOrigin(validOrigins, origin) {
