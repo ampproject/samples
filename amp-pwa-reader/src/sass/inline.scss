@@ -1,6 +1,10 @@
 @import '_config.scss';
 @import '_helpers.scss';
 
+.amp-shadow {
+    touch-action: none;
+}
+
 .amp-shadow > *:not(.sr-card) {
     background-color: #fff;
 }

@@ -20,8 +20,12 @@ class Nav {
     this.category = null;
     this.cards = [];
     this.feedReader = new FeedReader;
+    this.element = document.querySelector('.sr-navigation');
 
     this.bind();
+
+    // initialize slide logic
+    this.initMenuSlide();
 
     // Create the nav items from categories
     this.create();
@@ -61,6 +65,33 @@ class Nav {
     }
 
     document.querySelector('ul.sr-navigation').appendChild(fragment);
+
+  }
+
+  initMenuSlide() {
+
+    this.dragObserver = new DragObserver(document, { axis: 'x' });
+    var wasOpen = false;
+    var delta = 0;
+
+    this.dragObserver.bind('start', () => {
+      wasOpen = document.body.classList.contains('sr-nav-shown');
+      this.element.classList.add('sr-disable-transitions');
+    });
+
+    this.dragObserver.bind('move', (position) => {
+      delta = position.x;
+      let x = Math.max(-200, Math.min(position.x, 200) - (wasOpen ? 0 : 200));
+      this.element.style.transform = 'translateX(' + x + 'px)';
+    });
+
+    this.dragObserver.bind('stop', () => {
+      this.element.classList.remove('sr-disable-transitions');
+      this.element.style.transform = '';
+      if (Math.abs(delta) > 70) {
+        this[wasOpen ? 'hide' : 'show']();
+      }
+    });
 
   }
 
