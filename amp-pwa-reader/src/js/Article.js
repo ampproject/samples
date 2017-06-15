@@ -116,13 +116,19 @@ class Article {
 
   }
 
-  getAnimationSpeed() {
-    if (this._animationSpeed)
-      return this._animationSpeed;
+  get cssVariables() {
 
-    let htmlStyles = window.getComputedStyle(document.querySelector("html"));
-    this._animationSpeed = parseFloat(htmlStyles.getPropertyValue("--animation-speed")) * 1000;
-    return this._animationSpeed;
+    if (!this._cssVariables) {
+      let htmlStyles = window.getComputedStyle(document.querySelector("html"));
+      this._cssVariables = {
+        animationSpeedIn: parseFloat(htmlStyles.getPropertyValue("--animation-speed-in")) * 1000,
+        animationSpeedOut: parseFloat(htmlStyles.getPropertyValue("--animation-speed-in")) * 1000,
+        easing: htmlStyles.getPropertyValue("--animation-easing")
+      };
+    }
+
+    return this._cssVariables;
+
   }
 
   animateIn() {
@@ -140,7 +146,7 @@ class Article {
       this.container.animate([
         { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' },
         { opacity: 1, transform: 'translateY(' + scrollY + 'px)' }
-      ], { duration: this.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+      ], { duration: this.cssVariables.animationSpeedIn, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' }).onfinish = resolve;
     });
 
   }
@@ -159,7 +165,7 @@ class Article {
       return this.container.animate([
         { opacity: 1, transform: 'translateY(' + (scrollY) + 'px)' },
         { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' }
-      ], { duration: this.getAnimationSpeed(), easing: 'ease-out' }).onfinish = resolve;
+      ], { duration: this.cssVariables.animationSpeedOut, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' }).onfinish = resolve;
     });
 
   }

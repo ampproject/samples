@@ -27,11 +27,9 @@
             color: white;
             font-size: 22px;
             text-decoration: none;
-            transition: color var(--animation-speed), background var(--animation-speed);
 
             &:hover {
                 color: #4BC6DF;
-                background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
             }
         }
 
@@ -49,17 +47,18 @@
 main,
 .sr-category,
 .sr-navigation {
-    transition: transform var(--animation-speed) ease-out;
+    transition: transform var(--animation-speed-out) var(--animation-easing);
 }
 
+/* nice animation, but sadly too slow on mobile..
 .sr-nav-shown .sr-category,
 .sr-nav-shown main {
-    /* nice animation, but sadly too slow on mobile..*/
-    /* transform: translateX(200px); */
-}
+transform: translateX(200px);
+}*/
 
 .sr-nav-shown .sr-navigation {
     transform: translateX(0);
+    transition: transform var(--animation-speed-in) var(--animation-easing);
 }
 
 /* Desktop/Tablet */

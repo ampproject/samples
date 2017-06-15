@@ -17,7 +17,7 @@
   box-shadow: 0px 2px 9px rgba(0, 0, 0, 0.18);
   color: #fff;
   margin: 1em;
-  transition: transform var(--animation-speed) ease-out;
+  transition: transform var(--animation-speed-out) var(--animation-easing);
   -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 
   --hover-scale: 1;
@@ -40,7 +40,7 @@
     background: linear-gradient(to top, rgb(9, 22, 33), rgba(0,0,0,0) 60%, rgba(0,0,0,0));
     z-index: 2;
     opacity: 0;
-    transition: opacity var(--animation-speed) ease-out;
+    transition: transform var(--animation-speed-out) var(--animation-easing);
   }
 
   &.sr-loading::after {
@@ -88,7 +88,7 @@
   > * {
     position: relative;
     z-index: 1;
-    transition: transform var(--animation-speed) ease-out;
+    transition: transform var(--animation-speed-out) var(--animation-easing);
   }
 
   /* Yes, tons of !important. I hate important. But the Shadow DOM polyfill for
@@ -102,8 +102,8 @@
     position: relative;
     z-index: 3;
     transform-origin: bottom left;
-    transition: transform var(--animation-speed) ease-out,
-                opacity var(--animation-speed) ease-out;
+    transition: transform var(--animation-speed-out) var(--animation-easing),
+                opacity var(--animation-speed-out) var(--animation-easing);
 
     color: inherit !important;
     text-decoration: inherit !important;
@@ -168,6 +168,16 @@
         height: auto;
     }
 
+  }
+}
+
+.sr-card.sr-full {
+  transition-duration: var(--animation-speed-in);
+
+  &::before,
+  > *,
+  .sr-inner {
+    transition-duration: var(--animation-speed-in);
   }
 }
 
