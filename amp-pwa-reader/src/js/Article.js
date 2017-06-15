@@ -1,3 +1,19 @@
+/**
+ * Copyright 2017 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 class Article {
 
   constructor(url, card) {
@@ -18,11 +34,7 @@ class Article {
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
         var isAMP = xhr.responseXML.documentElement.hasAttribute('amp') || xhr.responseXML.documentElement.hasAttribute('⚡');
-        if (isAMP) {
-          resolve(xhr.responseXML);
-        } else {
-          reject('Article does not have an AMP version.');
-        }
+        return isAMP ? resolve(xhr.responseXML) : reject('Article does not have an AMP version.');
       }; // .responseXML contains a ready-to-use Document object
       xhr.send();
     });
@@ -30,7 +42,7 @@ class Article {
   }
 
   load() {
-    return (this.doc ? new Promise(resolve => resolve()) : this.fetch().then(doc => {
+    return (this.doc ? Promise.resolve() : this.fetch().then(doc => {
       this.doc = doc;
       this.sanitize();
     }));
@@ -114,7 +126,7 @@ class Article {
 
     // No animation if there's no card to animate from
     if (!this.card) {
-      return new Promise(resolve => resolve());
+      return Promise.resolve();
     }
 
     let offset = (innerWidth * this.card.imageData.ratio) / 2;
@@ -171,34 +183,30 @@ class Article {
     var card = this.card ? this.cloneCard() : this.generateCard();
     this.ampDoc.ampdoc.getBody().prepend(card);
 
-    return new Promise(resolve => {
+    // animate the article in. Only makes sense when there's a card transition
+    // at the same time, within animateIn, we check for the availability of a
+    // connected card, and don't animate if it's not around.
+    return this.animateIn().then(() => {
 
-      // animate the article in. Only makes sense when there's a card transition
-      // at the same time, within animateIn, we check for the availability of a
-      // connected card, and don't animate if it's not around.
-      this.animateIn().then(() => {
+      // Hide the original card, show the cloned one (this also animates)
+      if (this.card) {
+        card.style.opacity = '1';
+      }
 
-        // Hide the original card, show the cloned one (this also animates)
-        if (this.card) {
-          card.style.opacity = '1';
-        }
+      // add class to html element for to contain the scroll, and transform
+      // the hamburger into a 'back' button.
+      document.documentElement.classList.add('sr-article-shown');
 
-        // add class to html element for to contain the scroll, and transform
-        // the hamburger into a 'back' button.
-        document.documentElement.classList.add('sr-article-shown');
+      this.takeoverScroll();
 
-        this.takeoverScroll();
+      // Set the visibility state of the AMP doc to visible
+      this.ampDoc.setVisibilityState('visible');
 
-        // Set the visibility state of the AMP doc to visible
-        this.ampDoc.setVisibilityState('visible');
-
-        // Finally, add new history entry
-        // Note: We're doing this deliberately late due to an AMP
-        // Bug that overrides the history state object early on
-        shadowReader.nav.setOpenArticle(this, replaceHistoryState);
-
-        resolve();
-      });
+      // Finally, add new history entry
+      // Note: We're doing this deliberately late due to an AMP
+      // Bug that overrides the history state object early on
+      shadowReader.nav.setOpenArticle(this, replaceHistoryState);
+      return true;
     });
 
   }
@@ -221,11 +229,9 @@ class Article {
 
       // animate everything back to the card/listing view, then
       // clear the old Shadow DOM to free up memory.
-      return new Promise(resolve => {
-        this.animateOut().then(() => {
-          this.clear();
-          resolve();
-        });
+      return this.animateOut().then(() => {
+        this.clear();
+        return true;
       });
 
     }, 50);

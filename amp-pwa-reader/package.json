@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Paul Bakaus",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "browser-sync": "*",
     "connect-history-api-fallback": "*",
