@@ -2,7 +2,7 @@
 @import '_helpers.scss';
 
 .amp-shadow {
-    touch-action: none;
+    touch-action: pan-y;
 }
 
 .amp-shadow > *:not(.sr-card) {

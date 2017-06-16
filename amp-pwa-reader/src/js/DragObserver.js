@@ -8,7 +8,7 @@ class DragObserver extends Evented {
 
     this.element = element;
     this.axis = options.axis || 'both';
-    this.distance = options.distance || 1;
+    this.distance = options.distance || 10;
 
     this._clickPreventer = this._createClickPreventer();
 
@@ -50,7 +50,7 @@ class DragObserver extends Evented {
     // store event for re-use
     this.eventDown = event;
 
-    event.preventDefault();
+    //event.preventDefault();
 
     this.__move = (e) => this._move(e);
     this.__stop = (e) => this._stop(e);
@@ -66,7 +66,7 @@ class DragObserver extends Evented {
     this.eventMove = event;
 
     // prevent the default behavior
-    event.preventDefault();
+    //event.preventDefault();
 
     var position = {
       x: (this.axis === 'both' || this.axis === 'x') ? -(this.eventDown.pageX - this.eventMove.pageX) : 0,
