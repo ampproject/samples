@@ -15,7 +15,7 @@
 
 'use strict';
 const jsrsasign = require('jsrsasign');
-const url = require('url');
+const {URL} = require('url');
 
 class CacheRefresh {
   constructor(privateKey) {
@@ -25,18 +25,18 @@ class CacheRefresh {
   }
 
   createRefreshUrl(cacheUrl) {
-    const parsedUrl = url.parse(cacheUrl);
+    const url = new URL(cacheUrl);
     // API accepts timestamp as a UNIX Epoch in seconds.
     const timestamp = (Date.now() / 1000) | 0;
 
     // Create the Cache Refresh URL to be signed.
-    const refreshPath = 
-        parsedUrl.path + (parsedUrl.query ? '&':'?') + 'amp_action=refresh&amp_ts=' + timestamp;        
-    const signature = this._createSignature(refreshPath);
+    url.pathname = '/update-cache' + url.pathname;
+    url.searchParams.append('amp_action', 'flush');
+    url.searchParams.append('amp_ts', timestamp);
 
     // Append the signature o the Cache Refresh Url.
-    const signedRefreshPath = refreshPath + '&amp_url_signature=' + signature;
-    return url.resolve(parsedUrl, signedRefreshPath);
+    url.searchParams.append('amp_url_signature', this._createSignature(url.pathname + url.search));
+    return url.toString();
   };
 
   _createSignature(url) {

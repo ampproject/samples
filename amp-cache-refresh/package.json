@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andre Bandarra",
@@ -14,5 +15,8 @@
     "multer": "^1.3.0"
   },
   "devDependencies": {
+  },
+  "engines": {
+     "node": "8.1.2"
   }
 }
