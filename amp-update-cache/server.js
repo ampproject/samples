@@ -23,7 +23,7 @@ const app = express();
 
 app.use(express.static('public'));
 
-app.post('/api/getCacheRefreshUrl', upload.array(), (req, res) => {
+app.post('/api/cache/generate-update-url', upload.array(), (req, res) => {
   const privateKey = req.body.privatekey;
   const url = req.body.url;
   const cacheRefresh = new CacheRefresh(privateKey);

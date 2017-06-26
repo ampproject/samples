@@ -14,6 +14,7 @@
  */
 
 'use strict';
+
 const jsrsasign = require('jsrsasign');
 const {URL} = require('url');
 
@@ -34,8 +35,9 @@ class CacheRefresh {
     url.searchParams.append('amp_action', 'flush');
     url.searchParams.append('amp_ts', timestamp);
 
-    // Append the signature o the Cache Refresh Url.
-    url.searchParams.append('amp_url_signature', this._createSignature(url.pathname + url.search));
+    // Append the signature to the Cache Refresh Url.
+    const urlSignature = this._createSignature(url.pathname + url.search);
+    url.searchParams.append('amp_url_signature', urlSignature);
     return url.toString();
   };
 
