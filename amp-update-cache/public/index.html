@@ -89,9 +89,10 @@
 </head>
 <body>
   <header>
-    <h1>AMP Cache Refresh</h1>
+    <h1>AMP update-cache request</h1>
   </header>
   <div class="content">
+    <h2>Invalidation Data</h2>
     <form method="post" action-xhr="/api/getCacheRefreshUrl" target="_top">
       <div class="data">
         <label for="input-url">Url</label>
@@ -143,6 +144,16 @@ C8iytkhnemDhNLoBYVaO1tPRSXkyelek+8s3HeKe86Qvc1tbhNV9
         </template>
       </div>
     </form>
+    <div>
+      <h2>Instructions</h2>
+      <ol>
+        <li>Generate RSA Keypairs, and make the public key available, as explained in the <a href="https://developers.google.com/amp/cache/update-ping#rsa-keys">Generate RSA keys</a> section of the documentation</li>
+        <li>Paste the <em>AMP Cache Url</em> that is desired to be flushed.</li>
+        <li>Paste the <em>private key</em> that matches the published public key on the respective field.</li>
+        <li>Click <em>Generate Url</em>. A link will be generated below the form</li>
+        <li>Navigate to the generated link to flush the cache. If an error occurs, double check the keys and the values in the form.</li>
+      </ol>
+    </div>
   </div>
 </body>
 </html>
