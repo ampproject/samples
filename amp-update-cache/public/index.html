@@ -56,6 +56,11 @@
       }
     }
 
+    .link {
+      font-family:Incosolata,monospace;        
+      font-size: 12px;          
+    }
+
     .data {
       margin: 8px 0 16px;
     }
@@ -135,7 +140,8 @@ C8iytkhnemDhNLoBYVaO1tPRSXkyelek+8s3HeKe86Qvc1tbhNV9
       </div>
       <div submit-success class="result">
         <template type="amp-mustache">
-          Cache Refresh URL generated. Click <a href="{{cacheRefreshUrl}}">here</a> to refresh the cache.
+          Cache Refresh URL generated. Click on the link below to refresh the cache:
+          <div class="link"><a href="{{cacheRefreshUrl}}" target="_blank" rel="noopener">{{cacheRefreshUrl}}</a></div>
         </template>
       </div>
       <div submit-error class="result result-error">
@@ -150,7 +156,7 @@ C8iytkhnemDhNLoBYVaO1tPRSXkyelek+8s3HeKe86Qvc1tbhNV9
         <li>Generate RSA Keypairs, and make the public key available, as explained in the <a href="https://developers.google.com/amp/cache/update-ping#rsa-keys">Generate RSA keys</a> section of the documentation</li>
         <li>Paste the <em>AMP Cache Url</em> that is desired to be flushed.</li>
         <li>Paste the <em>private key</em> that matches the published public key on the respective field.</li>
-        <li>Click <em><a href="https://github.com/ampproject/amp-publisher-sample/amp-update-cache/cache-refresh.js">Generate Url</a></em>. A link will be generated below the form</li>
+        <li>Click <em>Generate Url</em>. A link will be generated below the form</li>
         <li>Navigate to the generated link to flush the cache. If an error occurs, double check the keys and the values in the form.</li>
       </ol>
     </div>
