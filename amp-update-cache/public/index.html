@@ -101,7 +101,7 @@
     <form method="post" action-xhr="/api/cache/generate-update-url" target="_top">
       <div class="data">
         <label for="input-url">Url</label>
-        <input id="input-url" type="text" class="data-input" name="url" placeholder="Url..." value="https://limitless--tundra--65881-herokuapp-com.cdn.ampproject.org/c/s/limitless-tundra-65881.herokuapp.com/amp-access/sample/0" required>
+        <input id="input-url" type="text" class="data-input" name="url" placeholder="Url..." value="https://limitless-tundra-65881.herokuapp.com/amp-access/sample/0" required>
       </div>
       <div class="data">
         <label for="input-private-key">Private Key</label>
@@ -140,8 +140,14 @@ C8iytkhnemDhNLoBYVaO1tPRSXkyelek+8s3HeKe86Qvc1tbhNV9
       </div>
       <div submit-success class="result">
         <template type="amp-mustache">
-          Cache Refresh URL generated. Click on the link below to refresh the cache:
-          <div class="link"><a href="{{cacheRefreshUrl}}" target="_blank" rel="noopener">{{cacheRefreshUrl}}</a></div>
+          Cache Refresh URLs generated. Click on the links below to refresh each cache:
+          <ul>
+            {{#items}}
+            <li>
+              <a href="{{refreshUrl}}" target="_blank" rel="noopener">{{name}}</a>
+            </li>
+            {{/items}}
+          </ul>
         </template>
       </div>
       <div submit-error class="result result-error">

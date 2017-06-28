@@ -27,17 +27,18 @@ app.post('/api/cache/generate-update-url', upload.array(), (req, res) => {
   const privateKey = req.body.privatekey;
   const url = req.body.url;
   const cacheRefresh = new CacheRefresh(privateKey);
-  const signedRefreshUrl = cacheRefresh.createRefreshUrl(url);
+  const signedRefreshUrl = cacheRefresh.createCacheUpdateUrls(url)
+    .then(refreshUrlInfos => {
+      // Append CORS headers.
+      const requestingOrigin = req.headers.origin;
+      const requestingSourceOrigin = req.query.__amp_source_origin;
+      res.header('Access-Control-Allow-Origin', requestingOrigin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
+      res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
 
-  // Append CORS headers.
-  const requestingOrigin = req.headers.origin;
-  const requestingSourceOrigin = req.query.__amp_source_origin;
-  res.header('Access-Control-Allow-Origin', requestingOrigin);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
-  res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
-
-  res.send({cacheRefreshUrl: signedRefreshUrl});
+      res.send(JSON.stringify({items: refreshUrlInfos}));
+    });
 });
 
 const port = process.env.PORT || 3000;
