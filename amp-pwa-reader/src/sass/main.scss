@@ -1,0 +1,75 @@
+@import '_config.scss';
+@import '_helpers.scss';
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
+    margin: 0;
+    touch-action: pan-y;
+}
+
+.sr-wrapper {
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.sr-category {
+    margin: 1em;
+    padding-top: var(--header-height);
+
+    h1 {
+        text-align: center;
+        font-weight: 300;
+        font-size: 1em;
+        margin-top: 0;
+
+        span {
+            font-weight: 600;
+        }
+    }
+}
+
+main {
+  line-height: 1.4;
+}
+
+/* Desktop/Tablet */
+@media (min-width: $mobile-breakpoint) {
+
+    .sr-category,
+    main {
+        transform: translateX(0);
+        margin-left: 200px;
+    }
+
+    .sr-category {
+        padding-left: 1em;
+    }
+
+    .sr-category h1 {
+        font-size: 2em;
+    }
+
+    .sr-wrapper {
+        max-width: none;
+    }
+
+    main {
+        padding: 0 1em;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 1em;
+    }
+
+}
+
+@import '_performance.scss';
+@import '_article.scss';
+@import '_card.scss';
+@import '_header.scss';
+@import '_nav.scss';
+
+@import 'backends/*.scss';
+
+
+

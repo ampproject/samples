@@ -1,0 +1,222 @@
+$name: theguardian;
+
+/*
+@font-face{
+  font-family:'Guardian Agate Sans';
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg.svg#Guardian-Text-Egyp-Web-Reg') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:'Guardian Agate Sans';
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Reg-It.svg#Guardian-Text-Egyp-Web-Reg-It') format('svg');
+  font-weight:normal;
+  font-style:italic;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:'Guardian Agate Sans';
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold.svg#Guardian-Text-Egyp-Web-Medium') format('svg');
+  font-weight:bold;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:'Guardian Agate Sans';
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Ag-Sans-1-Web-Bold-It.svg#Guardian-Text-Egyp-Web-Med-It') format('svg');
+  font-weight:bold;
+  font-style:italic;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:'Guardian Compact';
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Compact-Web-Black.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Compact-Web-Black.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Compact-Web-Black.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Compact-Web-Black.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Compact-Web-Black.svg#Guardian-Compact-Web-Black') format('svg');font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+  }
+*/
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.svg#Guardian-Egyp-Web-Light') format('svg');
+  font-weight:200;
+  font-style:normal;
+  font-stretch:normal;
+}
+
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular.svg#Guardian-Egyp-Web-Regular') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Regular-It.svg#Guardian-Egyp-Web-Regular-It') format('svg');
+  font-weight:normal;
+  font-style:italic;
+  font-stretch:normal;
+}
+
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Medium.eot');src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Medium.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Medium.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Medium.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Medium.svg#Guardian-Egyp-Web-Medium') format('svg');
+  font-weight:500;
+  font-style:normal;
+  font-stretch:normal;
+}
+
+/*
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold.svg#Guardian-Egyp-Web-Semibold') format('svg');
+  font-weight:600;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Semibold-It.svg#Guardian-Egyp-Web-Semibold-It') format('svg');
+  font-weight:600;
+  font-style:italic;
+  font-stretch:normal;
+  }
+*/
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold.svg#Guardian-Egyp-Web-Bold') format('svg');
+  font-weight:bold;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Bold-It.svg#Guardian-Egyp-Web-Bold-It') format('svg');
+  font-weight:bold;
+  font-style:italic;
+  font-stretch:normal;
+}
+
+/*
+@font-face{
+  font-family:"Guardian Egyptian Text";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg.svg#Guardian-Text-Egyp-Web-Reg') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Text";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Reg-It.svg#Guardian-Text-Egyp-Web-Reg-It') format('svg');
+  font-weight:normal;
+  font-style:italic;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Text";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med.svg#Guardian-Text-Egyp-Web-Medium') format('svg');
+  font-weight:500;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Egyptian Text";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med-It.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med-It.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med-It.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med-It.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Text-Egyp-Web-Med-It.svg#Guardian-Text-Egyp-Web-Med-It') format('svg');
+  font-weight:500;
+  font-style:italic;
+  font-stretch:normal;
+}
+
+@font-face{
+  font-family:"Guardian Sans Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Light.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Light.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Light.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Light.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Light.svg#Guardian-Sans-Web-Light') format('svg');
+  font-weight:200;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Sans Headline";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Regular.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Regular.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Regular.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Regular.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Sans-Web-Regular.svg#Guardian-Sans-Web-Regular') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"Guardian Titlepiece";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/GuardianTitlepieceWeb-Regular.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/GuardianTitlepieceWeb-Regular.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/GuardianTitlepieceWeb-Regular.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/GuardianTitlepieceWeb-Regular.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/GuardianTitlepieceWeb-Regular.svg#GuardianTitlepieceWeb-Regular') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+@font-face{
+  font-family:"DW72 Weekend Cond";
+  src:url('//pasteup.guim.co.uk/fonts/latin1/DW72-Weekend-Cond-Web-BL-Head.eot');
+  src:url('//pasteup.guim.co.uk/fonts/latin1/DW72-Weekend-Cond-Web-BL-Head.eot?#iefix') format('embedded-opentype'),url('//pasteup.guim.co.uk/fonts/latin1/DW72-Weekend-Cond-Web-BL-Head.woff') format('woff'),url('//pasteup.guim.co.uk/fonts/latin1/DW72-Weekend-Cond-Web-BL-Head.ttf') format('truetype'),url('//pasteup.guim.co.uk/fonts/latin1/DW72-Weekend-Cond-Web-BL-Head.svg#GuardianTitlepieceWeb-Regular') format('svg');
+  font-weight:normal;
+  font-style:normal;
+  font-stretch:normal;
+}
+*/
+
+.sr-backend-#{$name} {
+
+  header {
+
+    align-items: flex-start;
+    justify-content: flex-end;
+
+    img.#{$name} {
+      display: block;
+      margin-top: 6px;
+      margin-right: 6px;
+    }
+  }
+
+  .sr-navigation {
+    font-family:"Guardian Egyptian Headline";
+    font-weight: 500;
+  }
+
+  .sr-category {
+    h1 {
+      font-family:"Guardian Egyptian Headline";
+      color: #197caa;
+      font-weight: 500;
+      font-size: 22px;
+      text-align: left;
+    }
+  }
+
+  .sr-card {
+    border-top: 1px solid #4BC6DF;
+    font-family:"Guardian Egyptian Headline";
+    font-weight: 500;
+
+    .sr-inner {
+      h2 {
+        font-weight: 500;
+      }
+    }
+  }
+
+}

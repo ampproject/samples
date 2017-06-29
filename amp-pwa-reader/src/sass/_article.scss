@@ -1,0 +1,36 @@
+/* Article */
+
+.sr-article-shown main {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.sr-article {
+
+}
+
+.sr-article,
+.sr-article-skeleton-ui {
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+
+.sr-article-skeleton-ui {
+    background: #fff;
+    bottom: 0;
+    display: none;
+
+    &::before {
+        display: block;
+        content: '';
+        background: #eee;
+        padding-top: 60%;
+    }
+}
+
+.sr-show-article-skeleton .sr-article-skeleton-ui {
+    display: block;
+}

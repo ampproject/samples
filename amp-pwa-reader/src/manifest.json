@@ -1,0 +1,26 @@
+{
+  "short_name": "ShadowReader",
+  "name": "ShadowReader",
+  "icons": [
+    {
+      "src": "/img/icon-1x.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "img/icon-2x.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "img/icon-4x.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#2196F3",
+  "theme_color": "#2196F3",
+  "display": "standalone",
+  "orientation": "portrait"
+}

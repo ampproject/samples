@@ -1,0 +1,14 @@
+@import '_config.scss';
+@import '_helpers.scss';
+
+.amp-shadow {
+    touch-action: pan-y;
+}
+
+.amp-shadow > *:not(.sr-card) {
+    background-color: #fff;
+}
+
+@import '_performance.scss';
+@import '_card.scss';
+@import 'backends/*.scss';

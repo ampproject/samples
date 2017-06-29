@@ -1,0 +1,205 @@
+.sr-card {
+
+  text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
+  line-height: 1.4;
+
+  /* Layout */
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  transform-origin: top left;
+  user-select: none;
+
+  /* Styling */
+  cursor: pointer;
+  background-color: #f6f6f6;
+  box-shadow: 0px 2px 9px rgba(0, 0, 0, 0.18);
+  color: #fff;
+  margin: 1em;
+  transition: transform var(--animation-speed-out) var(--animation-easing);
+  -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+
+  --hover-scale: 1;
+
+  &.sr-full {
+      z-index: 5;
+      &::before {
+        opacity: 1;
+      }
+  }
+
+  &::before {
+    display: block;
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -1px; /* fixes weird clipping bug in Chrome.. */
+    background: linear-gradient(to top, rgb(9, 22, 33), rgba(0,0,0,0) 60%, rgba(0,0,0,0));
+    z-index: 2;
+    opacity: 0;
+    transition: transform var(--animation-speed-out) var(--animation-easing);
+  }
+
+  &.sr-loading::after {
+    display: block;
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -1px; /* fixes weird clipping bug in Chrome.. */
+    z-index: 5;
+    background-color: rgba(0,0,0,0.5);
+    background-image: url(/img/loader.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  &.sr-error::after {
+    display: block;
+    position: absolute;
+    content: 'Error: No AMP version to display (this is a demo – in production, you\'d know in advance)';
+    padding: 2em;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -1px; /* fixes weird clipping bug in Chrome.. */
+    z-index: 5;
+    background-color: rgba(132, 21, 21, 0.87);
+  }
+
+  &:first-child {
+      min-height: 50vh;
+
+      &::before {
+        opacity: 1;
+      }
+
+      .sr-inner p {
+        display: block !important;
+        margin-bottom: 0 !important;
+      }
+  }
+
+  /* Card children */
+  > * {
+    position: relative;
+    z-index: 1;
+    transition: transform var(--animation-speed-out) var(--animation-easing);
+  }
+
+  /* Yes, tons of !important. I hate important. But the Shadow DOM polyfill for
+   * Safari requires them :/
+   */
+  .sr-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1em;
+    position: relative;
+    z-index: 3;
+    transform-origin: bottom left;
+    transition: transform var(--animation-speed-out) var(--animation-easing),
+                opacity var(--animation-speed-out) var(--animation-easing);
+
+    color: inherit !important;
+    text-decoration: inherit !important;
+
+    h2 {
+      margin: 3em 0 0 0 !important;
+      font-weight: normal;
+      background: rgba(0, 0, 0, 0.57) !important;
+      padding: 0.5em 0.3em !important;
+      font-size: 1.4em;
+    }
+
+    p {
+      margin: 1em 0 !important;
+      height: 4em !important;
+      font-weight: normal !important;
+      margin-bottom: -5em !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      flex-shrink: 0 !important;
+    }
+
+  }
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+  }
+
+}
+
+.amp-shadow {
+  .sr-card {
+
+    /* need to force font-size, since inner styles might not play nice..*/
+    font-size: 16px;
+    background-color: #eee;
+
+    &:hover {
+      transform: none;
+      cursor: inherit;
+    }
+
+    &:first-child {
+        min-height: initial;
+    }
+
+    .sr-inner {
+      padding-right: 3em; /* needed to make it look the same between cloned and non-cloned */
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+
+  }
+}
+
+.sr-card.sr-full {
+  transition-duration: var(--animation-speed-in);
+
+  &::before,
+  > *,
+  .sr-inner {
+    transition-duration: var(--animation-speed-in);
+  }
+}
+
+/* Desktop/Tablet */
+@media (min-width: $mobile-breakpoint) {
+
+    .sr-card {
+        margin: 0;
+
+        &:hover {
+          transform: translateY(-5px);
+          --hover-scale: 1.1;
+          .inner {
+            opacity: 0;
+          }
+        }
+
+        &.sr-full:hover {
+            cursor: auto;
+            transform: inherit;
+        }
+
+    }
+
+    .sr-card:first-child {
+        grid-column: 1 / 3;
+        grid-row: 1 / 3;
+        min-height: auto;
+    }
+
+}
