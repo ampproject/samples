@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="manifest" href="/manifest.json">
+  <title>The Shadow Reader</title>
+  <style>/* REPLACED-INLINE-STYLESHEET */</style>
+
+  <!-- Asynchronously load the AMP-with-Shadow-DOM runtime library. -->
+  <script async src="https://cdn.ampproject.org/shadow-v0.js"></script>
+</head>
+<body>
+
+<!-- Load critical state-parsing JS to show the right skeleton UI at the right time -->
+<script>
+/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('sr-show-article-skeleton');
+</script>
+
+  <div class="sr-wrapper">
+
+    <header>
+
+      <button class="sr-hamburger">
+        <span class="sr-hamburger-box">
+          <span class="sr-hamburger-inner"></span>
+        </span>
+      </button>
+
+      <img class="theguardian" src="/img/guardian.svg" alt="Guardian" width="240" height="45">
+    </header>
+
+    <ul class="sr-navigation">
+    </ul>
+
+    <div class="sr-category">
+      <h1><span>CATEGORY<span></h1>
+    </div>
+
+    <main>
+
+      <div class="sr-card">
+        <div class="sr-inner">
+          <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
+          <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
+        </div>
+      </div>
+
+      <div class="sr-card">
+        <div class="sr-inner">
+          <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
+          <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
+        </div>
+      </div>
+
+      <div class="sr-card">
+        <div class="sr-inner">
+          <h2>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</h2>
+          <p>~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~ ~~~~~~ ~~~ ~~~~~~~~ ~~~ ~~~~~~~~ ~~~~ ~~~~~</p>
+        </div>
+      </div>
+
+    </main>
+
+    <div class="sr-article-skeleton-ui">
+    </div>
+
+  </div>
+
+<script>/* REPLACED-INLINE-JAVASCRIPT */</script>
+</body>
+</html>

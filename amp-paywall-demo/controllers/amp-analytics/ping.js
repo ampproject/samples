@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ var router = express.Router();
 var Analytics = require('../../models/amp-analytics');
 
 /**
- * Registers an event for the given account. 
+ * Registers an event for the given account.
  *
  * Example: /amp-analytics/ping?acccount=AN_ACCOUNT&event=AN_EVENT
  */

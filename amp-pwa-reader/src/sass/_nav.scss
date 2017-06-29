@@ -1,0 +1,72 @@
+/* Navigation Menu */
+.sr-navigation {
+    width: 80vw;
+    height: 100vh;
+    max-width: 200px;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    transform: translateX(-100%);
+
+    list-style: none;
+    background: #00456E;
+    margin: 0;
+    padding: 0;
+    z-index: 5;
+    box-sizing: border-box;
+    padding-left: 18px;
+    padding-top: 20px;
+
+    li {
+        border-top: 1px solid #005689;
+
+        a {
+            display: block;
+            height: 34px;
+            padding-top: 2px;
+            color: white;
+            font-size: 22px;
+            text-decoration: none;
+
+            &:hover {
+                color: #4BC6DF;
+            }
+        }
+
+        &.active {
+            a {
+                border-top: 1px solid #4BC6DF;
+                color: #4BC6DF;
+            }
+        }
+
+    }
+
+}
+
+main,
+.sr-category,
+.sr-navigation {
+    transition: transform var(--animation-speed-out) var(--animation-easing);
+}
+
+/* nice animation, but sadly too slow on mobile..
+.sr-nav-shown .sr-category,
+.sr-nav-shown main {
+transform: translateX(200px);
+}*/
+
+.sr-nav-shown .sr-navigation {
+    transform: translateX(0);
+    transition: transform var(--animation-speed-in) var(--animation-easing);
+}
+
+/* Desktop/Tablet */
+@media (min-width: $mobile-breakpoint) {
+
+    .sr-navigation {
+        transform: translateX(0);
+        z-index: auto;
+    }
+
+}

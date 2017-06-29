@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 "use strict";
 
 var express = require('express');
@@ -26,7 +27,7 @@ for (var i = 0; i < 10; i++) {
 }
 
 /**
- * List all Articles 
+ * List all Articles
  **/
 router.get('/', function(req, res) {
   res.render('amp-access/list', {
@@ -48,7 +49,7 @@ router.get('/fcf', function(req, res) {
 });
 
 /**
- * View a single Article 
+ * View a single Article
  **/
 router.get(['/((\\d+))', '/server/((\\d+))'], function(req, res) {
   var id = parseInt(req.params[0]);
@@ -70,7 +71,7 @@ router.get(['/((\\d+))', '/server/((\\d+))'], function(req, res) {
 });
 
 router.get('/washingtonpost/((\\d+))', function(req, res) {
-  var id = parseInt(req.params[0]);  
+  var id = parseInt(req.params[0]);
   var host = req.get('host');
   // http works only on localhost
   var protocol = host.startsWith('localhost') ? 'http' : 'https';

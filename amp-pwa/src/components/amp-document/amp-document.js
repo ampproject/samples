@@ -22,7 +22,7 @@ class AMPDocument extends React.Component {
     });
 
     /**
-     * Child element that the AMP document will be added as a shadow root to.
+     * Child element that will wrap the AMP shadow root.
      * @private
      * @type {Element}
      */
@@ -43,6 +43,13 @@ class AMPDocument extends React.Component {
      */
     this.shadowAmp_ = null;
 
+    /**
+     * The root node of the shadow AMP.
+     * @note A single node must not be reused for multiple shadow AMP docs.
+     * @type {Element}
+     */
+    this.shadowRoot_ = null;
+
     /** @private */
     this.boundClickListener_ = this.clickListener_.bind(this);
   }
@@ -54,10 +61,7 @@ class AMPDocument extends React.Component {
   }
 
   componentWillUnmount() {
-    // Cleans up internal shadow AMP document state.
-    if (typeof(this.shadowAmp_.close) === 'function') {
-      this.shadowAmp_.close();
-    }
+    this.closeShadowAmpDoc_();
 
     this.container_.removeEventListener('click', this.boundClickListener_);
 
@@ -94,12 +98,32 @@ class AMPDocument extends React.Component {
       return this.ampReadyPromise_.then(amp => {
         // Hide navigational and other unwanted elements before displaying.
         this.hideUnwantedElementsOnDocument_(doc);
-        // Attach the document as a shadow root to the container.
-        this.shadowAmp_ = amp.attachShadowDoc(this.container_, doc, url);
+
+        // Replace the old shadow root with a new div element.
+        const oldShadowRoot = this.shadowRoot_;
+        this.shadowRoot_ = document.createElement('div');
+        if (oldShadowRoot) {
+          this.container_.replaceChild(this.shadowRoot_, oldShadowRoot);
+        } else {
+          this.container_.appendChild(this.shadowRoot_);
+        }
+
+        // Attach the shadow document to the new shadow root.
+        this.shadowAmp_ = amp.attachShadowDoc(this.shadowRoot_, doc, url);
       });
     }).catch(error => {
       this.setState({'offline': true});
     });
+  }
+
+  /**
+   * Cleans up internal state of current shadow AMP document.
+   * @private
+   */
+  closeShadowAmpDoc_() {
+    if (typeof this.shadowAmp_.close === 'function') {
+      this.shadowAmp_.close();
+    }
   }
 
   /**
@@ -167,22 +191,41 @@ class AMPDocument extends React.Component {
     if (e.defaultPrevented) {
       return false;
     }
-    // Check `path` since events that cross the Shadow DOM boundary are retargeted.
-    // See http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-events
-    for (let i = 0; i < e.path.length; i++) {
-      const a = e.path[i];
-      if (a.tagName === 'A' && a.href) {
-        const url = new URL(a.href);
-        if (url.origin === window.location.origin) {
-          // Perform router push instead of page navigation.
-          e.preventDefault();
-          this.props.router.push(url.pathname);
-          // Scroll to top of new document.
-          window.scrollTo(0, 0);
-          return false;
+
+    let a = null;
+
+    if (e.path) {
+      // Check `path` since events that cross the Shadow DOM boundary are retargeted.
+      // See http://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-301/#toc-events
+      for (let i = 0; i < e.path.length; i++) {
+        const node = e.path[i];
+        if (node.tagName === 'A') {
+          a = node;
+          break;
         }
       }
+    } else {
+      // Polyfill for `path`.
+      let node = e.target;
+      while (node && node.tagName !== 'A') {
+        node = node.parentNode;
+      }
+      a = node;
     }
+
+    if (a && a.href) {
+      const url = new URL(a.href);
+      if (url.origin === window.location.origin) {
+        // Perform router push instead of page navigation.
+        e.preventDefault();
+        // Clean up current shadow AMP document.
+        this.closeShadowAmpDoc_();
+        // Router push reuses current component with new props.
+        this.props.router.push(url.pathname);
+        return false;
+      }
+    }
+
     return true;
   }
 }

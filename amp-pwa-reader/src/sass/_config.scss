@@ -1,0 +1,8 @@
+$mobile-breakpoint: 768px;
+
+:root {
+  --header-height: 70px;
+  --animation-speed-in: 0.4s;
+  --animation-speed-out: 0.4s;
+  --animation-easing: cubic-bezier(0.23, 1, 0.32, 1);
+}

@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 "use strict";
 
 var url = require('url');
@@ -25,7 +26,7 @@ var FIRST_CLICK_FREE_TEST_PATH = 'fcf';
 
 /**
  * A simple paywall implementation. It understands AMP Reader Ids
- * and users. Supported features are: 
+ * and users. Supported features are:
  *
  * - Metered paywall
  * - First-click-free
@@ -45,15 +46,15 @@ class PaywallAccess {
    * Returns true if the user is a subscriber.
    */
   isSubscriber() {
-    if (!this.user) { 
+    if (!this.user) {
       return false;
     }
     return this.user.subscriber;
   }
 
   /**
-   * Determines based on the request referrer whether 
-   * First-Click-Free is supported. 
+   * Determines based on the request referrer whether
+   * First-Click-Free is supported.
    */
   isFirstClickFree(referrer) {
     var host = url.parse(referrer);
@@ -62,12 +63,12 @@ class PaywallAccess {
       referrer.indexOf(FIRST_CLICK_FREE_TEST_PATH) == -1) {
         return false;
     }
-    return !this.viewedUrlsByReferrer[host] || 
+    return !this.viewedUrlsByReferrer[host] ||
       this.viewedUrlsByReferrer[host] < MAX_FIRST_CLICK_FREE_VIEWS;
   }
 
   /**
-   * Registers a viewed article. Counts views per referrer. 
+   * Registers a viewed article. Counts views per referrer.
    */
   registerView(referrer, viewedUrl) {
     if (!this.hasAccess(referrer, viewedUrl)) {
@@ -79,7 +80,7 @@ class PaywallAccess {
       if (this.viewedUrlsByReferrer[host]) {
         this.viewedUrlsByReferrer[host]++;
       } else {
-        this.viewedUrlsByReferrer[host] = 1;      
+        this.viewedUrlsByReferrer[host] = 1;
       }
     } else if (!this.user && !this.viewedUrls[viewedUrl]) {
       this.numViews++;
@@ -91,9 +92,9 @@ class PaywallAccess {
    * Returns true if the user has access to the given URL.
    */
   hasAccess(referrer, url) {
-    return this.isSubscriber() || 
-      this.hasAlreadyVisisted(url) || 
-      this.isFirstClickFree(referrer) || 
+    return this.isSubscriber() ||
+      this.hasAlreadyVisisted(url) ||
+      this.isFirstClickFree(referrer) ||
       this.numViews < MAX_VIEWS;
   }
 
@@ -145,7 +146,7 @@ exports.deleteByEmail = function(email) {
   for (var readerId in READER_ID_TO_MAPPING) {
     var user = READER_ID_TO_MAPPING[readerId].user;
     if (user && user.email == email) {
-      this.deleteByReaderId(readerId); 
+      this.deleteByReaderId(readerId);
     }
   }
 };

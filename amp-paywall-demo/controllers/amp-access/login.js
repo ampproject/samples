@@ -1,5 +1,5 @@
-/**
- * Copyright 2015 The AMP HTML Authors. All Rights Reserved.
+/** @license
+ * Copyright 2015 - present The AMP HTML Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 "use strict";
 
 var express = require('express');
@@ -23,11 +24,11 @@ var PaywallAccess = require('../../models/amp-access');
 var AUTH_COOKIE_MAX_AGE = 1000 * 60 * 60 * 2; //2 hours
 
 /**
- * The link to the Login Page is configured via the login property in the 
- * AMP Access Configuration section. 
+ * The link to the Login Page is configured via the login property in the
+ * AMP Access Configuration section.
  *
- * Login Page is simply a normal Web page with no special constraints, other 
- * than it should function well as a browser dialog. 
+ * Login Page is simply a normal Web page with no special constraints, other
+ * than it should function well as a browser dialog.
  */
 router.get('/', function(req, res) {
   console.log('Serve /login');
@@ -38,7 +39,7 @@ router.get('/', function(req, res) {
 });
 
 /**
- * A simple login flow. The important thing is to map the user 
+ * A simple login flow. The important thing is to map the user
  * to it's AMP Reader ID.
  */
 router.post('/submit', function(req, res) {
@@ -52,13 +53,13 @@ router.post('/submit', function(req, res) {
   if (!user || user.password != password) {
     console.log('Login failed: ', user);
     res.redirect('/?rid=' + readerId + "&return=" + returnUrl);
-    return;    
+    return;
   }
   console.log('Login success: ', user);
 
   // map the user to the AMP Reader ID
   var paywallAccess = PaywallAccess.getOrCreate(readerId);
-  paywallAccess.user = user;  
+  paywallAccess.user = user;
 
   // set user as logged in via cookie
   res.cookie('email', user.email, {
@@ -80,15 +81,15 @@ router.get('/reset', function(req, res) {
 });
 
 /**
- * Simple user logout. 
+ * Simple user logout.
  */
 router.get('/logout', function(req, res) {
   var email = req.cookies.email;
   if (email) {
   	PaywallAccess.deleteByEmail(email);
-  	res.clearCookie('email');	
+  	res.clearCookie('email');
   }
-  res.redirect(req.header('Referer') || '/');  
+  res.redirect(req.header('Referer') || '/');
 });
 
 module.exports = router;

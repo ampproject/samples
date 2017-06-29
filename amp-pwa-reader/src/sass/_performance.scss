@@ -1,0 +1,29 @@
+.sr-navigation {
+  contain: strict;
+  will-change: transform;
+}
+
+.sr-category {
+  contain: style;
+  will-change: transform;
+}
+
+main {
+  will-change: transform;
+}
+
+.sr-card,
+.sr-card img {
+  contain: content;
+  will-change: transform;
+}
+
+.sr-card .sr-inner {
+  will-change: transform;
+}
+
+.sr-hamburger {
+  contain: content;
+  will-change: transform;
+}
+

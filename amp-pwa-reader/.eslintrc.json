@@ -1,0 +1,49 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "globals": {
+        "shadowReader": true,
+        "ShadowReader": true,
+        "Backend": true,
+        "TheGuardian": true,
+        "Lifehacker": true,
+        "Nav": true,
+        "Article": true,
+        "Card": true,
+        "HistoryStack": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-else-return": [
+            "error"
+        ],
+        "array-bracket-spacing": [
+            "error",
+            "always",
+            { "singleValue": false }
+        ],
+        "brace-style": [
+            "error",
+            "1tbs"
+        ]
+    }
+}
