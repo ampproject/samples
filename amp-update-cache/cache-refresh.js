@@ -25,6 +25,7 @@ const CACHES_JSON_URL = 'https://cdn.ampproject.org/caches.json';
 
 class CacheRefresh {
   constructor(privateKey) {
+    this._caches = null;
     this._privateKey = privateKey;
     this._sig = new jsrsasign.Signature({'alg': 'SHA256withRSA'});
     this._sig.init(this._privateKey);    
@@ -111,7 +112,7 @@ class CacheRefresh {
    * https://github.com/ampproject/amphtml/issues/7259
    */
   _getCaches() {
-    if (this._caches instanceof Array) {
+    if (this._caches) {
       return Promise.resolve(this._caches);
     }
 
