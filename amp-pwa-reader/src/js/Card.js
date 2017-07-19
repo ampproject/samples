@@ -80,9 +80,9 @@ class Card {
 
     // back to transitions after next render tick if prev disabled..
     if (animate === false) {
-      requestAnimationFrame(() => {
+      setTimeout(() => { // turns out requestAnimationFrame isn't enough here..
         this.elem.classList.remove('sr-disable-transitions');
-      });
+      }, 0);
     }
 
   }
