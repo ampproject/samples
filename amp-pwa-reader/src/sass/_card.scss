@@ -107,6 +107,13 @@
 
     color: inherit !important;
     text-decoration: inherit !important;
+    outline: 0;
+
+    &:focus {
+      h2 {
+          background: rgb(0, 85, 139) !important;
+      }
+    }
 
     h2 {
       margin: 3em 0 0 0 !important;

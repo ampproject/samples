@@ -24,13 +24,16 @@ class Card {
     this.naturalDimensions = { width: 0, height: 0 };
 
     this.create();
+    this.bind();
 
     // if we're in headless mode, that means the Card is initialized purely to
     // render out the featured image in the Shadow DOM, not for the list view,
-    // thus we don't need to fancy it up or bind events.
-    if (!this.headless) {
+    // thus we don't need to fancy it up.
+    if (this.headless) {
+      this.elem.classList.add('sr-full');
+      this.innerElem.setAttribute('tabindex', -1);
+    } else {
       this.article = new Article(this.data.link, this);
-      this.bind();
       this.render();
     }
 
@@ -146,9 +149,10 @@ class Card {
     h2.innerHTML = this.data.title;
     p.innerHTML = this.data.description;
     innerElem.className = 'sr-inner';
-    innerElem.href = this.data.link;
+    innerElem.href = this.data.link || '';
     elem.className = 'sr-card';
     img.src = this.data.image;
+    img.setAttribute('role', 'presentation'); // prevents screen reader access
 
     // if we're in headless mode, that means the Card is initialized purely to
     // render out the featured image in the Shadow DOM, not for the list view,
@@ -200,6 +204,9 @@ class Card {
 
   activate() {
 
+    // set main view to inert so you can't tab into it
+    shadowReader.disableCardTabbing();
+
     // add loading spinner
     this.elem.classList.add('sr-loading');
 
@@ -220,6 +227,10 @@ class Card {
   }
 
   deactivate() {
+
+    // restore tabbing in main view
+    shadowReader.enableCardTabbing();
+
     this.animateBack();
     this.article.hide();
   }
@@ -227,13 +238,26 @@ class Card {
   bind() {
     /* use click event on purpose here, to not interfere with panning */
     this.innerElem.addEventListener('click', (event) => {
+
       // we only activate a card if we're on a narrow resolution, otherwise
       // we simply navigate to the link for now.
-      // TODO: Do fancy grid based animation for Desktop.
-      if (!this.elem.classList.contains('sr-full') && innerWidth < 768) {
-        this.activate();
-        event.preventDefault();
+      if (innerWidth >= 768) {
+        return;
       }
+
+      // don't trigger the default link click
+      event.preventDefault();
+
+      // blur the element, as the focus style would hinder the animation
+      this.innerElem.blur();
+
+      // if we're looking at the duplicate card in the article view, a click
+      // on the card should do nothing at all
+      if (!this.elem.classList.contains('sr-full')) {
+        // activate the card
+        this.activate();
+      }
+
     });
   }
 

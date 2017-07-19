@@ -64,7 +64,7 @@ class Nav {
       fragment.appendChild(item);
     }
 
-    document.querySelector('ul.sr-navigation').appendChild(fragment);
+    this.element.appendChild(fragment);
 
   }
 
@@ -121,6 +121,7 @@ class Nav {
 
         // the return button in this state is a special case, and can't animate (yet)
         this.hamburgerReturnAction = () => {
+          shadowReader.enableCardTabbing();
           article.card && article.card.animateBack();
           article.hide();
           shadowReader.history.navigate(null);
@@ -146,9 +147,14 @@ class Nav {
                 // we can animate back when the user clicks back
                 // TODO: stupid to call this method animate..
                 article.card.animate(false, -article._mainScrollY);
+
               });
             }
           }
+
+          // set main view to inert so you can't tab into it
+          shadowReader.disableCardTabbing();
+
         });
 
       });
@@ -218,15 +224,38 @@ class Nav {
       // reset scroll position
       document.scrollingElement.scrollTop = 0;
 
+      // restore focus
+      shadowReader.itemsElement.firstElementChild.children[1].focus();
+
     });
 
   }
 
   show() {
+
+    //disable focus for all menu elements
+    for (let child of this.element.children) {
+      child.firstChild.removeAttribute('tabindex');
+    }
+
+      // focus the first element in the menu
+    this.element.children[0].firstChild.focus();
+
     document.body.classList.add('sr-nav-shown');
+
   }
 
   hide() {
+
+    //disable focus for all menu elements
+    for (let child of this.element.children) {
+      child.firstChild.setAttribute('tabindex', '-1');
+    }
+
+    // focus on the first element in the main view
+    let focusableCard = shadowReader.itemsElement.firstElementChild.children[1];
+    focusableCard && focusableCard.focus();
+
     document.body.classList.remove('sr-nav-shown');
   }
 
