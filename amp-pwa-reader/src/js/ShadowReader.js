@@ -45,11 +45,9 @@ class ShadowReader {
   }
 
   disableCardTabbing() {
-    console.time('focus');
     for (let item of this.itemsElement.children) {
       item.children[1].setAttribute('tabindex', -1);
     }
-    console.timeEnd('focus');
   }
 
   loadPolyfills() {
