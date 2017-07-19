@@ -207,8 +207,8 @@ class Card {
     // set main view to inert so you can't tab into it
     shadowReader.disableCardTabbing();
 
-    // add loading spinner
-    this.elem.classList.add('sr-loading');
+    // add loading spinner (and promote to layer)
+    this.elem.classList.add('sr-loading', 'sr-promote-layer');
 
     this.article.load()
       .then(() => this.article.render())
