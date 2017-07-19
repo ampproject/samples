@@ -39,6 +39,10 @@ header {
 
   font: inherit;
   color: inherit;
+
+  &:focus {
+    box-shadow: 0 0 0 0.2625rem rgba(0, 0, 0, 0.38);
+  }
 }
 
 .sr-hamburger-box {

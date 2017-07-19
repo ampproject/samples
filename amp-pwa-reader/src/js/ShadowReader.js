@@ -22,7 +22,7 @@ class ShadowReader {
     document.documentElement.classList.add('sr-backend-' + this.backend.appTitle.toLowerCase());
 
     this.history = new HistoryStack(this.backend);
-    this.clickEvent = 'ontouchend' in window ? 'touchend' : 'click';
+    this.clickEvent = 'click';
   }
 
   init() {
@@ -36,6 +36,18 @@ class ShadowReader {
     this.loadPolyfills().then(() => {
       this.nav = new Nav();
     });
+  }
+
+  enableCardTabbing() {
+    for (let item of this.itemsElement.children) {
+      item.children[1].removeAttribute('tabindex');
+    }
+  }
+
+  disableCardTabbing() {
+    for (let item of this.itemsElement.children) {
+      item.children[1].setAttribute('tabindex', -1);
+    }
   }
 
   loadPolyfills() {

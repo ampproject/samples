@@ -1,4 +1,6 @@
 .sr-disable-transitions,
+.sr-disable-transitions::before,
+.sr-disable-transitions::after,
 .sr-disable-transitions * {
     transition: none !important;
 }

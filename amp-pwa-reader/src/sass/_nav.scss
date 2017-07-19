@@ -28,6 +28,11 @@
             font-size: 22px;
             text-decoration: none;
 
+            &:focus {
+                outline: 0;
+                color: #4BC6DF;
+            }
+
             &:hover {
                 color: #4BC6DF;
             }

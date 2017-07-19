@@ -12,7 +12,7 @@ class DragObserver extends Evented {
 
     this._clickPreventer = this._createClickPreventer();
 
-    this.element.addEventListener('pointerdown', this._start.bind(this), false);
+    this.element.addEventListener('pointerdown', this._start.bind(this), { passive: true });
 
   }
 
@@ -50,12 +50,10 @@ class DragObserver extends Evented {
     // store event for re-use
     this.eventDown = event;
 
-    //event.preventDefault();
-
     this.__move = (e) => this._move(e);
     this.__stop = (e) => this._stop(e);
-    document.addEventListener('pointermove', this.__move, false);
-    document.addEventListener('pointerup', this.__stop, false);
+    document.addEventListener('pointermove', this.__move, { passive: true });
+    document.addEventListener('pointerup', this.__stop, { passive: true });
 
   }
 
@@ -64,9 +62,6 @@ class DragObserver extends Evented {
     // store event for re-use
     this.eventMovePrev = this.eventMove || this.eventStart;
     this.eventMove = event;
-
-    // prevent the default behavior
-    //event.preventDefault();
 
     var position = {
       x: (this.axis === 'both' || this.axis === 'x') ? -(this.eventDown.pageX - this.eventMove.pageX) : 0,
@@ -92,8 +87,6 @@ class DragObserver extends Evented {
 
     document.removeEventListener('pointermove', this.__move);
     document.removeEventListener('pointerup', this.__stop);
-
-    event.preventDefault();
 
     if(this._started) {
       event.stopPropagation();

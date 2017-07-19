@@ -6,6 +6,7 @@ body {
     text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
     margin: 0;
     touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .sr-wrapper {
