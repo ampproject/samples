@@ -192,6 +192,17 @@ class Card {
 
   }
 
+  refresh() {
+
+    this.naturalDimensions = {
+      width: this.elem.offsetWidth,
+      height: this.elem.offsetHeight
+    };
+
+    this.resizeChildren(this.naturalDimensions, false);
+
+  }
+
   hijackMenuButton() {
     shadowReader.nav.hamburgerReturnAction = event => {
       // Go back in history stack, but only if we don't trigger the method

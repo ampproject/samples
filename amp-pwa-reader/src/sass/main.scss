@@ -34,6 +34,10 @@ main {
   line-height: 1.4;
 }
 
+.note-desktop {
+    display: none;
+}
+
 /* Desktop/Tablet */
 @media (min-width: $mobile-breakpoint) {
 
@@ -60,6 +64,18 @@ main {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         grid-gap: 1em;
+    }
+
+    .note-desktop {
+        display: block;
+        margin-left: calc(216px);
+        margin-right: 16px;
+        margin-bottom: 16px;
+        border: 2px solid #fffd4f;
+        background: #fffe99;
+        padding: 1em;
+        font-size: 18pt;
+        line-height: 1.4;
     }
 
 }
