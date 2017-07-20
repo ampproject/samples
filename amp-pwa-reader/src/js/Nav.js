@@ -263,6 +263,12 @@ class Nav {
     return this[document.body.classList.contains('sr-nav-shown') ? 'hide' : 'show']();
   }
 
+  resize() {
+    for (let card of this.cards) {
+      card.refresh();
+    }
+  }
+
   bind() {
 
     /* history navigation */
@@ -322,6 +328,15 @@ class Nav {
 
       event.preventDefault();
     }), false;
+
+    /* resize event, mostly relevant for Desktop resolutions */
+    let debounce;
+    window.addEventListener('resize', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => {
+        this.resize();
+      }, 100);
+    });
 
   }
 
