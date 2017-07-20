@@ -39,13 +39,15 @@ class ShadowReader {
   }
 
   enableCardTabbing() {
-    for (let item of this.itemsElement.children) {
+    let children = Array.from(this.itemsElement.children); // sadly needed for Safari
+    for (let item of children) {
       item.children[1].removeAttribute('tabindex');
     }
   }
 
   disableCardTabbing() {
-    for (let item of this.itemsElement.children) {
+    let children = Array.from(this.itemsElement.children); // sadly needed for Safari
+    for (let item of children) {
       item.children[1].setAttribute('tabindex', -1);
     }
   }

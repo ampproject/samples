@@ -234,7 +234,8 @@ class Nav {
   show() {
 
     //disable focus for all menu elements
-    for (let child of this.element.children) {
+    let children = Array.from(this.element.children); // sadly needed for Safari
+    for (let child of children) {
       child.firstChild.removeAttribute('tabindex');
     }
 
@@ -248,7 +249,8 @@ class Nav {
   hide() {
 
     //disable focus for all menu elements
-    for (let child of this.element.children) {
+    let children = Array.from(this.element.children); // sadly needed for Safari
+    for (let child of children) {
       child.firstChild.setAttribute('tabindex', '-1');
     }
 
