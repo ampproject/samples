@@ -49,21 +49,34 @@
 
 }
 
-main,
-.sr-category,
-.sr-navigation {
-    transition: transform var(--animation-speed-out) var(--animation-easing);
+.sr-navigation-skirt {
+    background-color: rgba(0,0,0,0.6);
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 4;
+    pointer-events: none;
 }
 
-/* nice animation, but sadly too slow on mobile..
-.sr-nav-shown .sr-category,
-.sr-nav-shown main {
-transform: translateX(200px);
-}*/
+.sr-nav-shown .sr-navigation-skirt {
+    opacity: 1;
+    pointer-events: all;
+}
 
-.sr-nav-shown .sr-navigation {
+.sr-navigation,
+.sr-navigation-skirt {
+    transition: transform var(--animation-speed-out) var(--animation-easing),
+                opacity var(--animation-speed-out) var(--animation-easing);
+}
+
+.sr-nav-shown .sr-navigation,
+.sr-nav-shown .sr-navigation-skirt {
     transform: translateX(0);
-    transition: transform var(--animation-speed-in) var(--animation-easing);
+    transition: transform var(--animation-speed-in) var(--animation-easing),
+                opacity var(--animation-speed-out) var(--animation-easing);
 }
 
 /* Desktop/Tablet */
