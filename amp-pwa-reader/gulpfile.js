@@ -70,7 +70,11 @@ function scripts() {
   return gulp.src(paths.scripts.src)
     .pipe(plumber())
     .pipe(concat('scripts.js'))
-    .pipe(DIST_MODE ? uglify() : gutil.noop())
+    .pipe(DIST_MODE ? uglify({
+      mangle: {
+        safari10: true
+      }
+    }) : gutil.noop())
     .pipe(gulp.dest(paths.scripts.dest));
 }
 
