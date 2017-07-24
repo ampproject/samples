@@ -52,6 +52,26 @@ class ShadowReader {
     }
   }
 
+  focusVisibleCard() {
+
+    // if cards haven't been initialized yet, ignore
+    if (!this.nav || !this.nav.cards) {
+      return;
+    }
+
+    const scrollY = window.scrollY;
+    const innerHeight = window.innerHeight;
+
+    for (let card of this.nav.cards) {
+      if (card.elem.offsetTop < (scrollY + innerHeight)
+          && card.elem.offsetTop > scrollY) {
+        card.innerElem.focus();
+        break;
+      }
+    }
+
+  }
+
   loadPolyfills() {
 
     var promises = [];

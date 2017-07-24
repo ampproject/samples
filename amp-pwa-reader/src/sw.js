@@ -16,6 +16,10 @@ workboxSW.router.registerNavigationRoute('index.html', {
 workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
 
 // Cache a number of YQL queries, but only for 5 minutes
+/*
+
+TODO: Re-enable when workbox fix is deployed..
+
 workboxSW.router.registerRoute(
   'https://query.yahooapis.com/v1/public/(.*)',
   workboxSW.strategies.cacheFirst({
@@ -27,6 +31,8 @@ workboxSW.router.registerRoute(
     cacheableResponse: {statuses: [ 0, 200 ]}
   })
 );
+
+*/
 
 // Cache a number of images
 workboxSW.router.registerRoute(

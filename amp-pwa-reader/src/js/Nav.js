@@ -47,7 +47,7 @@ class Nav {
   }
 
   clear() {
-    document.querySelector('ul.sr-navigation').innerHTML = '';
+    this.element.innerHTML = '';
   }
 
   create() {
@@ -70,9 +70,11 @@ class Nav {
 
   initMenuSlide() {
 
-    this.dragObserver = new DragObserver(document, { axis: 'x' });
+    const skirt = document.querySelector('.sr-navigation-skirt');
     var wasOpen = false;
     var delta = 0;
+
+    this.dragObserver = new DragObserver(document, { axis: 'x' });
 
     this.dragObserver.bind('start', () => {
       wasOpen = document.body.classList.contains('sr-nav-shown');
@@ -81,13 +83,16 @@ class Nav {
 
     this.dragObserver.bind('move', (position) => {
       delta = position.x;
-      let x = Math.max(-200, Math.min(position.x, 200) - (wasOpen ? 0 : 200));
+      let refPoint = wasOpen ? 0 : 200;
+      let x = Math.max(-200, Math.min(position.x, refPoint) - refPoint);
       this.element.style.transform = 'translateX(' + x + 'px)';
+      skirt.style.opacity = 1 - (x / -200);
     });
 
     this.dragObserver.bind('stop', () => {
       this.element.classList.remove('sr-disable-transitions');
       this.element.style.transform = '';
+      skirt.style.opacity = '';
       if (Math.abs(delta) > 70) {
         this[wasOpen ? 'hide' : 'show']();
       }
@@ -249,14 +254,13 @@ class Nav {
   hide() {
 
     //disable focus for all menu elements
-    let children = Array.from(this.element.children); // sadly needed for Safari
+    const children = Array.from(this.element.children); // sadly needed for Safari
     for (let child of children) {
       child.firstChild.setAttribute('tabindex', '-1');
     }
 
-    // focus on the first element in the main view
-    let focusableCard = shadowReader.itemsElement.firstElementChild.children[1];
-    focusableCard && focusableCard.focus();
+    // focus on the appropriate card in the main view
+    shadowReader.focusVisibleCard();
 
     document.body.classList.remove('sr-nav-shown');
   }
@@ -276,7 +280,7 @@ class Nav {
     /* history navigation */
     window.addEventListener('popstate', event => {
 
-      var state = {
+      let state = {
         category: event.state && event.state.category ? event.state.category : this.category,
         articleUrl: event.state ? event.state.articleUrl : null
       };
@@ -329,6 +333,11 @@ class Nav {
       shadowReader.history.navigate(null);
 
       event.preventDefault();
+    }), false;
+
+    /* clicks on menu skirt */
+    document.querySelector('.sr-navigation-skirt').addEventListener(shadowReader.clickEvent, () => {
+      this.hide();
     }), false;
 
     /* resize event, mostly relevant for Desktop resolutions */
