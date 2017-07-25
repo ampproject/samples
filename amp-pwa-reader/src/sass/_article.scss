@@ -1,14 +1,4 @@
 /* Article */
-
-.sr-article-shown main {
-    max-height: 100vh;
-    overflow: hidden;
-}
-
-.sr-article {
-
-}
-
 .sr-article,
 .sr-article-skeleton-ui {
     position: absolute;
@@ -16,6 +6,21 @@
     left: 0;
     right: 0;
     z-index: 5;
+}
+
+.sr-article {
+    position: fixed;
+    transform: translateY(50vh);
+    transition: transform var(--animation-speed-out) var(--animation-easing),
+                opacity var(--animation-speed-out) var(--animation-easing);
+    opacity: 0;
+}
+
+.sr-article.at-top {
+    transform: translateY(0);
+    transition: transform var(--animation-speed-in) var(--animation-easing),
+                opacity var(--animation-speed-in) var(--animation-easing);
+    opacity: 1;
 }
 
 .sr-article-skeleton-ui {
@@ -33,4 +38,16 @@
 
 .sr-show-article-skeleton .sr-article-skeleton-ui {
     display: block;
+}
+
+.sr-article-shown {
+    main {
+        max-height: 100vh;
+        overflow: hidden;
+    }
+    .sr-article {
+        position: absolute;
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

@@ -36,8 +36,10 @@ class Nav {
 
     if (state.articleUrl) {
       // Open the correct article, even before switching to the category, if we
-      // have one.
-      this.startWithArticle(state);
+      // have one (but only when the AMP lib is ready, since it's loaded async).
+      shadowReader.ampReady(() => {
+        this.startWithArticle(state);
+      });
     } else {
       // If there's no article to be loaded, just load the default or
       // selected category.
@@ -114,12 +116,16 @@ class Nav {
       .then(() => article.render())
       .then(() => {
 
+        // disable transitions temporarily, don't want them at load time
+        article.container.classList.add('sr-disable-transitions');
+
         // passing true here ensures that the state is overwritten again..
         article.show(true).then(() => {
           // hide the skeleton UI
           // INVESTIGATE: For some reason needs a delay..
           setTimeout(() => {
             document.body.classList.remove('sr-show-article-skeleton');
+            article.container.classList.remove('sr-disable-transitions');
           }, 100);
 
         });

@@ -1,26 +1,31 @@
 .sr-navigation {
   contain: strict;
   will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 .sr-navigation-skirt {
   will-change: opacity;
+  transform: translate3d(0,0,0);
 }
 
 .sr-category {
   contain: style;
   will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 .sr-hamburger {
   contain: content;
   will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 .sr-promote-layer,
 .sr-promote-layer img,
 .sr-promote-layer .sr-inner {
   will-change: transform;
+  transform: translate3d(0,0,0);
 }
 
 .sr-card,
@@ -28,6 +33,10 @@
   contain: content;
 }
 
+.sr-article {
+  will-change: transform;
+  transform: translate3d(0,0,0);
+}
 
 
 

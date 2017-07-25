@@ -138,15 +138,16 @@ class Article {
       return Promise.resolve();
     }
 
-    let offset = (innerWidth * this.card.imageData.ratio) / 2;
-    this.container.style.transform = 'translateY(' + scrollY + 'px)';
-    this.container.style.opacity = 1;
-
     return new Promise(resolve => {
-      this.container.animate([
-        { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' },
-        { opacity: 1, transform: 'translateY(' + scrollY + 'px)' }
-      ], { duration: this.cssVariables.animationSpeedIn, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' }).onfinish = resolve;
+
+      let _transitionEnd = () => {
+        this.container.removeEventListener('transitionend', _transitionEnd);
+        resolve();
+      };
+
+      this.container.addEventListener('transitionend', _transitionEnd, false);
+      this.container.classList.add('at-top');
+
     });
 
   }
@@ -155,17 +156,19 @@ class Article {
 
     // No animation if there's no card to animate from
     if (!this.card) {
-        return new Promise(resolve => resolve());
+      return Promise.resolve();
     }
 
-    let offset = (innerWidth * this.card.imageData.ratio) / 2;
-    this.container.style.transform = 'translateY(' + (offset + scrollY) + 'px)';
-
     return new Promise(resolve => {
-      return this.container.animate([
-        { opacity: 1, transform: 'translateY(' + (scrollY) + 'px)' },
-        { opacity: 0, transform: 'translateY(' + (offset + scrollY) + 'px)' }
-      ], { duration: this.cssVariables.animationSpeedOut, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' }).onfinish = resolve;
+
+      let _transitionEnd = () => {
+        this.container.removeEventListener('transitionend', _transitionEnd);
+        resolve();
+      };
+
+      this.container.addEventListener('transitionend', _transitionEnd, false);
+      this.container.classList.remove('at-top');
+
     });
 
   }
@@ -190,6 +193,7 @@ class Article {
     // view (e.g. we load directly into the article), in which case we need to
     // generate a new one.
     var card = this.card ? this.cloneCard() : this.generateCard();
+    card.lastElementChild.onclick = function () { return false; };
     this.ampDoc.ampdoc.getBody().prepend(card);
 
     // animate the article in. Only makes sense when there's a card transition
@@ -251,6 +255,7 @@ class Article {
     this._mainScrollY = document.scrollingElement.scrollTop;
     document.scrollingElement.scrollTop = 0;
     this.container.style.transform = '';
+
   }
 
   restoreScroll() {
