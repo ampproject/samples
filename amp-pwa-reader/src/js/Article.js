@@ -140,12 +140,12 @@ class Article {
 
     return new Promise(resolve => {
 
-      this._transitionEndCallback = () => {
-        this.container.removeEventListener('transitionend', this._transitionEndCallback);
+      let _transitionEnd = () => {
+        this.container.removeEventListener('transitionend', _transitionEnd);
         resolve();
       };
 
-      this.container.addEventListener('transitionend', this._transitionEndCallback, false);
+      this.container.addEventListener('transitionend', _transitionEnd, false);
       this.container.classList.add('at-top');
 
     });
@@ -156,17 +156,17 @@ class Article {
 
     // No animation if there's no card to animate from
     if (!this.card) {
-      return new Promise(resolve => resolve());
+      return Promise.resolve();
     }
 
     return new Promise(resolve => {
 
-      this._transitionEndCallback = () => {
-        this.container.removeEventListener('transitionend', this._transitionEndCallback);
+      let _transitionEnd = () => {
+        this.container.removeEventListener('transitionend', _transitionEnd);
         resolve();
       };
 
-      this.container.addEventListener('transitionend', this._transitionEndCallback, false);
+      this.container.addEventListener('transitionend', _transitionEnd, false);
       this.container.classList.remove('at-top');
 
     });
