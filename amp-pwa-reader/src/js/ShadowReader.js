@@ -34,6 +34,10 @@ class ShadowReader {
 
   }
 
+  ampReady(callback) {
+    (window.AMP = window.AMP || []).push(callback);
+  }
+
   enableCardTabbing() {
     let children = Array.from(this.itemsElement.children); // sadly needed for Safari
     for (let item of children) {

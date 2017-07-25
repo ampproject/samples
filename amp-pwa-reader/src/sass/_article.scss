@@ -47,5 +47,7 @@
     }
     .sr-article {
         position: absolute;
+        transform: translateY(0);
+        opacity: 1;
     }
 }

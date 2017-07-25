@@ -193,6 +193,7 @@ class Article {
     // view (e.g. we load directly into the article), in which case we need to
     // generate a new one.
     var card = this.card ? this.cloneCard() : this.generateCard();
+    card.lastElementChild.onclick = function () { return false; };
     this.ampDoc.ampdoc.getBody().prepend(card);
 
     // animate the article in. Only makes sense when there's a card transition
