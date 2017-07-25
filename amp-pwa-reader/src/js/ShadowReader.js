@@ -16,11 +16,8 @@
 
 class ShadowReader {
 
-  constructor(config) {
-
-    this.backend = new config.backend();
-    document.documentElement.classList.add('sr-backend-' + this.backend.appTitle.toLowerCase());
-
+  constructor() {
+    this.backend = new Backend();
     this.history = new HistoryStack(this.backend);
     this.clickEvent = 'click';
   }

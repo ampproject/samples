@@ -32,7 +32,6 @@ const paths = {
     src: [
       'src/js/History.js',
       'src/js/Backend.js',
-      'src/js/backends/*.js',
       'src/js/Evented.js',
       'src/js/DragObserver.js',
       'src/js/ShadowReader.js',

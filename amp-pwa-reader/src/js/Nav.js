@@ -124,7 +124,7 @@ class Nav {
           // hide the skeleton UI
           // INVESTIGATE: For some reason needs a delay..
           setTimeout(() => {
-            document.body.classList.remove('sr-show-article-skeleton');
+            document.body.classList.remove('sr-skeleton-ui-article');
             article.container.classList.remove('sr-disable-transitions');
           }, 100);
 
@@ -221,6 +221,13 @@ class Nav {
 
     // fetch new nav entries via RSS via YQL
     return this.feedReader.fetch(category).then(entries => {
+
+      // if this is the first time loading cards, now would
+      // be a good time to remove the skeleton ui class from the body
+      if (!this._cardViewInitialized) {
+        document.body.classList.remove('sr-skeleton-ui');
+        this._cardViewInitialized = true;
+      }
 
       // empty items container (lazy..)
       shadowReader.itemsElement.innerHTML = '';
