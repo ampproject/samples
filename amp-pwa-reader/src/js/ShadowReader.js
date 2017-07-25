@@ -85,7 +85,7 @@ class ShadowReader {
     };
 
     if (!('animate' in document.body)) {
-      promises.push(loadScript('https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations-next-lite.min.js'));
+      promises.push(loadScript('https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations-next-lite.min.js'));
     }
 
     return Promise.all(promises);
