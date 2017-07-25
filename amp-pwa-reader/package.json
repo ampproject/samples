@@ -18,11 +18,10 @@
     "gulp-plumber": "*",
     "gulp-replace": "*",
     "gulp-sass": "*",
-    "gulp-sass-glob": "^1.0.8",
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
     "uglify-es": "*",
-    "workbox-build": "^1.0.1",
-    "workbox-sw": "^1.0.1"
+    "workbox-build": "*",
+    "workbox-sw": "*"
   }
 }

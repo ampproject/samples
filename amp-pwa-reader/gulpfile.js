@@ -10,7 +10,6 @@ const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
-const sassGlob = require('gulp-sass-glob');
 const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
@@ -59,7 +58,6 @@ function copy() {
 function styles() {
   return gulp.src(paths.styles.src)
     .pipe(plumber())
-    .pipe(sassGlob())
     .pipe(sass(DIST_MODE ? { outputStyle: 'compressed' } : {}))
     .pipe(autoprefixer({ browsers: ['> 10%'] }))
     .pipe(gulp.dest(paths.styles.dest));
