@@ -1,5 +1,3 @@
-$name: theguardian;
-
 @font-face{
   font-family:"Guardian Egyptian Headline";
   src:url('//pasteup.guim.co.uk/fonts/latin1/Guardian-Egyp-Web-Light.eot');
@@ -49,53 +47,4 @@ $name: theguardian;
   font-weight:bold;
   font-style:italic;
   font-stretch:normal;
-}
-
-.sr-backend-#{$name} {
-
-  header {
-
-    align-items: flex-start;
-    justify-content: flex-end;
-
-    img.#{$name} {
-      display: block;
-      margin-top: 6px;
-      margin-right: 6px;
-    }
-  }
-
-  .sr-navigation {
-    font-family:"Guardian Egyptian Headline";
-    font-weight: 500;
-  }
-
-  .sr-category {
-    h1 {
-      font-family:"Guardian Egyptian Headline";
-      color: #197caa;
-      font-weight: 500;
-      font-size: 22px;
-      text-align: left;
-    }
-  }
-
-  .sr-card {
-    border-top: 1px solid #4BC6DF;
-    font-family:"Guardian Egyptian Headline";
-    font-weight: 500;
-
-    &.sr-full {
-      border-top: 1px solid #00558c;
-    }
-
-    .sr-inner {
-      h2 {
-        font-weight: 500;
-      }
-    }
-  }
-
-
-
 }

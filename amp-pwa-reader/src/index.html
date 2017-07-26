@@ -10,11 +10,11 @@
   <!-- Asynchronously load the AMP-with-Shadow-DOM runtime library. -->
   <script async src="https://cdn.ampproject.org/shadow-v0.js"></script>
 </head>
-<body>
+<body class="sr-skeleton-ui">
 
 <!-- Load critical state-parsing JS to show the right skeleton UI at the right time -->
 <script>
-/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('sr-show-article-skeleton');
+/^\/[^\/]+\/[^\/]+\/[^\/]+/.test(location.pathname) && document.body.classList.add('sr-skeleton-ui-article');
 </script>
 
   <div class="sr-wrapper">
@@ -79,6 +79,7 @@
 
   </div>
 
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,fetch"></script>
 <script>/* REPLACED-INLINE-JAVASCRIPT */</script>
 </body>
 </html>

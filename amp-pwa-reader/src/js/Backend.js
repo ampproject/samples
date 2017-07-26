@@ -16,60 +16,58 @@
 
 class Backend {
 
-  constructor(config) {
-    this.appTitle = config.appTitle;
-    this.ampEndpoint = config.ampEndpoint; // AMP Endpoint
-    this.defaultCategory = config.defaultCategory;
-    this.categories = config.categories;
-    this.create();
-  }
-
-  /*
-   * Static methods
-   */
-
-  static get(className) {
-    return Backend.classes[className.toLowerCase()];
+  constructor() {
+    this.appTitle = 'TheGuardian';
+    this.ampEndpoint = 'https://amp.theguardian.com/';
+    this.defaultCategory = 'us';
+    this.categories = {
+      'us': 'top news',
+      'us-news--us-politics': 'politics',
+      'world': 'world',
+      'commentisfree': 'opinion',
+      'us--technology': 'tech',
+      'us--culture': 'arts',
+      'us--lifeandstyle': 'lifestyle',
+      'fashion': 'fashion',
+      'us--business': 'business',
+      'us--travel': 'travel'
+    };
   }
 
   getCategoryTitle(category) {
     return this.categories[category];
   }
 
-  create() {
-    document.documentElement.classList.add('sr-backend-' + this.appTitle.toLowerCase());
-  }
-
-  destroy() {
-    document.documentElement.classList.remove('sr-backend-' + this.appTitle.toLowerCase());
-  }
-
   /*
    * RSS Feed related getters and functions.
    */
 
-  getRSSUrl(/*category*/) {
-    return '';
+  getRSSUrl(category) {
+    return 'https://www.theguardian.com/' + category.replace('--', '/') + '/rss';
   }
 
   getRSSTitle(entry) {
     return entry.title;
   }
 
-  getRSSDescription(entry) {
-    return entry.description.replace(/<[^>]+>/ig,'');
+  getRSSImage(entry) {
+    return entry.content ? entry.content[entry.content.length - 1].url : '';
   }
 
-  getRSSImage(entry) {
-    return entry.thumbnail;
+  getRSSDescription(entry) {
+    return entry.description.replace(/<[^>]+>/ig,'');
   }
 
   /*
    * AMP Doc related functions.
    */
 
-  getAMPUrl(/*url*/) {
-    /*return url.replace('www.', 'amp.');*/
+  getAMPUrl(url) {
+    return url.replace('www.', 'amp.');
+  }
+
+  constructAMPUrl(category, path) {
+    return this.ampEndpoint + path;
   }
 
   getAMPUrlComponent(articleUrl) {
@@ -97,9 +95,33 @@ class Backend {
   }
 
   sanitize(doc) {
-    return doc;
+
+    // remove stuff we don't need in embed mode
+    let header = doc.getElementsByTagName('header');
+    if (header.length)
+      header[0].remove();
+
+    // remove sidebar
+    let sidebar = doc.getElementsByTagName('amp-sidebar');
+    if (sidebar.length)
+      sidebar[0].remove();
+
+    // remove content head
+    let contentHead = doc.querySelector('header.content__head');
+    if (contentHead) {
+      this._title = contentHead.querySelector('h1.content__headline').textContent;
+      this._description = contentHead.querySelector('.content__standfirst meta').getAttribute('content');
+      contentHead.remove();
+    }
+
+    // remove the featured image of the AMP article
+    let featuredImage = doc.querySelector('.media-primary amp-img');
+    if (featuredImage) {
+      this._image = featuredImage.getAttribute('src');
+      this._imageRatio = featuredImage.getAttribute('height') / featuredImage.getAttribute('width');
+      featuredImage.remove();
+    }
+
   }
 
 }
-
-Backend.classes = {};

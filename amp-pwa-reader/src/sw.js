@@ -1,7 +1,10 @@
 'use strict';
 
 importScripts('/workbox.js');
-const workboxSW = new WorkboxSW();
+const workboxSW = new WorkboxSW({
+  clientsClaim: true,
+  skipWaiting: true
+});
 
 // Static precaching of images
 workboxSW.precache([]);
@@ -12,27 +15,16 @@ workboxSW.router.registerNavigationRoute('index.html', {
   blacklist: [/img\/.*/, /\.(js|css)/]
 });
 
-// Cache AMP libraries
+// Cache external libraries and fonts
 workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
+workboxSW.router.registerRoute('https://cdn.polyfill.io/(.*)', workboxSW.strategies.staleWhileRevalidate());
+workboxSW.router.registerRoute('https://pasteup.guim.co.uk/fonts/(.*)', workboxSW.strategies.cacheFirst());
 
-// Cache a number of YQL queries, but only for 5 minutes
-/*
-
-TODO: Re-enable when workbox fix is deployed..
-
+// Cache a number of YQL queries, but only for the offline scenario
 workboxSW.router.registerRoute(
   'https://query.yahooapis.com/v1/public/(.*)',
-  workboxSW.strategies.cacheFirst({
-    cacheName: 'feeds',
-    cacheExpiration: {
-      maxEntries: 20,
-      maxAgeSeconds: 5 * 60
-    },
-    cacheableResponse: {statuses: [ 0, 200 ]}
-  })
+  workboxSW.strategies.networkFirst()
 );
-
-*/
 
 // Cache a number of images
 workboxSW.router.registerRoute(
@@ -50,8 +42,4 @@ workboxSW.router.registerRoute(
 // Make sure new versions of the Service Worker activate immediately
 self.addEventListener('install', () => {
   self.skipWaiting();
-});
-
-self.addEventListener('activate', () => {
-  self.clients.claim();
 });

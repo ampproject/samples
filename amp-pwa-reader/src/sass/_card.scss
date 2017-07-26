@@ -19,11 +19,16 @@
   margin: 1em;
   transition: transform var(--animation-speed-out) var(--animation-easing);
   -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+  border-top: 1px solid #4BC6DF;
+  font-family:"Guardian Egyptian Headline";
+  font-weight: 500;
 
   --hover-scale: 1;
 
   &.sr-full {
       z-index: 5;
+      border-top: 1px solid #00558c;
+
       &::before {
         opacity: 1;
       }
@@ -117,7 +122,7 @@
 
     h2 {
       margin: 3em 0 0 0 !important;
-      font-weight: normal;
+      font-weight: 500;
       background: rgba(0, 0, 0, 0.57) !important;
       padding: 0.5em 0.3em !important;
       font-size: 1.4em;
@@ -142,6 +147,23 @@
     transform-origin: top left;
   }
 
+}
+
+.sr-skeleton-ui {
+  .sr-card {
+    &::before {
+      background: linear-gradient(to top, #c5c5c5, rgba(0,0,0,0) 60%, rgba(0,0,0,0));
+    }
+    .sr-inner {
+      h2 {
+        background: rgba(0, 0, 0, 0.08) !important;
+        color: transparent;
+      }
+      p {
+        color: transparent;
+      }
+    }
+  }
 }
 
 .amp-shadow {

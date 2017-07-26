@@ -7,15 +7,16 @@ header {
   right: 0;
   z-index: 6;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
 
   /* Styling */
   background: linear-gradient(to bottom, #005689, #00558c);
 
   /* Children */
   img {
-    display: none;
+    margin-top: 6px;
+    margin-right: 6px;
   }
 
 }
@@ -77,13 +78,13 @@ header {
   bottom: -6px;
 }
 
-.sr-show-article-skeleton .sr-hamburger .sr-hamburger-inner::before,
+.sr-skeleton-ui-article .sr-hamburger .sr-hamburger-inner::before,
 .sr-article-shown .sr-hamburger .sr-hamburger-inner::before,
 .sr-nav-shown .sr-hamburger .sr-hamburger-inner::before {
   transform: translate3d(-7px, 0, 0) rotate(-45deg) scale(0.7, 1);
 }
 
-.sr-show-article-skeleton .sr-hamburger .sr-hamburger-inner::after,
+.sr-skeleton-ui-article .sr-hamburger .sr-hamburger-inner::after,
 .sr-article-shown .sr-hamburger .sr-hamburger-inner::after,
 .sr-nav-shown .sr-hamburger .sr-hamburger-inner::after {
   transform: translate3d(-7px, 0, 0) rotate(45deg) scale(0.7, 1);
