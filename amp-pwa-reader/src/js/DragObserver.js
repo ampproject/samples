@@ -87,10 +87,7 @@ class DragObserver extends Evented {
     if(this._started) {
       this._clickPreventer.style.transform = 'translate3d(' + (this.eventDown.pageX + rawPosition.x - 15) + 'px, ' + (this.eventDown.pageY + rawPosition.y - 15) + 'px, 0)';
       this.trigger('move', position);
-
-
     }
-
   }
 
   _stop (event) {
