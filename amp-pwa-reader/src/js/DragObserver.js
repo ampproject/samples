@@ -3,7 +3,7 @@ class DragObserver extends Evented {
   constructor (element, options = {}) {
 
     super();
-
+    console.log('Alberto');
     this._started = false;
 
     this.element = element;
@@ -12,7 +12,12 @@ class DragObserver extends Evented {
 
     this._clickPreventer = this._createClickPreventer();
 
-    this.element.addEventListener('pointerdown', this._start.bind(this), { passive: true });
+    this._supportsPointerEvents = false; //!!window.PointerEvent;
+
+    this.element.addEventListener(
+      this._supportsPointerEvents ? 'pointerdown' : 'touchstart',
+      this._start.bind(this), { passive: true }
+    );
 
   }
 
@@ -47,17 +52,33 @@ class DragObserver extends Evented {
 
   _start (event) {
 
-    // store event for re-use
-    this.eventDown = event;
+    if (event.pageX) {
+      this.eventDown = event;
+    } else {
+      this.eventDown = event.targetTouches[0];
+    }
 
     this.__move = (e) => this._move(e);
     this.__stop = (e) => this._stop(e);
-    document.addEventListener('pointermove', this.__move, { passive: true });
-    document.addEventListener('pointerup', this.__stop, { passive: true });
+
+    document.addEventListener(
+        this._supportsPointerEvents ? 'pointermove' : 'touchmove',
+        this.__move, { passive: true }
+    );
+    document.addEventListener(
+        this._supportsPointerEvents ? 'pointerup' : 'touchend',
+        this.__stop, { passive: true }
+    );
 
   }
 
   _move (event) {
+
+    if (event.pageX) {
+      this.eventMove = event;
+    } else {
+      this.eventMove = event.targetTouches[0];
+    }
 
     // store event for re-use
     this.eventMovePrev = this.eventMove || this.eventStart;
@@ -85,8 +106,14 @@ class DragObserver extends Evented {
 
   _stop (event) {
 
-    document.removeEventListener('pointermove', this.__move);
-    document.removeEventListener('pointerup', this.__stop);
+    document.removeEventListener(
+        this._supportsPointerEvents ? 'pointermove' : 'touchmove',
+        this.__move
+    );
+    document.removeEventListener(
+        this._supportsPointerEvents ? 'pointerup' : 'touchend',
+        this.__stop
+    );
 
     if(this._started) {
       event.stopPropagation();
@@ -94,7 +121,5 @@ class DragObserver extends Evented {
       this._started = false;
       this.trigger('stop');
     }
-
   }
-
 }
