@@ -3,7 +3,7 @@ class DragObserver extends Evented {
   constructor (element, options = {}) {
 
     super();
-    console.log('Alberto');
+
     this._started = false;
 
     this.element = element;
@@ -12,11 +12,12 @@ class DragObserver extends Evented {
 
     this._clickPreventer = this._createClickPreventer();
 
-    this._supportsPointerEvents = false; //!!window.PointerEvent;
+    this._supportsPointerEvents = !!window.PointerEvent;
 
     this.element.addEventListener(
       this._supportsPointerEvents ? 'pointerdown' : 'touchstart',
-      this._start.bind(this), { passive: true }
+      this._start.bind(this),
+      { passive: true }
     );
 
   }
@@ -26,6 +27,8 @@ class DragObserver extends Evented {
     div.style.width = '30px';
     div.style.height = '30px';
     div.style.position = 'absolute';
+    div.style.left = '0';
+    div.style.top = '0';
     div.style.zIndex = '1000';
     return div;
   }
@@ -52,10 +55,9 @@ class DragObserver extends Evented {
 
   _start (event) {
 
+    // store event for re-use
     if (event.pageX) {
       this.eventDown = event;
-    } else {
-      this.eventDown = event.targetTouches[0];
     }
 
     this.__move = (e) => this._move(e);
@@ -63,30 +65,37 @@ class DragObserver extends Evented {
 
     document.addEventListener(
         this._supportsPointerEvents ? 'pointermove' : 'touchmove',
-        this.__move, { passive: true }
+        this.__move,
+        { passive: true }
     );
     document.addEventListener(
         this._supportsPointerEvents ? 'pointerup' : 'touchend',
-        this.__stop, { passive: true }
+        this.__stop,
+        { passive: true }
     );
 
   }
 
   _move (event) {
 
+    // store event for re-use
     if (event.pageX) {
       this.eventMove = event;
-    } else {
-      this.eventMove = event.targetTouches[0];
     }
 
     // store event for re-use
     this.eventMovePrev = this.eventMove || this.eventStart;
     this.eventMove = event;
 
-    var position = {
-      x: (this.axis === 'both' || this.axis === 'x') ? -(this.eventDown.pageX - this.eventMove.pageX) : 0,
-      y: (this.axis === 'both' || this.axis === 'y') ? -(this.eventDown.pageY - this.eventMove.pageY) : 0
+    // keep track of position before axis 'removal'
+    let rawPosition = {
+      x: -(this.eventDown.pageX - this.eventMove.pageX),
+      y: -(this.eventDown.pageY - this.eventMove.pageY)
+    }
+
+    let position = {
+      x: (this.axis === 'both' || this.axis === 'x') ? rawPosition.x : 0,
+      y: (this.axis === 'both' || this.axis === 'y') ? rawPosition.y : 0
     };
 
     // only execute start callback when moved at least one pixel (configured as 'distance')
@@ -98,10 +107,9 @@ class DragObserver extends Evented {
 
     // only execute move callback when properly started
     if(this._started) {
-      this._clickPreventer.style.transform = 'translate3d(' + (this.eventDown.pageX + position.x - 15) + 'px, ' + (this.eventDown.pageY + position.y - 15) + 'px, 0)';
+      this._clickPreventer.style.transform = 'translate3d(' + (this.eventDown.pageX + rawPosition.x - 15) + 'px, ' + (this.eventDown.pageY + rawPosition.y - 15) + 'px, 0)';
       this.trigger('move', position);
     }
-
   }
 
   _stop (event) {
