@@ -229,6 +229,12 @@ class Nav {
         this._cardViewInitialized = true;
       }
 
+      // If for some reason the feed failed, let's bail
+      if(!entries.length) {
+        console.error('feed failed to update!');
+        return;
+      }
+
       // empty items container (lazy..)
       shadowReader.itemsElement.innerHTML = '';
       this.cards = [];

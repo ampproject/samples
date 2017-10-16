@@ -20,7 +20,7 @@ class FeedReader {
 
   }
 
-  fetch(category) {
+  fetch(category, attempts = 0) {
 
     let rssUrl = shadowReader.backend.getRSSUrl(category);
     let yqlQuery = 'select * from feed where url = \'' + encodeURIComponent(rssUrl) + '\'';
@@ -30,7 +30,14 @@ class FeedReader {
       .then(response => response.json() )
       .then(rss => {
 
-        var entries = rss.query.results.item;
+        // sadly, the Guardian's RSS feeds seem to be having intermittent failures right now,
+        // so rerequest if that happens
+        if(!rss.query.results && attempts < 10) {
+          return this.fetch(category, (attempts || 0) + 1);
+        }
+
+        var entries = rss.query.results ? rss.query.results.item : [];
+
         return entries.map(entry => {
           return {
             title: shadowReader.backend.getRSSTitle(entry),
