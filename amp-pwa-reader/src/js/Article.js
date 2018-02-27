@@ -16,20 +16,21 @@
 
 class Article {
 
-  constructor(url, card) {
+  constructor(url, card, streaming) {
     this.url = shadowReader.backend.getAMPUrl(url);
+    this.proxyUrl = this.urlProxy(this.url);
     this.card = card;
+    this.streaming = streaming;
     Article.articles[this.url] = this;
   }
 
   fetch() {
-
     // unfortunately fetch() does not support retrieving documents,
     // so we have to resort to good old XMLHttpRequest.
     var xhr = new XMLHttpRequest();
 
     return new Promise((resolve, reject) => {
-      xhr.open('GET', 'https://seed-octagon.glitch.me/' + encodeURIComponent(this.url), true);
+      xhr.open('GET', this.proxyUrl, true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
@@ -39,6 +40,61 @@ class Article {
       xhr.send();
     });
 
+  }
+
+  loadAndRender() {
+    return this.streaming ?
+      this.stream() :
+      this.load().then(this.render());
+  }
+
+  createStreamingShadowDoc() {
+    this.container = this.createShadowRoot();
+    this.ampDoc = AMP.attachShadowDocAsStream(this.container, this.url); 
+  }
+
+// see https://github.com/ampproject/amphtml/blob/master/spec/amp-shadow-doc.md
+// and https://jakearchibald.com/2016/fun-hacks-faster-content/
+  stream() {
+    var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to readChunk()
+    var article = this;             // this too
+    var visible = false;
+
+    fetch(this.proxyUrl).then(response => {
+      let reader = response.body.getReader();
+      let decoder = new TextDecoder();
+
+      function readChunk() {
+        return reader.read().then(chunk => {
+          let text = decoder.decode(
+              chunk.value || new Uint8Array(),
+              {stream: !chunk.done}
+          );
+
+          if (text) {
+            let filteredText = shadowReader.backend.filterHTML(text);
+            shadowDoc.writer.write(filteredText);
+          }
+/* removing because show() assumes the <body> already exists. */
+          // should this be within if (text) so nothing gets shown if nothing loads?
+          if (!visible) {
+            article.show();
+            visible = true;   //TODO: should this be a class property instead?
+          }
+
+          if (chunk.done) {
+            shadowDoc.writer.close();
+          } else {
+            return readChunk();
+          }
+
+        });
+      }
+
+      return readChunk();
+    });
+
+    return this.ampDoc.ampdoc.whenReady();
   }
 
   load() {
@@ -54,7 +110,6 @@ class Article {
   }
 
   sanitize() {
-
     let doc = this.doc;
     let hasCard = !!this.card;
 
@@ -62,14 +117,13 @@ class Article {
     shadowReader.backend.sanitize(doc, hasCard);
 
     // add the correct backend class, as the styling expects it
-    this.doc.body.classList.add('sr-backend-' + shadowReader.backend.appTitle.toLowerCase());
+    doc.body.classList.add('sr-backend-' + shadowReader.backend.appTitle.toLowerCase());
 
     // insert stylesheet that styles the featured image
     var stylesheet = document.createElement('link');
     stylesheet.setAttribute('rel', 'stylesheet');
     stylesheet.href = '/inline.css';
-    this.doc.body.append(stylesheet);
-
+    doc.body.append(stylesheet);
   }
 
   createShadowRoot() {
@@ -84,7 +138,6 @@ class Article {
   }
 
   cloneCard() {
-
     let card = this.card.elem.cloneNode(true);
 
     // clear all transforms
@@ -99,11 +152,9 @@ class Article {
 
     this.clonedCard = card;
     return card;
-
   }
 
   generateCard() {
-
     let articleData = shadowReader.backend.getArticleData();
     let card = new Card(articleData, /*headless*/true).elem;
 
@@ -117,7 +168,6 @@ class Article {
   }
 
   get cssVariables() {
-
     if (!this._cssVariables) {
       let htmlStyles = window.getComputedStyle(document.querySelector("html"));
       this._cssVariables = {
@@ -132,7 +182,6 @@ class Article {
   }
 
   animateIn() {
-
     // No animation if there's no card to animate from
     if (!this.card) {
       return Promise.resolve();
@@ -153,7 +202,6 @@ class Article {
   }
 
   animateOut() {
-
     // No animation if there's no card to animate from
     if (!this.card) {
       return Promise.resolve();
@@ -174,27 +222,29 @@ class Article {
   }
 
   render() {
+      // Create an empty container for the AMP page
+      this.container = this.createShadowRoot();
 
-    // Create an empty container for the AMP page
-    this.container = this.createShadowRoot();
+      // Tell Shadow AMP to initialize the AMP page in prerender-mode
+      this.ampDoc = AMP.attachShadowDoc(this.container, this.doc, this.url);
+      this.ampDoc.setVisibilityState('prerender');
 
-    // Tell Shadow AMP to initialize the AMP page in prerender-mode
-    this.ampDoc = AMP.attachShadowDoc(this.container, this.doc, this.url);
-    this.ampDoc.setVisibilityState('prerender');
-
-    return this.ampDoc.ampdoc.whenReady();
-
+      return this.ampDoc.ampdoc.whenReady();
   }
 
   show(replaceHistoryState) {
-
     // We need to clone the featured image into the Shadow DOM so it scrolls
     // along. There are cases were we don't have a linked card from the list
     // view (e.g. we load directly into the article), in which case we need to
     // generate a new one.
     var card = this.card ? this.cloneCard() : this.generateCard();
+
+    this.card.elem.classList.remove('sr-loading');
+    this.card.animate();
+    this.card.hijackMenuButton();
+
     card.lastElementChild.onclick = function () { return false; };
-    this.ampDoc.ampdoc.getBody().prepend(card);
+    //this.ampDoc.ampdoc.getBody().prepend(card); TODO: restore this
 
     // animate the article in. Only makes sense when there's a card transition
     // at the same time, within animateIn, we check for the availability of a
@@ -225,7 +275,6 @@ class Article {
   }
 
   hide() {
-
     // remove class to html element for global CSS stuff
     document.documentElement.classList.remove('sr-article-shown');
 
@@ -260,6 +309,10 @@ class Article {
 
   restoreScroll() {
     document.scrollingElement.scrollTop = this._mainScrollY;
+  }
+
+  urlProxy(url) {
+    return 'https://seed-octagon.glitch.me/' + encodeURIComponent(url);
   }
 
 }
