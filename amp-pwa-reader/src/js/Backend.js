@@ -95,7 +95,6 @@ class Backend {
   }
 
   sanitize(doc) {
-
     // remove stuff we don't need in embed mode
     let header = doc.getElementsByTagName('header');
     if (header.length)
@@ -121,7 +120,25 @@ class Backend {
       this._imageRatio = featuredImage.getAttribute('height') / featuredImage.getAttribute('width');
       featuredImage.remove();
     }
+  }
 
+  filterHTML(html) {
+    const substitutions = [
+      ['<style amp-custom>', '<style amp-custom> header {display: none;} amp-sidebar {display: none;} .media-primary amp-img {display: none;}']
+    ];
+
+    substitutions.forEach(substitution => 
+      html = html.replace(substitution[0], substitution[1])
+    );
+
+    return html;
+  }
+
+//TODO: either use this or don't
+  hideElements(html) {
+    const selectors = ['header', 'amp-sidebar', '.media-primary amp-img'];
+
+//    selectors.forEach(selector => )  etc. etc.
   }
 
 }
