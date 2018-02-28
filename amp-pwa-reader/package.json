@@ -11,8 +11,15 @@
   "dependencies": {
     "browser-sync": "*",
     "connect-history-api-fallback": "*",
+    "cors": "^2.8.4",
     "del": "*",
-    "gulp": "github:gulpjs/gulp#4.0",
+    "express": "^4.15.3",
+    "request": "^2.81.0",
+    "workbox-build": "*",
+    "workbox-sw": "*"
+  },
+  "devDependencies": {
+    "gulp": "github:gulpjs/gulp#4.0",    
     "gulp-autoprefixer": "*",
     "gulp-concat": "*",
     "gulp-plumber": "*",
@@ -20,8 +27,10 @@
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
-    "uglify-es": "*",
-    "workbox-build": "*",
-    "workbox-sw": "*"
+    "gulp-util": "^3.0.8",
+    "uglify-es": "*"
+  },
+  "engines": {
+    "node": "6.8.0"
   }
 }
