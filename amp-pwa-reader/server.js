@@ -15,15 +15,33 @@
  */
 
 const express = require('express');
-const path = require('path');
 const request = require('request');
-const serveStatic = require('serve-static');
-
+const fs = require('fs');
 const app = express();
+const backend = require('src/js/Backend.js');
 
-const staticFilesMiddleware = serveStatic(path.resolve('./dist'));
-app.use(staticFilesMiddleware);
+const pub = new backend.Backend();
+app.locals.pub = pub;  // Do we actually need to do that?
 
+// Serve static JS and CSS files the easy way. When user requests main app, serve index.html
+app.use(express.static('dist'));
+app.use('/', express.static('dist/index.html'));
+
+// When user requests an article, serve the AMP version of that article, with serviceworker injected.
+// But if that article is requested with a query param, that means it's come from the service worker,
+// and we should serve the PWA 
+/*
+app.get('/' + articlePathname, (req, res) => {
+  let 
+
+    if (!req.query.pwa) {
+      body = addServiceWorker(body);
+    }
+
+  
+});
+*/
+// This is used when the PWA requests a new article.
 app.get('/proxy', (req, res) => {
   const options = {
     url: req.query.url,
@@ -33,9 +51,9 @@ app.get('/proxy', (req, res) => {
   };
   
   request(options, (error, response, body) => {
-    if(!error){
+    if (!error) {
       res.send(body);
-    }else{
+    } else {
       res.json({error: 'An error occurred'});
     }
   });
@@ -46,3 +64,13 @@ const port = process.env.PORT || 8080;
 const listener = app.listen(port, () => {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+// inject service worker HTML into an HTML document.
+function addServiceWorker(html) {
+  const swHeadHTML = fs.readFileSync('./sw_head.html');
+  const swBodyHTML = fs.readFileSync('./sw_body.html');
+
+  return html.replace('</head>', swHeadHTML + "\n</head>")
+             .replace('<body>', "<body>\n" + swBodyHTML)
+  ;
+}
