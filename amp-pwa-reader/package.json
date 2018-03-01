@@ -13,13 +13,13 @@
     "connect-history-api-fallback": "*",
     "cors": "^2.8.4",
     "del": "*",
-    "express": "^4.15.3",
+    "express": "^4.16.2",
     "request": "^2.81.0",
     "workbox-build": "*",
     "workbox-sw": "*"
   },
   "devDependencies": {
-    "gulp": "github:gulpjs/gulp#4.0",    
+    "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "*",
     "gulp-concat": "*",
     "gulp-plumber": "*",
