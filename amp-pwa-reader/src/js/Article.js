@@ -62,7 +62,7 @@ class Article {
     shadowReader.backend.sanitize(doc, hasCard);
 
     // add the correct backend class, as the styling expects it
-    this.doc.body.classList.add('sr-backend-' + shadowReader.backend.appTitle.toLowerCase());
+    this.doc.body.classList.add('sr-backend-' + shadowReader.backend.pathname);
 
     // insert stylesheet that styles the featured image
     var stylesheet = document.createElement('link');

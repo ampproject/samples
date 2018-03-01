@@ -31,13 +31,13 @@ class HistoryStack {
   }
 
   constructUrl(articleUrl) {
-    return '/' + this.backend.appTitle.toLowerCase() + '/' + ((window.shadowReader && shadowReader.nav.category) || this.state.category) + (articleUrl ? '/' + this.backend.getAMPUrlComponent(articleUrl) : '');
+    return '/' + this.backend.pathname + '/' + ((window.shadowReader && shadowReader.nav.category) || this.state.category) + (articleUrl ? '/' + this.backend.getAMPUrlComponent(articleUrl) : '');
   }
 
   parseUrlIntoState() {
 
     // grab the pathname from the url (minus slashes at the beginning and end, and the backend)
-    var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '').replace(this.backend.appTitle.toLowerCase() + '/', '');
+    var path = location.pathname.replace(/^\/*/, '').replace(/\/*$/, '').replace(this.backend.pathname + '/', '');
     var state = {
       category: this.backend.defaultCategory,
       articleUrl: null
