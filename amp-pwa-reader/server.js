@@ -18,29 +18,38 @@ const express = require('express');
 const request = require('request');
 const fs = require('fs');
 const app = express();
-const backend = require('src/js/Backend.js');
+const pubBackend = require('./src/js/Backend.js');
 
-const pub = new backend.Backend();
-app.locals.pub = pub;  // Do we actually need to do that?
+const pub = new pubBackend();
+//app.locals.pub = pub;  // Do we actually need to do that?
 
 // Serve static JS and CSS files the easy way. When user requests main app, serve index.html
 app.use(express.static('dist'));
-app.use('/', express.static('dist/index.html'));
+app.use('/', express.static('./dist/index.html'));
 
 // When user requests an article, serve the AMP version of that article, with serviceworker injected.
 // But if that article is requested with a query param, that means it's come from the service worker,
-// and we should serve the PWA 
-/*
-app.get('/' + articlePathname, (req, res) => {
-  let 
+// and we should serve the PWA.
 
-    if (!req.query.pwa) {
-      body = addServiceWorker(body);
-    }
+app.get('/' + pub.pathname + ':articlePath', (req, res) => {
+//  const pub = app.locals.pub;
+  const ampUrl = pub.constructAMPUrl(req.params.articlePath);
 
-  
+  if (req.query.pwa) {
+    request(ampUrl, function(error, response, body) {
+      if (!error) {
+        res.send(addServiceWorker(body));
+      } else {
+        res.json({error: 'An error occurred'});
+      }      
+    });
+
+  } else {
+    res.send(fs.readFileSync(req.url)); 
+  }  
+
 });
-*/
+
 // This is used when the PWA requests a new article.
 app.get('/proxy', (req, res) => {
   const options = {
