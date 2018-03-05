@@ -23,7 +23,7 @@ workboxSW.router.registerRoute('https://pasteup.guim.co.uk/fonts/(.*)', workboxS
 // Cache a number of YQL queries, but only for the offline scenario
 workboxSW.router.registerRoute(
   'https://query.yahooapis.com/v1/public/(.*)',
-  new workboxSW.strategies.networkFirst()
+  workboxSW.strategies.networkFirst()
 );
 
 // Cache a number of images
