@@ -126,6 +126,3 @@ class Backend {
   }
 
 }
-
-//Make this reusable as a node module
-module.exports = Backend;
