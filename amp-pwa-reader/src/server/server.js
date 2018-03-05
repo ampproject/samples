@@ -13,41 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 const express = require('express');
 const request = require('request');
 const fs = require('fs');
+const path = require('path');
+const pubBackend = require('/dist/server/Backend.js');
+
 const app = express();
-const pubBackend = require('./src/js/Backend.js');
-
 const pub = new pubBackend();
-//app.locals.pub = pub;  // Do we actually need to do that?
 
-// Serve static JS and CSS files the easy way. When user requests main app, serve index.html
-app.use(express.static('dist'));
+// Serve static JS and CSS files the easy way.
+app.use(express.static('./dist'));
+//app.use(express.static('*/.map'));
+
+// When user requests main app, serve index.html
 app.use('/', express.static('./dist/index.html'));
+//app.use('/index.html', express.static('./dist/index.html'));
 
 // When user requests an article, serve the AMP version of that article, with serviceworker injected.
 // But if that article is requested with a query param, that means it's come from the service worker,
 // and we should serve the PWA.
 
-app.get('/' + pub.pathname + ':articlePath', (req, res) => {
-//  const pub = app.locals.pub;
-  const ampUrl = pub.constructAMPUrl(req.params.articlePath);
-
+app.get('/' + pub.pathname + '/*', (req, res) => {
+  console.log('req.params:');  console.log(req.params);
+  console.log('req.query:'); console.log(req.query);
   if (req.query.pwa) {
+    let options = { root: __dirname + '/dist/' };
+    res.sendFile('index.html', options);
+
+  } else {
+    let categoryAndUrl = splitUrlCategory(req.params[0]);
+    const ampUrl = pub.constructAMPUrl(categoryAndUrl.category, categoryAndUrl.url);
+
+    console.log("ampUrl is " + ampUrl);
     request(ampUrl, function(error, response, body) {
       if (!error) {
         res.send(addServiceWorker(body));
       } else {
-        res.json({error: 'An error occurred'});
+        res.json({error: 'An error occurred in the article route'});
       }      
     });
 
-  } else {
-    res.send(fs.readFileSync(req.url)); 
-  }  
-
+  }
 });
 
 // This is used when the PWA requests a new article.
@@ -63,10 +70,12 @@ app.get('/proxy', (req, res) => {
     if (!error) {
       res.send(body);
     } else {
-      res.json({error: 'An error occurred'});
+      res.json({error: 'An error occurred in /proxy route'});
     }
   });
 });
+
+// app.get('*')
 
 // listen for requests :)
 const port = process.env.PORT || 8080;
@@ -76,10 +85,16 @@ const listener = app.listen(port, () => {
 
 // inject service worker HTML into an HTML document.
 function addServiceWorker(html) {
-  const swHeadHTML = fs.readFileSync('./sw_head.html');
-  const swBodyHTML = fs.readFileSync('./sw_body.html');
+  const swHeadHTML = fs.readFileSync('partials/sw_head.html', 'utf8');
+  const swBodyHTML = fs.readFileSync('partials/sw_body.html', 'utf8');
 
-  return html.replace('</head>', swHeadHTML + "\n</head>")
-             .replace('<body>', "<body>\n" + swBodyHTML)
+  return html.replace('</head>', swHeadHTML + "\n$&")
+             .replace(/<body.+?>/, "$&\n" + swBodyHTML)
   ;
+}
+
+// Split the category (the first element in the URL) from the rest.
+function splitUrlCategory(srUrl) {
+  let matches = srUrl.match(/(.+?)\/(.+)/);
+  return {category: matches[1], url: matches[2]};
 }
