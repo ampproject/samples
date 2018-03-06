@@ -29,7 +29,7 @@ class Article {
     var xhr = new XMLHttpRequest();
 
     return new Promise((resolve, reject) => {
-      xhr.open('GET', 'https://seed-octagon.glitch.me/' + encodeURIComponent(this.url), true);
+      xhr.open('GET', '/proxy?url=' + encodeURIComponent(this.url), true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
@@ -62,7 +62,7 @@ class Article {
     shadowReader.backend.sanitize(doc, hasCard);
 
     // add the correct backend class, as the styling expects it
-    this.doc.body.classList.add('sr-backend-' + shadowReader.backend.appTitle.toLowerCase());
+    this.doc.body.classList.add('sr-backend-' + shadowReader.backend.pathname);
 
     // insert stylesheet that styles the featured image
     var stylesheet = document.createElement('link');
