@@ -143,8 +143,8 @@ function watch() {
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
-  gulp.watch(paths.images.src, copy);
-  gulp.watch(paths.server.src, copy);
+  gulp.watch(paths.images.src, dist);   // of course, this could be a smaller task if builds ever got too slow
+  gulp.watch(paths.server.src, dist);   // same
 }
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
