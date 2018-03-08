@@ -15,13 +15,6 @@ workboxSW.router.registerNavigationRoute('index.html', {
   blacklist: [/img\/.*/, /\.(js|css)/]
 });
 
-// Append a query param to  requests for index.html.  This may replace the previous registernavigationroute
-/*
-workboxSW.router.registerRoute('???', ({url, event, params}) => {
-  return fetch(addUrlParam(url, 'pwa=true'));
-});
-*/
-
 // Cache external libraries and fonts
 workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
 workboxSW.router.registerRoute('https://cdn.polyfill.io/(.*)', workboxSW.strategies.staleWhileRevalidate());
