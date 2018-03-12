@@ -12,7 +12,6 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const insert = require('gulp-insert');
-const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
@@ -132,14 +131,6 @@ function modularizeJS(name) {
 }
 
 function watch() {
-  browserSync.init({
-    server: {
-      baseDir: 'dist/',
-      middleware: [historyApiFallback()]
-    },
-    ui: false
-  });
-
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
