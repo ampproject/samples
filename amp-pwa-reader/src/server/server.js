@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 const express = require('express');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const serveStatic = require('serve-static');
 const pubBackend = require('./Backend.js');
 
 const app = express();
 const pub = new pubBackend();
 
-const staticFilesMiddleware = serveStatic(path.resolve('..'));
+console.log(__dirname);
+
+const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
 
 // When user requests an article, serve the AMP version of that article,
@@ -35,8 +36,7 @@ app.get('/' + pub.pathname + '/*', (req, res) => {
 
 // If this is URL is for a section, not an article, then return the Shadow Reader instead.
   if (isSectionUrl) {
-    let options = { root: '../' };
-    res.sendFile('index.html', options);
+    res.sendFile(path.join(__dirname, '../index.html'));
 
   } else {
 
@@ -86,8 +86,8 @@ const listener = app.listen(port, () => {
 
 // Inject service worker HTML into an HTML document.
 function addServiceWorker(html) {
-  const swHeadHTML = fs.readFileSync('partials/sw_head.html', 'utf8');
-  const swBodyHTML = fs.readFileSync('partials/sw_body.html', 'utf8');
+  const swHeadHTML = fs.readFileSync(path.join(__dirname, 'partials/sw_head.html'), 'utf8');
+  const swBodyHTML = fs.readFileSync(path.join(__dirname, 'partials/sw_body.html'), 'utf8');
 
   return html.replace('</head>', swHeadHTML + "\n$&")
              .replace(/<body.+?>/, "$&\n" + swBodyHTML)
@@ -96,7 +96,7 @@ function addServiceWorker(html) {
 
 // Replace the sidebar with one that works for the Shadow Reader.
 function replaceSidebar(html) {
-  const template = fs.readFileSync('partials/sidebar.html', 'utf8');
+  const template = fs.readFileSync(path.join(__dirname, 'partials/sidebar.html'), 'utf8');
   const basePath = '/' + pub.pathname + '/';
   let newSidebarHTML = '';
 
