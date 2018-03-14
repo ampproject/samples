@@ -29,7 +29,7 @@ workboxSW.router.registerRoute(
 // Cache a number of images
 workboxSW.router.registerRoute(
   'https://i.guim.co.uk/img/(.*)',
-  new workboxSW.strategies.cacheFirst({
+  workboxSW.strategies.cacheFirst({
     cacheName: 'images',
     cacheExpiration: {
       maxEntries: 10,
