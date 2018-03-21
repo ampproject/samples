@@ -120,7 +120,7 @@ function watch() {
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
-  gulp.watch(paths.images.src, copy);
+  gulp.watch(paths.images.src, dist);
 
 }
 
