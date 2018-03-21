@@ -21,7 +21,7 @@ class Card {
     this.headless = headless;
     this.currentTransform = { scaleX: 1, scaleY: 1 };
     this.naturalDimensions = { width: 0, height: 0 };
-    this.streaming = true; //TODO: pass this in as a param
+    this.streaming = !prerender;  //TODO: also check to see if browser supports it
 
     this.create();
     this.bind();
@@ -33,7 +33,7 @@ class Card {
       this.elem.classList.add('sr-full');
       this.innerElem.setAttribute('tabindex', -1);
     } else {
-      this.article = new Article(this.data.link, this, !prerender);
+      this.article = new Article(this.data.link, this, this.streaming);
       this.render();
     }
 
@@ -209,13 +209,19 @@ class Card {
   activate() {
     // set main view to inert so you can't tab into it
     shadowReader.disableCardTabbing();
+
+    this.article.getClonedCardElem();
+
     // add loading spinner (and promote to layer)
     this.elem.classList.add('sr-loading', 'sr-promote-layer');
 
     if (this.streaming) {
-      this.article.createStreamingShadowDoc();
-      this.article.show();
-      this.article.loadAndRender()
+      this.article.renderStreaming();
+      this.article.stream()
+        .then(() => {
+          this.elem.classList.remove('sr-loading');
+          this.hijackMenuButton();  //TODO: this should probably happen earlier in streaming case
+      })
         .catch(error => {
           this.elem.classList.remove('sr-loading');
           this.elem.classList.add('sr-error');
@@ -223,10 +229,16 @@ class Card {
 
     } else {
 
-      this.article.loadAndRender()
+      this.article.load()
+        .then(() => this.article.render())
         .then(() => {
-          this.article.show();
-        })
+       // remove loading spinner
+        this.elem.classList.remove('sr-loading');
+
+        this.animate();
+        this.article.show();
+        this.hijackMenuButton();
+      })
         .catch(error => {
           this.elem.classList.remove('sr-loading');
           this.elem.classList.add('sr-error');
