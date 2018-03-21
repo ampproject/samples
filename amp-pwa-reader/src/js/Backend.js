@@ -32,6 +32,9 @@ class Backend {
       'us--business': 'business',
       'us--travel': 'travel'
     };
+
+    // selectors for DOM elements we want to hide in Shadow AMP mode
+    this.elementsToHide = ['header', 'amp-sidebar', '.media-primary amp-img'];
   }
 
   getCategoryTitle(category) {
@@ -122,23 +125,17 @@ class Backend {
     }
   }
 
-  filterHTML(html) {
-    const substitutions = [
-      ['<style amp-custom>', '<style amp-custom> header {display: none;} amp-sidebar {display: none;} .media-primary amp-img {display: none;}']
-    ];
-
-    substitutions.forEach(substitution => 
-      html = html.replace(substitution[0], substitution[1])
-    );
-
-    return html;
-  }
-
-//TODO: either use this or don't
+// Given an array of selectors, create CSS rules that hide each of those - and insert it into AMP HTML.
+// This is the equivalent of sanitize() for the streaming case.
+//TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
   hideElements(html) {
-    const selectors = ['header', 'amp-sidebar', '.media-primary amp-img'];
+    const styleTag = '<style amp-custom>';
 
-//    selectors.forEach(selector => )  etc. etc.
+    let css = this.elementsToHide
+                .map(selector => selector + ' {display: none;}')
+                .join(' ');
+                
+    return html.replace(styleTag, styleTag + ' ' + css);
   }
 
 }
