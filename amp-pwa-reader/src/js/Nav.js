@@ -104,7 +104,7 @@ class Nav {
 
   startWithArticle(state) {
 
-    let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl);
+    let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl, null, false);
 
     // if we have a card, things are easy: simply pretend we click on the card!
     if (article.card) {
