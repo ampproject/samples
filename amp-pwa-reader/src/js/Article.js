@@ -41,13 +41,6 @@ class Article {
     });
 
   }
-/*
-  loadAndRender() {
-    return this.streaming ?
-      this.stream() :
-      this.load().then(this.render());
-  }
-*/
 
 // see https://github.com/ampproject/amphtml/blob/master/spec/amp-shadow-doc.md
 // and https://jakearchibald.com/2016/fun-hacks-faster-content/
