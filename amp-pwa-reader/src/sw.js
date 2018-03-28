@@ -43,9 +43,3 @@ workboxSW.router.registerRoute(
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
-
-
-function addUrlParam(url, param) {
-  url += (param.indexOf('?') === -1) ? '?' : '&';
-  return url + param;
-}
