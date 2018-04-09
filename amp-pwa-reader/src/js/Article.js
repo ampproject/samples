@@ -24,18 +24,17 @@ class Article {
 
   fetch() {
 
-    // unfortunately fetch() does not support retrieving documents,
-    // so we have to resort to good old XMLHttpRequest.
+    // we use XMLHttpRequest instead of fetch() because it returns a ready-to-use Document object
     var xhr = new XMLHttpRequest();
 
     return new Promise((resolve, reject) => {
-      xhr.open('GET', '/proxy?url=' + encodeURIComponent(this.url), true);
+      xhr.open('GET', '/article?url=' + encodeURIComponent(this.url), true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
         var isAMP = xhr.responseXML.documentElement.hasAttribute('amp') || xhr.responseXML.documentElement.hasAttribute('⚡');
         return isAMP ? resolve(xhr.responseXML) : reject('Article does not have an AMP version.');
-      }; // .responseXML contains a ready-to-use Document object
+      };
       xhr.send();
     });
 

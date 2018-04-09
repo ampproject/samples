@@ -18,6 +18,7 @@ const express = require('express');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
 const pubBackend = require('./Backend.js');
 
 const app = express();
@@ -25,8 +26,31 @@ const pub = new pubBackend();
 
 console.log(__dirname);
 
+// Whitelist domains for CORS. As more CDNs grab this sample app, we'll need to add them here.
+const corsOptions = {'origin': [
+  /amp\.cards$/,
+  /^localhost:/,
+  /amp-cards\.cdn\.ampproject\.org$/
+]};
+
 const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
+
+// This is used when the PWA requests a new article.
+app.get('/article', cors(corsOptions), function(req, res, next) {
+  const options = {
+    url: req.query.url
+  };
+
+  request(options, (error, response, body) => {
+    if (!error) {
+      res.send(body);
+    } else {
+      res.json({error: 'An error occurred in /article route'});
+    }
+  });
+});
+
 
 // When user requests an article, serve the AMP version of that article,
 // injecting our service worker and replacing the Guardian's menu with one that works for Shadow Reader.
@@ -55,24 +79,6 @@ app.get('/' + pub.pathname + '/*', (req, res) => {
   }
 });
 
-// This is used when the PWA requests a new article.
-app.get('/proxy', (req, res) => {
-  const options = {
-    url: req.query.url,
-    headers: {
-      'origin': 'http://glitch.com'
-    }
-  };
-  
-  request(options, (error, response, body) => {
-    if (!error) {
-      res.send(body);
-    } else {
-      res.json({error: 'An error occurred in /proxy route'});
-    }
-  });
-});
-
 
 // listen for requests :)
 const port = process.env.PORT || 8080;
@@ -80,9 +86,6 @@ const listener = app.listen(port, () => {
   console.log('Your app is listening on port ' + listener.address().port);
 });
 
-
-
-/** HELPERS **/
 
 // Inject service worker HTML into an HTML document.
 function addServiceWorker(html) {
