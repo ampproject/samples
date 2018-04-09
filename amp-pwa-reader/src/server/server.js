@@ -26,7 +26,7 @@ const pub = new pubBackend();
 
 console.log(__dirname);
 
-// Whitelist domains for CORS. As more CDNs grab this sample app, we'll need to add them here.
+// Whitelist domains for CORS. As more CDNs cache this site, we'll need to add them here.
 const corsOptions = {'origin': [
   /amp\.cards$/,
   /^localhost:/,
