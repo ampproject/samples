@@ -19,12 +19,15 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const memCache = require('memory-cache');
 const pubBackend = require('./Backend.js');
 
 const app = express();
 const pub = new pubBackend();
 
-console.log(__dirname);
+// how long (in seconds) to cache requests for main feed and for any article
+const cacheDurations = {feed: 600, article: 3600};
+const feedURL = 'https://query.yahooapis.com/v1/public/yql';
 
 // Whitelist domains for CORS. As more CDNs cache this site, we'll need to add them here.
 const corsOptions = {'origin': [
@@ -36,8 +39,24 @@ const corsOptions = {'origin': [
 const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
 
+// Proxy the feed request so that we can cache it.
+// YQL expects a query in the "q" parameter.
+app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
+  const options = {
+    url: feedURL + '?format=json&q=' + req.query.q
+  };
+
+  request(options, (error, response, body) => {
+    if (!error) {
+      res.send(body);
+    } else {
+      res.json({error: 'An error occurred in /feed route'});
+    }
+  });
+});
+
 // This is used when the PWA requests a new article.
-app.get('/article', cors(corsOptions), function(req, res, next) {
+app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(req, res, next) {
   const options = {
     url: req.query.url
   };
@@ -86,6 +105,33 @@ const listener = app.listen(port, () => {
   console.log('Your app is listening on port ' + listener.address().port);
 });
 
+
+
+/** HELPERS **/
+
+// Cache with memory-cache. A tip of the pin to https://medium.com/the-node-js-collection/simple-server-side-cache-for-express-js-with-node-js-45ff296ca0f0
+// Essentially, we wrap res.send() in a function that first puts the result in the cache.
+function cache(seconds) {
+  return (req, res, next) => {
+    const key = req.originalUrl || req.url;
+    const cachedBody = memCache.get(key);
+
+    if (cachedBody) {
+      console.log('** cache hit!');
+      res.send(cachedBody);
+
+    } else {
+      console.log('** cache miss.');
+      res.justSend = res.send;
+      res.send = (body) => {
+        memCache.put(key, body, seconds * 1000);
+        res.justSend(body);
+      };
+
+      next();
+    }
+  }
+}
 
 // Inject service worker HTML into an HTML document.
 function addServiceWorker(html) {

@@ -1,11 +1,10 @@
 {
   "name": "ShadowReader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/server/server.js"
+    "start": "opn localhost:8080 && node dist/server/server.js"
   },
   "author": "Paul Bakaus",
   "license": "Apache-2.0",
@@ -15,6 +14,7 @@
     "cors": "^2.8.4",
     "del": "*",
     "express": "^4.16.2",
+    "memory-cache": "^0.2.0",
     "request": "^2.81.0",
     "workbox-build": "*",
     "workbox-sw": "*"
@@ -30,6 +30,7 @@
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
     "gulp-util": "^3.0.8",
+    "opn": "^5.3.0",
     "uglify-es": "*"
   },
   "engines": {
