@@ -1,6 +1,6 @@
 {
   "name": "ShadowReader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
@@ -15,6 +15,7 @@
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "*",
     "gulp-concat": "*",
+    "gulp-insert": "^0.5.0",
     "gulp-plumber": "*",
     "gulp-replace": "*",
     "gulp-sass": "*",
