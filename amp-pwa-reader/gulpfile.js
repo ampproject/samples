@@ -11,6 +11,7 @@ const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
+const insert = require('gulp-insert');
 const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
@@ -38,7 +39,8 @@ const paths = {
       'src/js/FeedReader.js',
       'src/js/Nav.js',
       'src/js/Card.js',
-      'src/js/Article.js'
+      'src/js/Article.js',
+      'src/js/inline.css.js'
     ],
     dest: '.tmp/'
   },
@@ -64,6 +66,18 @@ function styles() {
 }
 
 function scripts() {
+  return gulp.series(buildCssJs, buildScripts);
+}
+
+function buildCssJs() {
+  console.log('in buildCSSJS');
+  return gulp.src(paths.styles.dest + 'inline.css')
+    .pipe(insert.wrap("shadowReader.backend.inlineCSS = `\n", "\n`"))
+    .pipe(gulp.dest(paths.scripts.dest + 'inline.css.js'));
+}
+
+function buildScripts() {
+  console.log('in buildScripts');
   return gulp.src(paths.scripts.src)
     .pipe(plumber())
     .pipe(concat('scripts.js'))
@@ -76,7 +90,6 @@ function scripts() {
 }
 
 function inline() {
-
   let css = fs.existsSync('./dist/main.css');
   let scripts = fs.existsSync('./.tmp/scripts.js');
 
@@ -108,7 +121,6 @@ function injectManifest() {
 }
 
 function watch() {
-
   browserSync.init({
     server: {
       baseDir: 'dist/',
@@ -121,8 +133,9 @@ function watch() {
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, dist);
-
 }
+
+
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, injectManifest);
 var dev = gulp.series(dist, watch);
