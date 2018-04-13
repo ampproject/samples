@@ -48,6 +48,7 @@ class Article {
   stream() {
     var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to readChunk()
     var article = this;             // this too
+    var allHTML = '';               // accumulate the HTML received so far
 
     fetch(this.proxyUrl).then(response => {
       let reader = response.body.getReader();
@@ -60,13 +61,15 @@ class Article {
               {stream: !chunk.done}
           );
 
-// check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS
+// check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
+// also, we check allHTML for "<body" just in case it's received in >1 chunk.
           if (html) {
+            allHTML += html;
             html = shadowReader.backend.hideElements(html);
 
 // if we've got the body, start the process of animating the card and showing the article,
 // placing the card before the article
-            if (html.includes('<body')) {
+            if (allHTML.includes('<body')) {
               html = article.prependCardHtml(html);
               shadowDoc.writer.write(html);
               article.card.animate();
@@ -94,11 +97,9 @@ class Article {
   }
 
 // Used during streaming. If we see <body>, add in the HTML of the card.
-// Also add in the inline.css stylesheet.
+// Also add in the CSS that was extracted from inline.css during the build process.
   prependCardHtml(html) {
-    let extraCSSHTML = '<link rel="stylesheet" href="/inline.css">';
-
-    return html.replace(/<body.+?>/, '$&' + this.clonedCardElem.outerHTML + extraCSSHTML);
+    return html.replace(/<body.+?>/, '$&' + this.clonedCardElem.outerHTML);
   }
 
   load() {
@@ -159,7 +160,7 @@ class Article {
 
   generateCard() {
     let articleData = shadowReader.backend.getArticleData();
-    let cardElem = new Card(articleData, /*headless*/true, /*prerender*/false, streaming).elem;
+    let cardElem = new Card(articleData, /*headless*/true, /*prerender*/false, this.streaming).elem;
 
     // resize card to image ratio
     cardElem.style.height = (innerWidth * articleData.imageRatio) + 'px';
