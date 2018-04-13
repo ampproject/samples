@@ -97,6 +97,8 @@ class Backend {
     return null;
   }
 
+// This hides article elements we don't want to show in the shadow root.
+// But it also extracts and stores properties we'll need later.
   sanitize(doc) {
     // remove stuff we don't need in embed mode
     let header = doc.getElementsByTagName('header');
@@ -125,17 +127,21 @@ class Backend {
     }
   }
 
+// Note that the inlineCSS property gets added to this object by inline.css.js.
+  injectCSS(html) {
+    const styleTag = '<style amp-custom>';
+
+    return html.replace(styleTag, styleTag + ' ' + hideElementsCSS() + this.inlineCSS);
+  }
+
 // Given an array of selectors, create CSS rules that hide each of those - and insert it into AMP HTML.
 // This is the equivalent of sanitize() for the streaming case.
 //TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
-  hideElements(html) {
-    const styleTag = '<style amp-custom>';
-
-    let css = this.elementsToHide
-                .map(selector => selector + ' {display: none;}')
-                .join(' ');
+  hideElementsCSS(html) {
+    return this.elementsToHide
+               .map(selector => selector + ' {display: none;}')
+               .join(' ');
                 
-    return html.replace(styleTag, styleTag + ' ' + css);
   }
 
 }

@@ -65,7 +65,7 @@ class Article {
 // also, we check allHTML for "<body" just in case it's received in >1 chunk.
           if (html) {
             allHTML += html;
-            html = shadowReader.backend.hideElements(html);
+            html = shadowReader.backend.injectCSS(html);
 
 // if we've got the body, start the process of animating the card and showing the article,
 // placing the card before the article
