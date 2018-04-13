@@ -14,6 +14,8 @@
     transition: transform var(--animation-speed-out) var(--animation-easing),
                 opacity var(--animation-speed-out) var(--animation-easing);
     opacity: 0;
+/*    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9); */
 }
 
 .sr-article.at-top {
