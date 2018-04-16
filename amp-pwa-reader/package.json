@@ -17,6 +17,7 @@
     "gulp-concat": "*",
     "gulp-insert": "^0.5.0",
     "gulp-plumber": "*",
+    "gulp-rename": "^1.2.2",
     "gulp-replace": "*",
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",

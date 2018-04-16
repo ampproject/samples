@@ -12,7 +12,9 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const insert = require('gulp-insert');
+const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
+const debug = require('gulp-debug');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
@@ -40,7 +42,7 @@ const paths = {
       'src/js/Nav.js',
       'src/js/Card.js',
       'src/js/Article.js',
-      'src/js/inline.css.js'
+      '.tmp/inline.css.js'
     ],
     dest: '.tmp/'
   },
@@ -65,19 +67,14 @@ function styles() {
     .pipe(gulp.dest(paths.styles.dest));
 }
 
-function scripts() {
-  return gulp.series(buildCssJs, buildScripts);
-}
-
-function buildCssJs() {
-  console.log('in buildCSSJS');
+function cssJsScripts() {
   return gulp.src(paths.styles.dest + 'inline.css')
     .pipe(insert.wrap("shadowReader.backend.inlineCSS = `\n", "\n`"))
-    .pipe(gulp.dest(paths.scripts.dest + 'inline.css.js'));
+    .pipe(rename('inline.css.js'))
+    .pipe(gulp.dest(paths.scripts.dest));
 }
 
-function buildScripts() {
-  console.log('in buildScripts');
+function jsScripts() {
   return gulp.src(paths.scripts.src)
     .pipe(plumber())
     .pipe(concat('scripts.js'))
@@ -88,6 +85,8 @@ function buildScripts() {
     }) : gutil.noop())
     .pipe(gulp.dest(paths.scripts.dest));
 }
+
+const scripts = gulp.series(cssJsScripts, jsScripts);
 
 function inline() {
   let css = fs.existsSync('./dist/main.css');
@@ -129,12 +128,11 @@ function watch() {
     ui: false
   });
 
-  gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
-  gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
+  gulp.watch(paths.scripts.src, gulp.series(jsScripts, inline));
+  gulp.watch(paths.styles.src, gulp.series(styles, scripts, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, dist);
 }
-
 
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, injectManifest);

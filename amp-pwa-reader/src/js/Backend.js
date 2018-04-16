@@ -131,7 +131,7 @@ class Backend {
   injectCSS(html) {
     const styleTag = '<style amp-custom>';
 
-    return html.replace(styleTag, styleTag + ' ' + hideElementsCSS() + this.inlineCSS);
+    return html.replace(styleTag, styleTag + ' ' + this.hideElementsCSS() + this.inlineCSS);
   }
 
 // Given an array of selectors, create CSS rules that hide each of those - and insert it into AMP HTML.
@@ -141,7 +141,6 @@ class Backend {
     return this.elementsToHide
                .map(selector => selector + ' {display: none;}')
                .join(' ');
-                
   }
 
 }
