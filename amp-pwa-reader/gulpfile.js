@@ -14,7 +14,6 @@ const concat = require('gulp-concat');
 const insert = require('gulp-insert');
 const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
-const debug = require('gulp-debug');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
