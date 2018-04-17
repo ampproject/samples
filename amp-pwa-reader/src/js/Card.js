@@ -215,6 +215,7 @@ class Card {
     // add loading spinner (and promote to layer)
     this.elem.classList.add('sr-loading', 'sr-promote-layer');
 
+    // in streaming case, things happen in a different order
     if (this.streaming) {
       this.article.renderStreaming();
       this.article.stream()

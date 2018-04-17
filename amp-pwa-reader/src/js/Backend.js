@@ -127,6 +127,7 @@ class Backend {
     }
   }
 
+// Inject CSS into the <style amp-custom> tag.
 // Note that the inlineCSS property gets added to this object by inline.css.js.
   injectCSS(html) {
     const styleTag = '<style amp-custom>';
@@ -136,7 +137,7 @@ class Backend {
 
 // Given an array of selectors, create CSS rules that hide each of those - and insert it into AMP HTML.
 // This is the equivalent of sanitize() for the streaming case.
-//TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
+// TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
   hideElementsCSS(html) {
     return this.elementsToHide
                .map(selector => selector + ' {display: none;}')
