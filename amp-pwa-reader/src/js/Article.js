@@ -48,7 +48,6 @@ class Article {
   stream() {
     var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to readChunk()
     var article = this;             // this too
-    var allHTML = '';               // accumulate the HTML received so far
 
     fetch(this.proxyUrl).then(response => {
       let reader = response.body.getReader();
@@ -57,19 +56,18 @@ class Article {
       function readChunk() {
         return reader.read().then(chunk => {
           let html = decoder.decode(
-              chunk.value || new Uint8Array(),
-              {stream: !chunk.done}
+            chunk.value || new Uint8Array(),
+            {stream: !chunk.done}
           );
 
 // check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
-// also, we check allHTML for "<body" just in case it's received in >1 chunk.
+// TODO: this will fail in the rare case that "<body" arrives in <1 chunk.
           if (html) {
-            allHTML += html;
             html = shadowReader.backend.injectCSS(html);
 
-// if we've got the body, start the process of animating the card and showing the article,
+// when we've got the body, start the process of animating the card and showing the article,
 // placing the card before the article
-            if (allHTML.includes('<body')) {
+            if (html.includes('<body')) {
               html = article.prependCardHtml(html);
               shadowDoc.writer.write(html);
               article.card.animate();
