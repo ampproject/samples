@@ -138,7 +138,7 @@ function watch() {
     ui: false
   });
 
-  const express = gls.new(paths.server.dest + '/server.js');
+  const express = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
   express.start();
 
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
