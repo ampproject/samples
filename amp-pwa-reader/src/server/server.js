@@ -117,11 +117,11 @@ function cache(seconds) {
     const cachedBody = memCache.get(key);
 
     if (cachedBody) {
-      console.log('** cache hit!');
+      console.log('** cache hit: ' + key);
       res.send(cachedBody);
 
     } else {
-      console.log('** cache miss.');
+      console.log('** cache miss: ' + key);
       res.justSend = res.send;
       res.send = (body) => {
         memCache.put(key, body, seconds * 1000);
