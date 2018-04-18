@@ -12,6 +12,8 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const insert = require('gulp-insert');
+const browserSync = require('browser-sync').create();
+const gls = require('gulp-live-server');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
@@ -131,12 +133,21 @@ function modularizeJS(name) {
 }
 
 function watch() {
+  browserSync.init({
+    server: false,
+    ui: false
+  });
+
+  const express = gls.new(paths.server.dest + '/server.js');
+  express.start();
+
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, dist);   // of course, this could be a smaller task if builds ever got too slow
   gulp.watch(paths.server.src, dist);   // same
 }
+
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
 var dev = gulp.series(dist, watch);
