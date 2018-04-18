@@ -4,7 +4,8 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server/server.js"
   },
   "author": "Paul Bakaus",
   "license": "Apache-2.0",
@@ -30,5 +31,8 @@
     "uglify-es": "*",
     "workbox-build": "2.1.3",
     "workbox-sw": "*"
+  },
+  "engines": {
+    "node": "6.8.0"
   }
 }
