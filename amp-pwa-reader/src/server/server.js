@@ -56,6 +56,7 @@ app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
 });
 
 // This is used when the PWA requests a new article.
+// We proxy this request so that we can inject CORS headers and we can cache.
 app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(req, res, next) {
   const options = {
     url: req.query.url
@@ -73,11 +74,10 @@ app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(r
 
 // When user requests an article, serve the AMP version of that article,
 // injecting our service worker and replacing the Guardian's menu with one that works for Shadow Reader.
-
 app.get('/' + pub.pathname + '/*', (req, res) => {
   let isSectionUrl = !req.params[0].match(/\/./);
 
-// If this is URL is for a section, not an article, then return the Shadow Reader instead.
+// If this URL is for a section, not an article, then return the Shadow Reader instead.
   if (isSectionUrl) {
     res.sendFile(path.join(__dirname, '../index.html'));
 
