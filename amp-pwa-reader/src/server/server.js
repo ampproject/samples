@@ -147,7 +147,7 @@ function addServiceWorker(html) {
 // Replace the sidebar with one that works for the Shadow Reader.
 // TODO: replace URLs in the nav links as well.
 function replaceSidebar(html) {
-  const template = fs.readFileSync(path.join(__dirname, 'partials/sidebar.html'), 'utf8');
+  const template = fs.readFileSync(path.join(__dirname, 'partials/sidebar_link.html'), 'utf8');
   const basePath = '/' + pub.pathname + '/';
   let newSidebarHTML = '';
 
