@@ -10,7 +10,6 @@
   "author": "Paul Bakaus",
   "license": "Apache-2.0",
   "dependencies": {
-    "browser-sync": "*",
     "connect-history-api-fallback": "*",
     "cors": "^2.8.4",
     "del": "*",

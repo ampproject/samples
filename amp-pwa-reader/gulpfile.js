@@ -12,7 +12,6 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const insert = require('gulp-insert');
-const browserSync = require('browser-sync').create();
 const gls = require('gulp-live-server');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
@@ -132,14 +131,12 @@ function modularizeJS(name) {
   return "\nmodule.exports = " + name + ';';
 }
 
-function watch() {
-  browserSync.init({
-    server: false,
-    ui: false
-  });
+var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
 
-  const express = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
-  express.start();
+
+function watch() {
+  const serverInstance = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
+  serverInstance.start();
 
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
@@ -149,7 +146,6 @@ function watch() {
 }
 
 
-var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
 var dev = gulp.series(dist, watch);
 
 gulp.task('dev', dev);

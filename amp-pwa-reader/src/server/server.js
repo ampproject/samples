@@ -72,8 +72,9 @@ app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(r
 });
 
 
-// When user requests an article, serve the AMP version of that article,
+// This is used when the user requests an article. Serve the AMP version of that article,
 // injecting our service worker and replacing the Guardian's menu with one that works for Shadow Reader.
+// TODO: Enhance this to serve categories' cards along with the article so that they're preloaded.
 app.get('/' + pub.pathname + '/*', (req, res) => {
   let isSectionUrl = !req.params[0].match(/\/./);
 
@@ -84,7 +85,7 @@ app.get('/' + pub.pathname + '/*', (req, res) => {
   } else {
 
 // Build the AMP URL from the Shadow Reader URL, and request the AMP.
-    let categoryAndUrl = splitUrlCategory(req.params[0]);
+    let categoryAndUrl = getCategoryAndArticleURL(req.params[0]);
     const ampUrl = pub.constructAMPUrl(categoryAndUrl.category, categoryAndUrl.url);
 
     request(ampUrl, function(error, response, body) {
@@ -144,6 +145,7 @@ function addServiceWorker(html) {
 }
 
 // Replace the sidebar with one that works for the Shadow Reader.
+// TODO: replace URLs in the nav links as well.
 function replaceSidebar(html) {
   const template = fs.readFileSync(path.join(__dirname, 'partials/sidebar.html'), 'utf8');
   const basePath = '/' + pub.pathname + '/';
@@ -159,7 +161,7 @@ function replaceSidebar(html) {
 }
 
 // Split the category (the first element in the URL) from the rest.
-function splitUrlCategory(srUrl) {
+function getCategoryAndArticleURL(srUrl) {
   let matches = srUrl.match(/(.+?)\/(.+)/);
   return {category: matches[1], url: matches[2]};
 }
