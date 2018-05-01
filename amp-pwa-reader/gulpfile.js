@@ -5,7 +5,7 @@ let uglifyes = require('uglify-es');
 let composer = require('gulp-uglify/composer');
 const uglify = composer(uglifyes, console);
 const gulp = require('gulp');
-const gutil = require('gulp-util');
+const noop = require('gulp-noop');
 const replace = require('gulp-replace');
 const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
@@ -77,7 +77,7 @@ function scripts() {
       mangle: {
         safari10: true
       }
-    }) : gutil.noop())
+    }) : noop())
     .pipe(gulp.dest(paths.scripts.dest));
 }
 
@@ -103,10 +103,10 @@ function inline() {
   return gulp.src('src/index.html')
     .pipe(css ?
       replace('/* REPLACED-INLINE-STYLESHEET */', fs.readFileSync('./dist/main.css', 'utf8')) :
-      gutil.noop())
+      noop())
     .pipe(scripts ?
       replace('/* REPLACED-INLINE-JAVASCRIPT */', fs.readFileSync('./.tmp/scripts.js', 'utf8')) :
-      gutil.noop())
+      noop())
     .pipe(gulp.dest('dist/'));
 }
 

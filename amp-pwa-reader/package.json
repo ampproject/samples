@@ -19,6 +19,7 @@
     "gulp-concat": "*",
     "gulp-insert": "*",
     "gulp-live-server": "0.0.31",
+    "gulp-noop": "*",
     "gulp-plumber": "*",
     "gulp-replace": "*",
     "gulp-sass": "*",
