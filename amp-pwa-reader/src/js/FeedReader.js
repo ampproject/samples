@@ -24,7 +24,7 @@ class FeedReader {
 
     let rssUrl = shadowReader.backend.getRSSUrl(category);
     let yqlQuery = 'select * from feed where url = \'' + encodeURIComponent(rssUrl) + '\'';
-    let yqlUrl = 'https://query.yahooapis.com/v1/public/yql?q=' + yqlQuery + '&format=json';
+    let yqlUrl = '/feed?q=' + yqlQuery;
 
     return fetch(yqlUrl)
       .then(response => response.json() )
