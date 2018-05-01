@@ -25,6 +25,7 @@
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
+    "gulp-util": "^3.0.8",
     "memory-cache": "^0.2.0",
     "request": "^2.81.0",
     "uglify-es": "*",
