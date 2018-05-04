@@ -175,9 +175,6 @@ function modularizeJS(name) {
   return "\nmodule.exports = " + name + ';';
 }
 
-var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
-
-
 function watch() {
   const serverInstance = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
   serverInstance.start();
