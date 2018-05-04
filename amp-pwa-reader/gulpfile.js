@@ -117,35 +117,76 @@ function clean() {
   ]);
 }
 
-function injectManifest() {
-  return workboxBuild.injectManifest({
-    globDirectory: './dist/',
-    globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
-    globIgnores: ['admin.html'],
-    swSrc: './src/sw.js',
-    swDest: './dist/sw.js'
-  });
+/* Generates a complete ServiceWorker, with precaching and runtime caching rules. */
+function buildSW() {
+    // This will return a Promise
+    return workboxBuild.generateSW({
+        globDirectory: './dist/',
+        // Static precaching of shell
+        globPatterns: [
+            'img/*.{svg,png,jpg}', 'index.html', 'inline.css'
+        ],
+        swDest: './dist/sw.js',
+        // Register main route for all navigation links to pages
+        navigateFallback: 'index.html',
+        navigateFallbackBlacklist: [/img\/.*/, /\.(js|css)/],
+        navigateFallbackWhitelist: [/./],
+        // Cache external libraries and fonts
+        runtimeCaching: [{
+                urlPattern: new RegExp('^https://cdn\.ampproject\.org/'),
+                handler: 'staleWhileRevalidate',
+            },
+            {
+                urlPattern: new RegExp('^https://cdn\.polyfill\.io/'),
+                handler: 'staleWhileRevalidate',
+            },
+            {
+                urlPattern: new RegExp('^https://pasteup\.guim\.co\.uk/fonts/'),
+                handler: 'cacheFirst',
+            },
+            // Cache a number of YQL queries, but only for the offline scenario
+            {
+                urlPattern: new RegExp('^https://query\.yahooapis\.com/v1/public/'),
+                handler: 'networkFirst',
+            },
+            // Cache a number of images
+            {
+                urlPattern: new RegExp('^https://i\.guim\.co\.uk/img/'),
+                handler: 'cacheFirst',
+                options: {
+                    cacheName: 'images',
+                    expiration: {
+                        maxEntries: 10,
+                        maxAgeSeconds: 7 * 24 * 60 * 60,
+                    },
+                    cacheableResponse: {
+                        statuses: [0, 200],
+                    },
+                },
+            },
+        ],
+        // Make sure new versions of the Service Worker activate immediately
+        clientsClaim: true,
+        skipWaiting: true,
+    });
 }
 
 function modularizeJS(name) {
   return "\nmodule.exports = " + name + ';';
 }
 
-var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
-
-
 function watch() {
   const serverInstance = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
   serverInstance.start();
 
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
-  gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
+  gulp.watch(paths.styles.src, gulp.series(styles, inline, buildSW));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, dist);   // of course, this could be a smaller task if builds ever got too slow
   gulp.watch(paths.server.src, dist);   // same
 }
 
-
+var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, buildSW);
 var dev = gulp.series(dist, watch);
 
 gulp.task('dev', dev);
