@@ -11,12 +11,12 @@ const plumber = require('gulp-plumber');
 const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
-const browserSync = require('browser-sync').create();
+const insert = require('gulp-insert');
+const gls = require('gulp-live-server');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
 const workboxBuild = require('workbox-build');
-
 
 const paths = {
   styles: {
@@ -45,12 +45,18 @@ const paths = {
   images: {
     src: 'src/img/**/*',
     dest: 'dist/img'
+  },
+  server: {
+    src: 'src/server/**/*',
+    dest: 'dist/server'
   }
 }
 
 function copy() {
   gulp.src(paths.images.src)
     .pipe(gulp.dest(paths.images.dest));
+  gulp.src(paths.server.src)
+    .pipe(gulp.dest(paths.server.dest));
   return gulp.src(paths.page.src)
     .pipe(gulp.dest(paths.page.dest));
 }
@@ -75,8 +81,22 @@ function scripts() {
     .pipe(gulp.dest(paths.scripts.dest));
 }
 
-function inline() {
+// Make front-end JS files into back-end modules by appending module.exports = {name};
+// Assumes the files consist of a class whose name is identical to that of the file.
+function server() {
+  const modules = ['Backend'];
 
+  for (let module of modules) {
+    let js = modularizeJS(module);
+    var retval = gulp.src('src/js/' + module + '.js')
+      .pipe(insert.append(js))
+      .pipe(gulp.dest(paths.server.dest));
+  }
+
+  return retval;
+}
+
+function inline() {
   let css = fs.existsSync('./dist/main.css');
   let scripts = fs.existsSync('./.tmp/scripts.js');
 
@@ -151,21 +171,22 @@ function buildSW() {
     });
 }
 
-function watch() {
+function modularizeJS(name) {
+  return "\nmodule.exports = " + name + ';';
+}
 
-  browserSync.init({
-    server: {
-      baseDir: 'dist/',
-      middleware: [historyApiFallback()]
-    },
-    ui: false
-  });
+var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, injectManifest);
+
+
+function watch() {
+  const serverInstance = gls.new(paths.server.dest + '/server.js', process.env.PORT || 8080);
+  serverInstance.start();
 
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, inline, buildSW));
   gulp.watch(paths.page.src, dist);
-  gulp.watch(paths.images.src, copy);
-
+  gulp.watch(paths.images.src, dist);   // of course, this could be a smaller task if builds ever got too slow
+  gulp.watch(paths.server.src, dist);   // same
 }
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, buildSW);

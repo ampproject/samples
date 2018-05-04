@@ -20,6 +20,7 @@ class Backend {
     this.appTitle = 'TheGuardian';
     this.ampEndpoint = 'https://amp.theguardian.com/';
     this.defaultCategory = 'us';
+    this.pathname = this.appTitle.toLowerCase();
     this.categories = {
       'us': 'top news',
       'us-news--us-politics': 'politics',
