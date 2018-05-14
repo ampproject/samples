@@ -25,7 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // install the Service Worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
+    // Use the window load event to keep the page load performant
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
   }
 
 });

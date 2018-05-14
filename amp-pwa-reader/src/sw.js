@@ -1,45 +1,63 @@
 'use strict';
 
-importScripts('/workbox.js');
-const workboxSW = new WorkboxSW({
-  clientsClaim: true,
-  skipWaiting: true
-});
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.2.0/workbox-sw.js');
 
-// Static precaching of images
-workboxSW.precache([]);
+if (workbox) {
 
-// Register main route for all navigation links to pages
-workboxSW.router.registerNavigationRoute('index.html', {
-  whitelist: [/./],
-  blacklist: [/img\/.*/, /\.(js|css)/]
-});
+  // Make sure new versions of the Service Worker activate immediately
+  workbox.skipWaiting();
+  workbox.clientsClaim();
 
-// Cache external libraries and fonts
-workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
-workboxSW.router.registerRoute('https://cdn.polyfill.io/(.*)', workboxSW.strategies.staleWhileRevalidate());
-workboxSW.router.registerRoute('https://pasteup.guim.co.uk/fonts/(.*)', workboxSW.strategies.cacheFirst());
+  // Static precaching of images, HTML, and CSS
+  workbox.precaching.precacheAndRoute([]);
 
-// Cache a number of YQL queries, but only for the offline scenario
-workboxSW.router.registerRoute(
-  'https://query.yahooapis.com/v1/public/(.*)',
-  workboxSW.strategies.networkFirst()
-);
+  // Register main route for all navigation links to pages
+  workbox.routing.registerNavigationRoute('/index.html', {
+    whitelist: [
+      new RegExp('/./')
+    ],
+    blacklist: [
+      new RegExp('/img\/.*/, /\.(js|css)/')
+    ]
+  });
 
-// Cache a number of images
-workboxSW.router.registerRoute(
-  'https://i.guim.co.uk/img/(.*)',
-  workboxSW.strategies.cacheFirst({
-    cacheName: 'images',
-    cacheExpiration: {
-      maxEntries: 10,
-      maxAgeSeconds: 7 * 24 * 60 * 60
-    },
-    cacheableResponse: {statuses: [ 0, 200 ]}
-  })
-);
+  // Cache external libraries and fonts
+  workbox.routing.registerRoute(
+    new RegExp('https://cdn.ampproject.org/(.*)'),
+    workbox.strategies.staleWhileRevalidate()
+  );
+  workbox.routing.registerRoute(
+    new RegExp('https://cdn.polyfill.io/(.*)'),
+    workbox.strategies.staleWhileRevalidate()
+  );
+  workbox.routing.registerRoute(
+    new RegExp('https://pasteup.guim.co.uk/fonts/(.*)'),
+    workbox.strategies.cacheFirst()
+  );
 
-// Make sure new versions of the Service Worker activate immediately
-self.addEventListener('install', () => {
-  self.skipWaiting();
-});
+  // Cache a number of YQL queries, but only for the offline scenario
+  workbox.routing.registerRoute(
+    new RegExp('https://query.yahooapis.com/v1/public/(.*)'),
+    workbox.strategies.networkFirst()
+  );
+
+  // Cache a number of images
+  workbox.routing.registerRoute(
+    new RegExp('https://i.guim.co.uk/img/(.*)'),
+    workbox.strategies.cacheFirst({
+      cacheName: 'images',
+      plugins: [
+        new workbox.expiration.Plugin({
+          maxEntries: 10,
+          maxAgeSeconds: 7 * 24 * 60 * 60
+        }),
+        new workbox.cacheableResponse.Plugin({
+          statuses: [ 0, 200 ]
+        })
+      ]
+    })
+  );
+
+} else {
+  console.log('Workbox didn\'t load 😬');
+}
