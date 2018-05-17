@@ -18,7 +18,6 @@ const express = require('express');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
 const memCache = require('memory-cache');
 const pubBackend = require('./Backend.js');
 
@@ -28,13 +27,6 @@ const pub = new pubBackend();
 // how long (in seconds) to cache requests for main feed and for any article
 const cacheDurations = {feed: 600, article: 3600};
 const feedURL = 'https://query.yahooapis.com/v1/public/yql';
-
-// Whitelist domains for CORS. As more CDNs cache this site, we'll need to add them here.
-const corsOptions = {'origin': [
-  /amp\.cards$/,
-  /^localhost:/,
-  /amp-cards\.cdn\.ampproject\.org$/
-]};
 
 const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
@@ -56,8 +48,8 @@ app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
 });
 
 // This is used when the PWA requests a new article.
-// We proxy this request so that we can inject CORS headers and we can cache.
-app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(req, res, next) {
+// We proxy this request so that we can cache it.
+app.get('/article', cache(cacheDurations.article), function(req, res, next) {
   const options = {
     url: req.query.url
   };
