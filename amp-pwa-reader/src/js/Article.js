@@ -46,49 +46,46 @@ class Article {
 // and https://jakearchibald.com/2016/fun-hacks-faster-content/
 // Recursively read and write chunks of data from the streaming API
   stream() {
-    var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to readChunk()
+    var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to callback
     var article = this;             // this too
 
-    fetch(this.proxyUrl).then(response => {
+    fetch(this.proxyUrl).then(async response => {
       let reader = response.body.getReader();
       let decoder = new TextDecoder();
 
-      function readChunk() {
-        return reader.read().then(chunk => {
-          let html = decoder.decode(
-            chunk.value || new Uint8Array(),
-            {stream: !chunk.done}
-          );
+      while (true) {
+        let chunk = await reader.read();
+
+        if (chunk.done) {
+          shadowDoc.writer.close();
+          break;
+        }
+
+        let html = decoder.decode(
+          chunk.value || new Uint8Array(),
+          {stream: !chunk.done}
+        );
 
 // check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
 // TODO: this will fail in the rare case that "<body" arrives in <1 chunk.
-          if (html) {
-            html = shadowReader.backend.injectCSS(html);
+        if (html) {
+          html = shadowReader.backend.injectCSS(html);
 
 // when we've got the body, start the process of animating the card and showing the article,
 // placing the card before the article
-            if (html.includes('<body')) {
-              html = article.prependCardHtml(html);
-              shadowDoc.writer.write(html);
-              article.card.animate();
-              article.show();
+          if (html.includes('<body')) {
+            html = article.prependCardHtml(html);
+            shadowDoc.writer.write(html);
+            article.card.animate();
+            article.show();
 
-            } else {
-              shadowDoc.writer.write(html);
-            }
-
-          }
-
-          if (chunk.done) {
-            shadowDoc.writer.close();
           } else {
-            return readChunk();
+            shadowDoc.writer.write(html);
           }
 
-        });
+        }
       }
-
-      return readChunk();
+      
     });
 
     return this.ampDoc.ampdoc.whenReady();
