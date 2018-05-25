@@ -31,7 +31,6 @@ class CacheRefresh {
   createCacheUpdateUrls(originUrl) {
     return this._caches.list()
       .then(caches => {
-        console.log(caches);
         return caches.map(cache => {
           const cacheUrl = createCacheUrl(cache.updateCacheApiDomainSuffix, originUrl);
           const refreshUrl = this.createRefreshUrl(cacheUrl);
