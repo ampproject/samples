@@ -15,73 +15,29 @@
 
 'use strict';
 
-const fetch = require('node-fetch');
 const jsrsasign = require('jsrsasign');
 const {URL} = require('url');
-const mime = require('mime-types');
-const punycode = require('punycode');
-
-const CACHES_JSON_URL = 'https://cdn.ampproject.org/caches.json';
+const createCacheUrl = require('amp-toolbox-cache-url');
+const Caches = require('amp-toolbox-cache-list');
 
 class CacheRefresh {
   constructor(privateKey) {
-    this._caches = null;
+    this._caches = new Caches();
     this._privateKey = privateKey;
     this._sig = new jsrsasign.Signature({'alg': 'SHA256withRSA'});
     this._sig.init(this._privateKey);    
   }
 
   createCacheUpdateUrls(originUrl) {
-    return this._getCaches()
+    return this._caches.list()
       .then(caches => {
+        console.log(caches);
         return caches.map(cache => {
-          const cacheUrl = this.createCacheUrl(originUrl, cache);
+          const cacheUrl = createCacheUrl(cache.updateCacheApiDomainSuffix, originUrl);
           const refreshUrl = this.createRefreshUrl(cacheUrl);
           return {id: cache.id, name: cache.name, refreshUrl: refreshUrl}
         });
       });
-  }
-
-  /**
-   * Translates an url from the origin to the AMP Cache URL format, as documented here:
-   *  https://developers.google.com/amp/cache/overview
-   *
-   * @param {String} originUrl the URL to be transformed.
-   * @param {Object} cache the cache Object containing the suffix configuration.
-   * @return {String} the transformed URL.
-   */
-  createCacheUrl(originUrl, cache) {
-    const url = new URL(originUrl);
-    const originalHostname = url.hostname;
-    let unicodeHostname = punycode.toUnicode(originalHostname);
-    unicodeHostname = unicodeHostname.replace(/-/g, '--');
-    unicodeHostname = unicodeHostname.replace(/\./g, '-');
-
-    let pathSegment = this._getResourcePath(url.pathname);
-    pathSegment += url.protocol === 'https:' ? '/s/' : '/';
-
-    url.hostname = punycode.toASCII(unicodeHostname) + '.' + cache.updateCacheApiDomainSuffix;
-    url.pathname = pathSegment + originalHostname + url.pathname;
-    return url.toString();
-  }
-
-  _getResourcePath(pathname) {
-    const mimetype = mime.lookup(pathname);
-    if (!mimetype) {
-      return '/c';
-    }
-
-    console.log(mimetype);
-    if (mimetype.indexOf('image/') === 0) {
-      return '/i';
-    }
-
-    if (mimetype.indexOf('font') >= 0) {
-      return '/r';
-    }
-
-    // Default to document
-    return '/c';
   }
 
   /**
@@ -106,23 +62,6 @@ class CacheRefresh {
     url.searchParams.append('amp_url_signature', urlSignature);
     return url.toString();
   };
-
-  /**
-   * Fetches AMP Caches information, as documented here:
-   * https://github.com/ampproject/amphtml/issues/7259
-   */
-  _getCaches() {
-    if (this._caches) {
-      return Promise.resolve(this._caches);
-    }
-
-    return fetch(CACHES_JSON_URL)
-      .then(response => response.json())
-      .then(json => {
-        this._caches = json.caches;
-        return this._caches;
-      });
-  }
 
   _createSignature(url) {
     const signed = this._sig.signString(url);
