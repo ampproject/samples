@@ -42,9 +42,9 @@ class Article {
 
   }
 
-// see https://github.com/ampproject/amphtml/blob/master/spec/amp-shadow-doc.md
-// and https://jakearchibald.com/2016/fun-hacks-faster-content/
-// Recursively read and write chunks of data from the streaming API
+  // see https://github.com/ampproject/amphtml/blob/master/spec/amp-shadow-doc.md
+  // and https://jakearchibald.com/2016/fun-hacks-faster-content/
+  // Recursively read and write chunks of data from the streaming API
   stream() {
     var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to callback
     var article = this;             // this too
@@ -66,13 +66,13 @@ class Article {
           {stream: !chunk.done}
         );
 
-// check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
-// TODO: this will fail in the rare case that "<body" arrives in <1 chunk.
+        // check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
+        // TODO: this will fail in the rare case that "<body" arrives in <1 chunk.
         if (html) {
           html = shadowReader.backend.injectCSS(html);
 
-// when we've got the body, start the process of animating the card and showing the article,
-// placing the card before the article
+          // when we've got the body, start the process of animating the card and showing the article,
+          // placing the card before the article
           if (html.includes('<body')) {
             html = article.prependCardHtml(html);
             shadowDoc.writer.write(html);
@@ -91,8 +91,8 @@ class Article {
     return this.ampDoc.ampdoc.whenReady();
   }
 
-// Used during streaming. If we see <body>, add in the HTML of the card.
-// Also add in the CSS that was extracted from inline.css during the build process.
+  // Used during streaming. If we see <body>, add in the HTML of the card.
+  // Also add in the CSS that was extracted from inline.css during the build process.
   prependCardHtml(html) {
     return html.replace(/<body.+?>/, '$&' + this.clonedCardElem.outerHTML);
   }
@@ -236,10 +236,10 @@ class Article {
   }
 
 
-// We need to clone the featured image into the Shadow DOM so it scrolls
-// along. There are cases were we don't have a linked card from the list
-// view (e.g. we load directly into the article), in which case we need to
-// generate a new one.
+  // We need to clone the featured image into the Shadow DOM so it scrolls
+  // along. There are cases were we don't have a linked card from the list
+  // view (e.g. we load directly into the article), in which case we need to
+  // generate a new one.
   getClonedCardElem() {
     this.card ? this.cloneCard() : this.generateCard();
 

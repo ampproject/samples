@@ -66,14 +66,16 @@ function styles() {
     .pipe(gulp.dest(paths.styles.dest));
 }
 
-function cssJsScripts() {
+// Build JS that embeds a CSS file in a JS object property
+function css2JSProperty() {
   return gulp.src(paths.styles.dest + 'inline.css')
     .pipe(insert.wrap("shadowReader.backend.inlineCSS = `\n", "\n`"))
     .pipe(rename('inline.css.js'))
     .pipe(gulp.dest(paths.scripts.dest));
 }
 
-function jsScripts() {
+// Transform JS files as desired
+function processScripts() {
   return gulp.src(paths.scripts.src)
     .pipe(plumber())
     .pipe(concat('scripts.js'))
@@ -85,7 +87,10 @@ function jsScripts() {
     .pipe(gulp.dest(paths.scripts.dest));
 }
 
-const scripts = gulp.series(cssJsScripts, jsScripts);
+// Scripts get built in a two-step process:
+//   First, transform a subset of our CSS files into JS object properties, for use by front-end JS.
+//   Second, process all JS files, including the ones we just built, as desired.
+const scripts = gulp.series(css2JSProperty, processScripts);
 
 function inline() {
   let css = fs.existsSync('./dist/main.css');
@@ -127,7 +132,7 @@ function watch() {
     ui: false
   });
 
-  gulp.watch(paths.scripts.src, gulp.series(jsScripts, inline));
+  gulp.watch(paths.scripts.src, gulp.series(processScripts, inline));
   gulp.watch(paths.styles.src, gulp.series(styles, scripts, inline, injectManifest));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, dist);

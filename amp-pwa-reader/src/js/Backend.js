@@ -128,6 +128,11 @@ class Backend {
   }
 
 // Inject CSS into the <style amp-custom> tag.
+// In the non-streaming case, it's fine to add a link to inline.css.
+// But, while streaming, we can't depend on that file being loaded and applied right away.
+// So we simply inject it directly.
+// If we owned the content pages, we'd use a much cleaner approach. We'd simply include the relevant styles
+// in the initial document with an .amp-shadow selector. That way, they'd only apply when the AMP was in a shadow root.
 // Note that the inlineCSS property gets added to this object by inline.css.js.
   injectCSS(html) {
     const styleTag = '<style amp-custom>';
