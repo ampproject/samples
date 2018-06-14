@@ -172,9 +172,9 @@ function buildSW() {
         clientsClaim: true,
         skipWaiting: true,
     }).then(({count, size, warnings}) => {
-+    // Optionally, log any warnings and details.
-+    warnings.forEach(console.warn);
-+    console.log(`${count} files will be precached, totaling ${size} bytes.`);
+    // Optionally, log any warnings and details.
+        warnings.forEach(console.warn);
+        console.log(`${count} files will be precached, totaling ${size} bytes.`);
    });;
 }
 
