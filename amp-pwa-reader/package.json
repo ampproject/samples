@@ -27,8 +27,7 @@
     "memory-cache": "^0.2.0",
     "request": "^2.81.0",
     "uglify-es": "*",
-    "workbox-build": "^3.2.0",
-    "workbox-sw": "*"
+    "workbox-build": "^3.2.0"
   },
   "engines": {
     "node": "6.8.0"
