@@ -32,11 +32,7 @@ app.use(helmet());
 
 if (app.get('env') === ENVIRONMENT_PRODUCTION) {
     app.use((req, res, next) => {
-        if (req.path.startsWith('/tasks/')) {
-            next();
-        } else {
-            enforce.HTTPS({ trustProtoHeader: true })(req, res, next);
-        }
+        enforce.HTTPS({ trustProtoHeader: true })(req, res, next);
     });
 }
 
