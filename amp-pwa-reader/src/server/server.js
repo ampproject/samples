@@ -20,9 +20,21 @@ const fs = require('fs');
 const path = require('path');
 const memCache = require('memory-cache');
 const pubBackend = require('./Backend.js');
+const enforce = require('express-sslify');
+const helmet = require('helmet');
+
+const ENVIRONMENT_PRODUCTION = 'production';
 
 const app = express();
 const pub = new pubBackend();
+
+app.use(helmet());
+
+if (app.get('env') === ENVIRONMENT_PRODUCTION) {
+    app.use((req, res, next) => {
+        enforce.HTTPS({ trustProtoHeader: true })(req, res, next);
+    });
+}
 
 // how long (in seconds) to cache requests for main feed and for any article
 const cacheDurations = {feed: 600, article: 3600};
