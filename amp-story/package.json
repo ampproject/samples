@@ -10,6 +10,9 @@
   "scripts": {},
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-amphtml-validator": "^1.0.2"
+    "gulp-amphtml-validator": "^1.0.2",
+    "gulp-htmllint": "0.0.16",
+    "gulp-stylelint": "^7.0.0",
+    "stylelint": "^9.5.0"
   }
 }
