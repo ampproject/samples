@@ -1,19 +1,28 @@
 {
+  "processors": [
+    ["@mapbox/stylelint-processor-arbitrary-tags", {
+      "startTag": "<style\\s[^>]*amp-custom[^>]*>",
+      "endTag": "</style>"
+    }]
+  ],
+  "extends": "stylelint-config-standard",
   "rules": {
-    "block-no-empty": null,
+    "block-no-empty": true,
     "color-no-invalid-hex": true,
-    "comment-empty-line-before": [ "always", {
-      "ignore": ["stylelint-commands", "after-comment"]
-    } ],
     "declaration-colon-space-after": "always",
-    "indentation": ["tab", {
+    "function-comma-space-after": "always",
+    "function-parentheses-space-inside": "never",
+    "indentation": [2, {
       "except": ["value"]
     }],
-    "max-empty-lines": 2,
-    "rule-empty-line-before": [ "always", {
-      "except": ["first-nested"],
-      "ignore": ["after-comment"]
-    } ],
-    "unit-whitelist": ["em", "rem", "%", "s"]
+    "max-empty-lines": 1,
+    "rule-empty-line-before": null,
+    "selector-type-no-unknown": [true, {
+      "ignoreTypes": ["/^amp-/"]
+    }],
+    "selector-pseudo-element-no-unknown": [true, {
+      "ignorePseudoElements": ["cue"]
+    }],
+    "unit-whitelist": ["em", "rem", "%", "ms", "s", "vh", "vw", "vmin", "vmax"]
   }
 }
