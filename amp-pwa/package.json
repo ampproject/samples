@@ -11,7 +11,7 @@
     "sw-precache": "4.3.0"
   },
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "4.1.3",
     "react": "15.6.2",
     "react-bootstrap": "0.32.4",
     "react-dom": "15.6.2",
