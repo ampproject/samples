@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/tomayac/amp-tube#readme",
   "devDependencies": {
-    "html-minifier": "^3.5.20",
-    "imagemin-cli": "^3.0.0"
+    "html-minifier": "3.5.20",
+    "imagemin-cli": "3.0.0"
   }
 }
