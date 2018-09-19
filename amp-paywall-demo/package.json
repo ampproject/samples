@@ -18,7 +18,7 @@
   "dependencies": {
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.3",
-    "express": "4.13.3",
+    "express": "4.16.3",
     "gcloud": "^0.27.0",
     "hogan-express": "0.5.2",
     "hogan.js": "^3.0.2",
