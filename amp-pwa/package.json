@@ -13,7 +13,7 @@
   "dependencies": {
     "bootstrap": "3.3.7",
     "react": "15.6.2",
-    "react-bootstrap": "0.30.10",
+    "react-bootstrap": "0.32.4",
     "react-dom": "15.6.2",
     "react-router": "2.8.1"
   },
