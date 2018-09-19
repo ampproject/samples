@@ -23,7 +23,7 @@
     "hogan-express": "0.5.2",
     "hogan.js": "^3.0.2",
     "jsonwebtoken": "^7.1.9",
-    "uuid": "2.0.1"
+    "uuid": "2.0.3"
   },
   "devDependencies": {
     "jshint": "2.9.6"
