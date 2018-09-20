@@ -31,10 +31,12 @@
       html {
         box-sizing: border-box;
       }
+
       *, *:before, *:after {
         box-sizing: inherit;
         outline: none;
       }
+
       html, body {
         background-color: #303030;
         font-family: Roboto,sans-serif;
@@ -44,11 +46,13 @@
         align-items: center;
         padding: 0px;
       }
+
       body {
         padding: .5em;
-        max-width: 500px;
+        max-width: 1000px;
         width: 100%;
       }
+
       input {
         border: solid #808080 1px;
         border-radius: 17px;
@@ -58,6 +62,7 @@
         height: 2.4em;
         padding: .2em .5em 0px 1em;
       }
+
       header {
         display: flex;
         align-items: center;
@@ -72,34 +77,41 @@
         letter-spacing: 1px;
         font-weight: normal;
       }
-      main {
+
+      form, main {
         width: 100%;
       }
+
       h1 {
         font-size: 1.5em;
         color: #ffc93a;
         font-weight: normal;
       }
+
       h2 {
         font-size: 1.1em;
         color: #ffae30;
         font-weight: normal;
       }
+
       h2.skeleton-title {
         color: transparent;
         text-shadow: 0 0 10px rgba(255, 174, 48, 0.5);
         user-select: none;
         margin: 0.3em 0em;
       }
+
       .container {
         border: #303030 solid 2px;
         margin: 1em 0em;
       }
+
       .channel {
         color: #828282;
         display: inline-block;
         margin: 0px;
       }
+
       .skeleton-channel {
         color: transparent;
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
@@ -126,30 +138,49 @@
         margin: 0px 5px;
       }
 
+      .list-overflow[overflow] {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      amp-list div[role="list"] {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 0.5em;
+      }
+
       amp-timeago {
         color: #828282;
       }
+
       amp-timeago.skeleton-timeago {
         color: transparent;
         text-shadow: 0 0 10px rgba(238, 238, 238, 0.5);
         user-select: none;
         margin-left: 10px;
       }
+
       amp-img[placeholder] {
         background-color: #202124;
       }
+
       amp-img.logo {
         display: inline;
         vertical-align: bottom;
         width: 20%;
       }
+
       amp-list {
         border: solid #303030 1px;
         border-radius: 5px;
       }
+
       #spinner {
         animation: spin 1s linear infinite;
       }
+
       @keyframes spin {
         100% {
           transform: rotate(360deg);
@@ -184,50 +215,51 @@
       <div hidden id="spinner">⚙️</div>
     </header>
 
-    <main>
-      <form
-        method="post"
+    <form
+      method="post"
+      on="
+        submit:
+          spinner.show;
+        submit-error:
+          results.show,
+          spinner.hide;
+        submit-success:
+          results.show,
+          spinner.hide;"
+      action-xhr="https://ampbyexample.com/json/examples.json"
+    >
+      <input
+        name="search"
+        type="search"
+        aria-label="Start typing to search"
+        required
+        placeholder="Start typing to search"
+        autocomplete="off"
+        value=""
         on="
-          submit:
-            spinner.show;
-          submit-error:
-            results.show,
-            spinner.hide;
-          submit-success:
-            results.show,
-            spinner.hide;"
-        action-xhr="https://ampbyexample.com/json/examples.json"
-      >
-        <input
-          name="search"
-          type="search"
-          aria-label="Start typing to search"
-          required
-          placeholder="Start typing to search"
-          autocomplete="off"
-          value=""
-          on="
-            change:
-              AMP.setState({
-                youtube: {query: event.value}
-              }),
-              results.hide;
-            tap:
-              AMP.setState({
-                youtube: {query: event.value}
-              }),
-              results.hide;"
-        />
-      </form>
+          change:
+            AMP.setState({
+              youtube: {query: event.value}
+            }),
+            results.hide;
+          tap:
+            AMP.setState({
+              youtube: {query: event.value}
+            }),
+            results.hide;"
+      />
+    </form>
+
+    <main>
       <amp-list
         id="results"
-        height="675"
+        height="200"
         layout="fixed-height"
         noloading
         reset-on-refresh
         items="items"
-        src="https://www.googleapis.com/youtube/v3/videos/?regionCode=US&chart=mostPopular&part=snippet%2Cstatistics&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM"
-        [src]="'https://www.googleapis.com/youtube/v3/search?maxResults=10&part=snippet&type=video&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM&q=' + youtube.query"
+        src="https://www.googleapis.com/youtube/v3/videos/?maxResults=9&regionCode=US&chart=mostPopular&part=snippet%2Cstatistics&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM"
+        [src]="'https://www.googleapis.com/youtube/v3/search?maxResults=9&part=snippet&type=video&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM&q=' + youtube.query"
       >
 
         <template type="amp-mustache">
@@ -291,6 +323,10 @@
               </div>
           </div>
         </template>
+
+        <div overflow class="list-overflow">
+          See more
+        </div>
 
         <div placeholder>
           <div class="container">
