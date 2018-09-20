@@ -19,6 +19,7 @@
     <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-form-0.1.js">
     <link rel="preload" as="image" href="./amp-tube.webp" type="image/webp">
     <link rel="preload" as="image" href="./placeholder.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <script async src="https://cdn.ampproject.org/v0.js"></script>
     <script async src="https://cdn.ampproject.org/v0/amp-list-0.1.js" custom-element="amp-list"></script>
     <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
@@ -30,97 +31,156 @@
       html {
         box-sizing: border-box;
       }
+
       *, *:before, *:after {
         box-sizing: inherit;
+        outline: none;
       }
+
       html, body {
         background-color: #303030;
-        font-family: sans-serif;
+        font-family: Roboto,sans-serif;
         font-size: 12pt;
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 0px;
       }
+
       body {
         padding: .5em;
-        max-width: 500px;
+        max-width: 1000px;
         width: 100%;
       }
+
       input {
         border: solid #808080 1px;
-        border-radius: 5px;
-        font-size: 2em;
+        border-radius: 17px;
+        font-size: 1em;
         margin: .2em 0;
         width: 100%;
+        height: 2.4em;
+        padding: .2em .5em 0px 1em;
       }
+
       header {
         display: flex;
         align-items: center;
         width: 100%;
+        padding: 5px;
+          margin-bottom: .5em;
       }
-      main {
+
+      header h1 {
+        line-height: 0px;
+        margin-left: 10px;
+        letter-spacing: 1px;
+        font-weight: normal;
+      }
+
+      form, main {
         width: 100%;
       }
+
       h1 {
         font-size: 1.5em;
         color: #ffc93a;
+        font-weight: normal;
       }
+
       h2 {
         font-size: 1.1em;
-        font-weight: bold;
         color: #ffae30;
+        font-weight: normal;
       }
+
       h2.skeleton-title {
         color: transparent;
         text-shadow: 0 0 10px rgba(255, 174, 48, 0.5);
         user-select: none;
+        margin: 0.3em 0em;
       }
+
       .container {
-        background-color: #000;
         border: #303030 solid 2px;
-        border-radius: 5px;
-        padding: 1em 2em;
+        margin: 1em 0em;
       }
-      .channel::before, .skeleton-channel::before {
-        content: "🎬 ";
-      }
+
       .channel {
-        color: white;
+        color: #828282;
+        display: inline-block;
+        margin: 0px;
       }
+
       .skeleton-channel {
         color: transparent;
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         user-select: none;
+        margin: 0px;
+        display: inline-block;
       }
 
-      amp-timeago::before {
-        content: "🗓 ";
+      .description {
+        padding: 0.5em 1em;
       }
+
+      .title {
+        margin: 0.3em 0em;
+      }
+
+      .subtitle {
+        display: flex;
+      }
+
+      .subtitle-seperator {
+        color: #828282;
+        display: inline-block;
+        margin: 0px 5px;
+      }
+
+      .list-overflow[overflow] {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      amp-list div[role="list"] {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 0.5em;
+      }
+
       amp-timeago {
-        font-size: .8em;
-        color: #eee;
+        color: #828282;
       }
+
       amp-timeago.skeleton-timeago {
         color: transparent;
         text-shadow: 0 0 10px rgba(238, 238, 238, 0.5);
         user-select: none;
+        margin-left: 10px;
       }
+
       amp-img[placeholder] {
-        background-color: #000;
+        background-color: #202124;
       }
+
       amp-img.logo {
         display: inline;
         vertical-align: bottom;
         width: 20%;
       }
+
       amp-list {
-        margin-top: 1em;
         border: solid #303030 1px;
         border-radius: 5px;
       }
+
       #spinner {
         animation: spin 1s linear infinite;
       }
+
       @keyframes spin {
         100% {
           transform: rotate(360deg);
@@ -146,8 +206,8 @@
     </amp-state>
 
     <header>
-      <amp-img alt="" class="logo" width="60" height="60" src="./amp-tube.webp">
-        <amp-img alt="" class="logo" width="60" height="60" src="./amp-tube.png" fallback></amp-img>
+      <amp-img alt="" class="logo" width="70" height="53" src="./amp-tube.webp">
+        <amp-img alt="" class="logo" width="70" height="53" src="./amp-tube.png" fallback></amp-img>
       </amp-img>
       <h1>
         AMP Tube
@@ -155,50 +215,51 @@
       <div hidden id="spinner">⚙️</div>
     </header>
 
-    <main>
-      <form
-        method="post"
+    <form
+      method="post"
+      on="
+        submit:
+          spinner.show;
+        submit-error:
+          results.show,
+          spinner.hide;
+        submit-success:
+          results.show,
+          spinner.hide;"
+      action-xhr="https://ampbyexample.com/json/examples.json"
+    >
+      <input
+        name="search"
+        type="search"
+        aria-label="Start typing to search"
+        required
+        placeholder="Start typing to search"
+        autocomplete="off"
+        value=""
         on="
-          submit:
-            spinner.show;
-          submit-error:
-            results.show,
-            spinner.hide;
-          submit-success:
-            results.show,
-            spinner.hide;"
-        action-xhr="https://ampbyexample.com/json/examples.json"
-      >
-        <input
-          name="search"
-          type="search"
-          aria-label="Start typing to search"
-          required
-          placeholder="Start typing to search"
-          autocomplete="off"
-          value=""
-          on="
-            change:
-              AMP.setState({
-                youtube: {query: event.value}
-              }),
-              results.hide;
-            tap:
-              AMP.setState({
-                youtube: {query: event.value}
-              }),
-              results.hide;"
-        />
-      </form>
+          change:
+            AMP.setState({
+              youtube: {query: event.value}
+            }),
+            results.hide;
+          tap:
+            AMP.setState({
+              youtube: {query: event.value}
+            }),
+            results.hide;"
+      />
+    </form>
+
+    <main>
       <amp-list
         id="results"
-        height="675"
+        height="200"
         layout="fixed-height"
         noloading
         reset-on-refresh
         items="items"
-        src="https://www.googleapis.com/youtube/v3/videos/?regionCode=US&chart=mostPopular&part=snippet%2Cstatistics&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM"
-        [src]="'https://www.googleapis.com/youtube/v3/search?maxResults=10&part=snippet&type=video&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM&q=' + youtube.query"
+        src="https://www.googleapis.com/youtube/v3/videos/?maxResults=9&regionCode=US&chart=mostPopular&part=snippet%2Cstatistics&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM"
+        [src]="'https://www.googleapis.com/youtube/v3/search?maxResults=9&part=snippet&type=video&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM&q=' + youtube.query"
       >
 
         <template type="amp-mustache">
@@ -246,17 +307,26 @@
               >
               </amp-img>
             </amp-youtube>
-            <h2 class="title">{{snippet.title}}</h2>
-            <p class="channel">{{snippet.channelTitle}}</p>
-            <amp-timeago
-              height="20"
-              width="100"
-              datetime="{{snippet.publishedAt}}"
-            >
-              {{snippet.publishedAt}}
-            </amp-timeago>
+              <div class="description">
+                <h2 class="title">{{snippet.title}}</h2>
+                <div class="subtitle">
+                  <p class="channel">{{snippet.channelTitle}}</p>
+                  <p class="subtitle-seperator">·</p>
+                  <amp-timeago
+                     height="20"
+                     width="100"
+                     datetime="{{snippet.publishedAt}}"
+                     >
+                     {{snippet.publishedAt}}
+                  </amp-timeago>
+                </div>
+              </div>
           </div>
         </template>
+
+        <div overflow class="list-overflow">
+          See more
+        </div>
 
         <div placeholder>
           <div class="container">
@@ -268,15 +338,19 @@
               layout="responsive"
             >
             </amp-img>
-            <h2 class="skeleton-title">Some placeholder title</h2>
-            <p class="skeleton-channel">Channel placeholder</p>
-            <amp-timeago class="skeleton-timeago"
-              height="20"
-              width="100"
-              datetime="2018-06-29T12:00:00.000Z"
-            >
-              2018-06-29T12:00:00.000Z
-            </amp-timeago>
+              <div class="description">
+                <h2 class="skeleton-title">Some placeholder title</h2>
+                <div class="subtitle">
+                  <p class="skeleton-channel">Channel placeholder</p>
+                  <amp-timeago class="skeleton-timeago"
+                               height="20"
+                               width="100"
+                               datetime="2018-06-29T12:00:00.000Z"
+                               >
+                               2018-06-29T12:00:00.000Z
+                  </amp-timeago>
+                </div>
+              </div>
           </div>
           <div class="container" placeholder>
             <amp-img
