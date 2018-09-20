@@ -1,0 +1,22 @@
+{
+  "name": "AMP Tube",
+  "short_name": "⚡️Tube",
+  "start_url": "https://tomayac.github.io/amp-tube/",
+  "display": "standalone",
+  "background_color": "#303030",
+  "theme_color": "#808080",
+  "dir": "ltr",
+  "lang": "en-US",
+  "orientation": "portrait-primary",
+  "icons": [{
+      "src": "amp-tube.webp",
+      "sizes": "any",
+      "type": "image/webp"
+    },
+    {
+      "src": "amp-tube.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

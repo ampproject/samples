@@ -9,12 +9,12 @@
   "license": "Apache-2.0",
   "scripts": {},
   "devDependencies": {
-    "@mapbox/stylelint-processor-arbitrary-tags": "^0.2.0",
-    "gulp": "^3.9.1",
-    "gulp-amphtml-validator": "^1.0.2",
+    "@mapbox/stylelint-processor-arbitrary-tags": "0.2.0",
+    "gulp": "3.9.1",
+    "gulp-amphtml-validator": "1.0.2",
     "gulp-htmllint": "0.0.16",
-    "gulp-stylelint": "^7.0.0",
-    "stylelint": "^9.5.0",
-    "stylelint-config-standard": "^18.2.0"
+    "gulp-stylelint": "7.0.0",
+    "stylelint": "9.5.0",
+    "stylelint-config-standard": "18.2.0"
   }
 }
