@@ -10,7 +10,7 @@ See the app in action at https://tomayac.github.io/amp-tube/.
 
 ## 💼 License
 
-Copyright 2018 Thomas Steiner. All rights reserved.
+Copyright 2018 by the [AMP Project](https://www.ampproject.org/). All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
