@@ -175,16 +175,6 @@
         border: solid #303030 1px;
         border-radius: 5px;
       }
-
-      #spinner {
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
     </style>
     <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
     <link rel="canonical" href="https://tomayac.github.io/amp-tube/">
@@ -211,43 +201,28 @@
       <h1>
         AMP Tube
       </h1>
-      <div hidden id="spinner">⚙️</div>
     </header>
 
-    <form
-      method="post"
+    <input
+      name="search"
+      type="search"
+      aria-label="Start typing to search"
+      required
+      placeholder="Start typing to search"
+      autocomplete="off"
+      value=""
       on="
-        submit:
-          spinner.show;
-        submit-error:
-          results.show,
-          spinner.hide;
-        submit-success:
-          results.show,
-          spinner.hide;"
-      action-xhr="https://ampbyexample.com/json/examples.json"
-    >
-      <input
-        name="search"
-        type="search"
-        aria-label="Start typing to search"
-        required
-        placeholder="Start typing to search"
-        autocomplete="off"
-        value=""
-        on="
-          change:
-            AMP.setState({
-              youtube: {query: event.value}
-            }),
-            results.hide;
-          tap:
-            AMP.setState({
-              youtube: {query: event.value}
-            }),
-            results.hide;"
-      />
-    </form>
+        input-debounced:
+          AMP.setState({
+            youtube: {query: event.value}
+          }),
+          results.show;
+        tap:
+          AMP.setState({
+            youtube: {query: event.value}
+          }),
+          results.hide;"
+    />
 
     <main>
       <amp-list
