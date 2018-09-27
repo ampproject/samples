@@ -14,7 +14,7 @@
     "gulp-amphtml-validator": "1.0.2",
     "gulp-htmllint": "0.0.16",
     "gulp-stylelint": "7.0.0",
-    "stylelint": "9.5.0",
+    "stylelint": "9.6.0",
     "stylelint-config-standard": "18.2.0"
   }
 }
