@@ -7,13 +7,16 @@
   },
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
-  "scripts": {},
+  "scripts": {
+    "start": "live-server --host=localhost templates"
+  },
   "devDependencies": {
     "@mapbox/stylelint-processor-arbitrary-tags": "0.2.0",
     "gulp": "3.9.1",
     "gulp-amphtml-validator": "1.0.2",
     "gulp-htmllint": "0.0.16",
     "gulp-stylelint": "7.0.0",
+    "live-server": "^1.2.0",
     "stylelint": "9.6.0",
     "stylelint-config-standard": "18.2.0"
   }
