@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html ⚡ lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="AMP Tube—A simple YouTube search engine and viewer app, implemented in AMP">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#808080">
+    <link rel="preconnect" href="https://cdn.ampproject.org/">
+    <link rel="preconnect" href="https://www.youtube.com/">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-list-0.1.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-mustache-0.2.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-youtube-0.1.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-form-0.1.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-bind-0.1.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-timeago-0.1.js">
+    <link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-form-0.1.js">
+    <link rel="preload" as="image" href="./amp-tube.webp" type="image/webp">
+    <link rel="preload" as="image" href="./placeholder.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async src="https://cdn.ampproject.org/v0/amp-list-0.1.js" custom-element="amp-list"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
+    <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+    <script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+    <script async custom-element="amp-timeago" src="https://cdn.ampproject.org/v0/amp-timeago-0.1.js"></script>
+    <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+    <style amp-custom>
+      html {
+        box-sizing: border-box;
+      }
+
+      *, *:before, *:after {
+        box-sizing: inherit;
+        outline: none;
+      }
+
+      html, body {
+        background-color: #303030;
+        font-family: Roboto,sans-serif;
+        font-size: 12pt;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0px;
+      }
+
+      body {
+        padding: .5em;
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      input {
+        border: solid #808080 1px;
+        border-radius: 17px;
+        font-size: 1em;
+        margin: .2em 0em 1em 0em;
+        width: 100%;
+        height: 2.4em;
+        padding: .2em .5em 0px 1em;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 5px;
+        margin-bottom: .5em;
+      }
+
+      header h1 {
+        line-height: 0px;
+        margin-left: 10px;
+        letter-spacing: 1px;
+        font-weight: normal;
+      }
+
+      form, main {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 1.5em;
+        color: #ffc93a;
+        font-weight: normal;
+      }
+
+      h2 {
+        font-size: 1.1em;
+        color: #ffae30;
+        font-weight: normal;
+      }
+
+      h2.skeleton-title {
+        color: transparent;
+        text-shadow: 0 0 10px rgba(255, 174, 48, 0.5);
+        user-select: none;
+        margin: 0.3em 0em;
+      }
+
+      .container {
+        border: #303030 solid 2px;
+      }
+
+      .channel {
+        color: #828282;
+        display: inline-block;
+        margin: 0px;
+      }
+
+      .skeleton-channel {
+        color: transparent;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        user-select: none;
+        margin: 0px;
+        display: inline-block;
+      }
+
+      .description {
+        padding: 0.5em 1em;
+      }
+
+      .title {
+        margin: 0.3em 0em;
+      }
+
+      .subtitle {
+        display: flex;
+      }
+
+      .subtitle-seperator {
+        color: #828282;
+        display: inline-block;
+        margin: 0px 5px;
+      }
+
+      .list-overflow[overflow] {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      amp-list div[role="list"] {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 0.5em;
+      }
+
+      amp-timeago {
+        color: #828282;
+      }
+
+      amp-timeago.skeleton-timeago {
+        color: transparent;
+        text-shadow: 0 0 10px rgba(238, 238, 238, 0.5);
+        user-select: none;
+        margin-left: 10px;
+      }
+
+      amp-img[placeholder] {
+        background-color: #202124;
+      }
+
+      amp-img.logo {
+        display: inline;
+        vertical-align: bottom;
+        width: 20%;
+      }
+
+      amp-list {
+        border: solid #303030 1px;
+        border-radius: 5px;
+      }
+    </style>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <link rel="canonical" href="https://tomayac.github.io/amp-tube/">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" type="image/webp" href="./amp-tube.webp">
+    <link rel="icon" type="image/png" href="./amp-tube.png">
+    <link rel="apple-touch-icon" href="./amp-tube.png">
+    <title>AMP Tube—A simple YouTube search engine and viewer app, implemented in AMP</title>
+  </head>
+  <body>
+
+    <amp-state id="youtube">
+      <script type="application/json">
+        {
+          "query": ""
+        }
+      </script>
+    </amp-state>
+
+    <header>
+      <amp-img alt="" class="logo" width="70" height="53" src="./amp-tube.webp">
+        <amp-img alt="" class="logo" width="70" height="53" src="./amp-tube.png" fallback></amp-img>
+      </amp-img>
+      <h1>
+        AMP Tube
+      </h1>
+    </header>
+
+    <input
+      name="search"
+      type="search"
+      aria-label="Start typing to search"
+      required
+      placeholder="Start typing to search"
+      autocomplete="off"
+      value=""
+      on="
+        input-debounced:
+          AMP.setState({
+            youtube: {query: event.value}
+          }),
+          results.show;
+        tap:
+          AMP.setState({
+            youtube: {query: event.value}
+          }),
+          results.hide;"
+    />
+
+    <main>
+      <amp-list
+        id="results"
+        height="200"
+        layout="fixed-height"
+        noloading
+        reset-on-refresh
+        items="items"
+        src="https://www.googleapis.com/youtube/v3/videos/?maxResults=9&regionCode=US&chart=mostPopular&part=snippet%2Cstatistics&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM"
+        [src]="'https://www.googleapis.com/youtube/v3/search?maxResults=9&part=snippet&type=video&key=AIzaSyD2g6U5OzaLLvzEBBacZBhfaBIKeoZnKFM&q=' + youtube.query"
+      >
+
+        <template type="amp-mustache">
+          <div class="container">
+            {{#id.videoId}}
+            <amp-youtube
+              data-videoid="{{id.videoId}}"
+              data-param-controls=1
+              data-param-color=white
+              data-param-iv_load_policy=3
+              data-param-loop=1
+              data-param-modestbranding=1
+              data-param-playsinline=1
+              data-param-rel=0
+              data-param-showinfo=0
+              width="160"
+              height="90"
+              layout="responsive"
+            >
+            {{/id.videoId}}
+            {{^id.videoId}}
+            <amp-youtube
+              data-videoid="{{id}}"
+              data-param-controls=1
+              data-param-color=white
+              data-param-iv_load_policy=3
+              data-param-loop=1
+              data-param-modestbranding=1
+              data-param-playsinline=1
+              data-param-rel=0
+              data-param-showinfo=0
+              width="160"
+              height="90"
+              layout="responsive"
+            >
+            {{/id.videoId}}
+              <amp-img
+                src="placeholder.svg"
+                alt=""
+                placeholder
+                width="160"
+                height="90"
+                layout="responsive"
+                noloading
+              >
+              </amp-img>
+            </amp-youtube>
+              <div class="description">
+                <h2 class="title">{{snippet.title}}</h2>
+                <div class="subtitle">
+                  <p class="channel">{{snippet.channelTitle}}</p>
+                  <p class="subtitle-seperator">·</p>
+                  <amp-timeago
+                     height="20"
+                     width="100"
+                     datetime="{{snippet.publishedAt}}"
+                     >
+                     {{snippet.publishedAt}}
+                  </amp-timeago>
+                </div>
+              </div>
+          </div>
+        </template>
+
+        <div overflow class="list-overflow">
+          See more
+        </div>
+
+        <div placeholder>
+          <div class="container">
+            <amp-img
+              src="placeholder.svg"
+              alt=""
+              width="160"
+              height="90"
+              layout="responsive"
+            >
+            </amp-img>
+              <div class="description">
+                <h2 class="skeleton-title">Some placeholder title</h2>
+                <div class="subtitle">
+                  <p class="skeleton-channel">Channel placeholder</p>
+                  <amp-timeago class="skeleton-timeago"
+                               height="20"
+                               width="100"
+                               datetime="2018-06-29T12:00:00.000Z"
+                               >
+                               2018-06-29T12:00:00.000Z
+                  </amp-timeago>
+                </div>
+              </div>
+          </div>
+          <div class="container" placeholder>
+            <amp-img
+              src="placeholder.svg"
+              alt=""
+              width="160"
+              height="90"
+              layout="responsive"
+            >
+            </amp-img>
+            <h2 class="skeleton-title">Some placeholder title</h2>
+            <p class="skeleton-channel">Channel placeholder</p>
+            <amp-timeago class="skeleton-timeago"
+              height="20"
+              width="100"
+              datetime="2018-06-29T12:00:00.000Z"
+            >
+              2018-06-29T12:00:00.000Z
+            </amp-timeago>
+          </div>
+        </div>
+
+      </amp-list>
+    </main>
+  </body>
+</html>

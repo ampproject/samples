@@ -16,9 +16,9 @@
   },
   "homepage": "https://github.com/ampproject/amp-publisher-sample/amp-pwa#readme",
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-react": "^6.16.0"
+    "babel-cli": "6.26.0",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-react": "6.24.1"
   },
   "main": "react-amp-document.js",
   "scripts": {

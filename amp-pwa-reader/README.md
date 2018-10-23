@@ -16,10 +16,12 @@ For a production build, call
 
     $ gulp dist
 
-## Caveats
+## Latest features
 
-As this is a purely client-side demo using third-party AMP pages from the Guardian that we have limited control over, there are a few gotchas with the demo:
+We've set up a server, which enables the following:
 
-- Search engines that don't understand JS won't be able to crawl the site (use hybrid rendering to address).
-- The navigation is a giant hack that fetches the Guardian's RSS feeds through YQL. That adds lots of latency (two server hops, 200kb of data). In a production environment, you'd of course fetch lightweight JSON from somewhere directly.
-- AMP pages are proxied through a [Glitch app](https://glitch.com/edit/#!/seed-octagon) to add CORS headers, also adding load latency. In production, you'd allow CORS access to your AMP pages to wherever your PWA lives.
+- If a new user navigates directly to a Shadow Reader article URL, the server shows the Guardian's AMP article, replacing the menu with one that contains links to the Shadow Reader. The service worker is warmed up with <amp-install-serviceworker>.  Subsquent navigations pull the user quickly into the PWA experience.  Since article content is rendered server-side, search engines that have trouble executing JavaScript can still crawl the site.
+
+- We no longer need to proxy via a glitch app, as our server can add CORS headers.
+
+- We cache YQL requests and articles.

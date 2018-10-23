@@ -1,29 +1,38 @@
 {
   "name": "ShadowReader",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server/server.js"
   },
   "author": "Paul Bakaus",
   "license": "Apache-2.0",
   "dependencies": {
-    "browser-sync": "*",
     "connect-history-api-fallback": "*",
     "del": "*",
-    "gulp": "github:gulpjs/gulp#4.0",
+    "express": "^4.16.2",
+    "express-sslify": "^1.2.0",
+    "gulp": "github:gulpjs/gulp",
     "gulp-autoprefixer": "*",
     "gulp-concat": "*",
-    "gulp-insert": "^0.5.0",
+    "gulp-insert": "*",
+    "gulp-live-server": "0.0.31",
+    "gulp-noop": "*",
     "gulp-plumber": "*",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "*",
     "gulp-sass": "*",
     "gulp-sourcemaps": "*",
     "gulp-uglify": "*",
+    "helmet": "^3.12.1",
+    "memory-cache": "^0.2.0",
+    "request": "^2.81.0",
     "uglify-es": "*",
-    "workbox-build": "*",
-    "workbox-sw": "*"
+    "workbox-build": "^3.2.0"
+  },
+  "engines": {
+    "node": "6.14.4"
   }
 }
