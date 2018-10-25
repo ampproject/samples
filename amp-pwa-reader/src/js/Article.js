@@ -18,6 +18,7 @@ class Article {
 
   constructor(url, card, streaming) {
     this.url = shadowReader.backend.getAMPUrl(url);
+    this.proxyUrl = this.urlProxy(this.url);
     this.card = card;
     this.streaming = streaming;
     Article.articles[this.url] = this;
@@ -29,7 +30,7 @@ class Article {
     var xhr = new XMLHttpRequest();
 
     return new Promise((resolve, reject) => {
-      xhr.open('GET', '/article?url=' + encodeURIComponent(this.url), true);
+      xhr.open('GET', this.proxyUrl, true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
@@ -48,7 +49,7 @@ class Article {
     var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to callback
     var article = this;             // this too
 
-    fetch(this.url).then(async response => {
+    fetch(this.proxyUrl).then(async response => {
       let reader = response.body.getReader();
       let decoder = new TextDecoder();
 
@@ -318,6 +319,11 @@ class Article {
 
   restoreScroll() {
     document.scrollingElement.scrollTop = this._mainScrollY;
+  }
+
+  // Proxy this URL through our server to avoid CORS restrictions and enable caching
+  urlProxy(url) {
+    return '/article?url=' + encodeURIComponent(url);
   }
 
 }
