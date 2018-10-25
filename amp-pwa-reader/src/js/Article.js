@@ -18,7 +18,6 @@ class Article {
 
   constructor(url, card, streaming) {
     this.url = shadowReader.backend.getAMPUrl(url);
-    this.proxyUrl = this.urlProxy(this.url);
     this.card = card;
     this.streaming = streaming;
     Article.articles[this.url] = this;
@@ -49,7 +48,7 @@ class Article {
     var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to callback
     var article = this;             // this too
 
-    fetch(this.proxyUrl).then(async response => {
+    fetch(this.url).then(async response => {
       let reader = response.body.getReader();
       let decoder = new TextDecoder();
 
@@ -319,10 +318,6 @@ class Article {
 
   restoreScroll() {
     document.scrollingElement.scrollTop = this._mainScrollY;
-  }
-
-  urlProxy(url) {
-    return 'https://seed-octagon.glitch.me/' + encodeURIComponent(url);
   }
 
 }
