@@ -12,6 +12,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const insert = require('gulp-insert');
+const rename = require('gulp-rename');
 const gls = require('gulp-live-server');
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
@@ -38,7 +39,8 @@ const paths = {
       'src/js/FeedReader.js',
       'src/js/Nav.js',
       'src/js/Card.js',
-      'src/js/Article.js'
+      'src/js/Article.js',
+      '.tmp/inline.css.js'
     ],
     dest: '.tmp/'
   },
@@ -69,7 +71,16 @@ function styles() {
     .pipe(gulp.dest(paths.styles.dest));
 }
 
-function scripts() {
+// Build JS that embeds a CSS file in a JS object property
+function css2JSProperty() {
+  return gulp.src(paths.styles.dest + 'inline.css')
+    .pipe(insert.wrap("shadowReader.backend.inlineCSS = `\n", "\n`"))
+    .pipe(rename('inline.css.js'))
+    .pipe(gulp.dest(paths.scripts.dest));
+}
+
+// Transform JS files as desired
+function processScripts() {
   return gulp.src(paths.scripts.src)
     .pipe(plumber())
     .pipe(concat('scripts.js'))
@@ -80,6 +91,11 @@ function scripts() {
     }) : noop())
     .pipe(gulp.dest(paths.scripts.dest));
 }
+
+// Scripts get built in a two-step process:
+//   First, transform a subset of our CSS files into JS object properties, for use by front-end JS.
+//   Second, process all JS files, including the ones we just built, as desired.
+const scripts = gulp.series(css2JSProperty, processScripts);
 
 // Make front-end JS files into back-end modules by appending module.exports = {name};
 // Assumes the files consist of a class whose name is identical to that of the file.
@@ -178,6 +194,7 @@ function buildSW() {
     console.log(`${count} files will be precached, totaling ${size} bytes.`);
   });
 }
+
 
 var dist = gulp.series(gulp.parallel(copy, styles, scripts, server), inline, buildSW);
 
