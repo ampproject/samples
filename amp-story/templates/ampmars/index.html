@@ -301,7 +301,7 @@
       position: absolute;
     }
 
-    #what-to-bring[active] .mars-wrapper {
+    #what-to-bring .mars-wrapper {
       padding: 0;
       align-content: flex-end;
     }
@@ -467,6 +467,8 @@
   <amp-story standalone title="The Mars Cruise" publisher="The AMP Project" publisher-logo-src="./img/logo-src.png"
     poster-portrait-src="./img/portrait-src.jpg" poster-square-src="./img/square-src.jpg" poster-landscape-src="./img/landscape-src.jpg"
     background-audio="./audio/Asche_Spencer-Contemplative_312.mp3">
+
+    <!-- Cover -->
     <amp-story-page id="cover">
       <amp-story-grid-layer template="fill">
         <amp-img class="bkgd" src="./img/01/bkgd.jpg" width="720" height="1280" layout="responsive"></amp-img>
@@ -478,9 +480,12 @@
         </h1>
         <p class="copy" animate-in="fade-in" animate-in-duration="0.75s" animate-in-delay="0.75s">
           Get ready for the trip of your life. Keep reading to see all
-          that awaits you on the Red Planet.</p>
+          that awaits you on the Red Planet.
+        </p>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- Journey -->
     <amp-story-page id="journey">
       <amp-story-grid-layer template="fill">
         <amp-video width="960" height="1280" autoplay noaudio layout="responsive" src="./video/02-bkgd.mp4" poster="./img/02/bkgd-poster.jpg"></amp-video>
@@ -495,6 +500,8 @@
         </p>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- What to Bring -->
     <amp-story-page id="what-to-bring">
       <amp-story-grid-layer template="fill">
         <amp-img src="./img/03/bkgd.jpg" width="960" height="1280"></amp-img>
@@ -527,6 +534,8 @@
         </p>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- Highlights -->
     <amp-story-page id="trip-highlights">
       <amp-story-grid-layer template="fill">
         <amp-video noaudio autoplay width="960" height="1280" src="./video/04-bkgd.mp4" layout="responsive" poster="./img/04/poster.jpg">
@@ -570,6 +579,8 @@
         </p>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- Rover tours -->
     <amp-story-page id="rover-tours">
       <amp-story-grid-layer template="fill">
         <amp-img src="./img/05/bkgd.jpg" width="960" height="1280" layout="responsive"></amp-img>
@@ -587,6 +598,8 @@
         <amp-img src="./img/05/360-btn.png" width="567" height="230" layout="responsive"></amp-img>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- 360 -->
     <amp-story-page id="rover-360">
       <amp-story-grid-layer template="fill">
         <amp-video autoplay noaudio width="960" height="1280" src="./video/05B-rover.mp4" layout="responsive" poster="./img/05B/rover.jpg">
@@ -596,6 +609,8 @@
         </amp-video>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- Can't Wait -->
     <amp-story-page id="last">
       <amp-story-grid-layer template="fill">
         <amp-img src="./img/06/bkgd.jpg" width="960" height="1280" layout="responsive"></amp-img>
@@ -615,7 +630,10 @@
         </h2>
       </amp-story-grid-layer>
     </amp-story-page>
+
+    <!-- Bookend -->
     <amp-story-bookend src="./json/bookend.json" layout="nodisplay"></amp-story-bookend>
+
   </amp-story>
 
 </body>
