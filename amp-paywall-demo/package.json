@@ -26,6 +26,6 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "jshint": "2.9.6"
+    "jshint": "2.9.7"
   }
 }
