@@ -30,7 +30,9 @@ app.post('/api/cache/generate-update-url', upload.array(), (req, res) => {
 
   // Generate update-cache URLs.
   const updateCacheUrlProvider = UpdateCacheUrlProvider.create(privateKey);
-  updateCacheUrlProvider.calculateFromOriginUrl(url)
+  const timestamp = Math.round((new Date()).getTime() / 1000) + 60;
+
+  updateCacheUrlProvider.calculateFromOriginUrl(url, timestamp)
     .then(refreshUrlInfos => {
       // Append CORS headers.
       const requestingOrigin = req.headers.origin;
