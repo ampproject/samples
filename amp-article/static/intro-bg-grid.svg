@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440px" height="2940px" viewBox="0 0 1440 2940" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.3 (67297) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#7EEABD" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#7EEABD" offset="49.8306539%"></stop>
+            <stop stop-color="#7EEABD" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Article" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.7">
+        <g id="Article---All-sections---Grain" transform="translate(0.000000, -1061.000000)" fill-rule="nonzero">
+            <g id="1.-Opening" transform="translate(-354.000000, 0.000000)">
+                <g id="Group" transform="translate(354.000000, 1061.000000)">
+                    <rect id="Rectangle" fill="#5DFDBF" opacity="0.151157924" x="0" y="1139" width="1440" height="1"></rect>
+                    <rect id="Rectangle" fill="#5DFDBF" opacity="0.151157924" x="0" y="1389" width="1440" height="1"></rect>
+                    <rect id="Rectangle" fill="#5DFDBF" opacity="0.151157924" x="0" y="1419" width="1440" height="1"></rect>
+                    <rect id="Rectangle" fill="#5DFDBF" opacity="0.151157924" x="0" y="1640" width="1440" height="1"></rect>
+                    <rect id="Rectangle" fill="#5DFDBF" opacity="0.151157924" x="0" y="1962" width="1440" height="1"></rect>
+                    <polygon id="Rectangle" fill="url(#linearGradient-1)" opacity="0.15" points="208 0 209 0 209 2942 208 2942"></polygon>
+                    <polygon id="Rectangle" fill="url(#linearGradient-1)" opacity="0.15" points="1061 0 1062 0 1062 2942 1061 2942"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
