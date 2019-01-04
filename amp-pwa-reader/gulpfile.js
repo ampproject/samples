@@ -73,7 +73,7 @@ function styles() {
 
 // Build JS that embeds a CSS file in a JS object property
 function css2JSProperty() {
-  return gulp.src(paths.styles.dest + 'inline.css')
+  return gulp.src(paths.styles.dest + 'inline.css', { allowEmpty: true })
     .pipe(insert.wrap("shadowReader.backend.inlineCSS = `\n", "\n`"))
     .pipe(rename('inline.css.js'))
     .pipe(gulp.dest(paths.scripts.dest));
@@ -81,7 +81,7 @@ function css2JSProperty() {
 
 // Transform JS files as desired
 function processScripts() {
-  return gulp.src(paths.scripts.src)
+  return gulp.src(paths.scripts.src, { allowEmpty: true })
     .pipe(plumber())
     .pipe(concat('scripts.js'))
     .pipe(DIST_MODE ? uglify({
