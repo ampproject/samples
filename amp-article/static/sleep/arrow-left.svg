@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.3 (67297) - http://www.bohemiancoding.com/sketch -->
+    <title>Arrow Right</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Article" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Article---Grain---Part-2" transform="translate(-474.000000, -5863.000000)">
+            <g id="6.-Sleep" transform="translate(0.000000, 4601.000000)">
+                <g id="Arrows" transform="translate(474.000000, 1262.000000)">
+                    <g id="Arrow-Right" transform="translate(25.000000, 25.000000) rotate(-180.000000) translate(-25.000000, -25.000000) translate(0.000000, 0.000000)">
+                        <g id="Group-32">
+                            <circle id="Oval" fill-opacity="0.160411005" fill="#FFFFFF" cx="25" cy="25" r="25"></circle>
+                            <polyline id="Rectangle" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(23.000000, 24.828427) rotate(45.000000) translate(-23.000000, -24.828427) " points="16.4142136 18.2426407 29.5857864 18.2426407 29.5857864 31.4142136"></polyline>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

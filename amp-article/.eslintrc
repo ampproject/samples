@@ -1,0 +1,4 @@
+extends:
+  - metalab
+env:
+  node: true
