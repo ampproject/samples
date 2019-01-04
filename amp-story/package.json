@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@mapbox/stylelint-processor-arbitrary-tags": "0.2.0",
-    "gulp": "3.9.1",
+    "gulp": "4.0.0",
     "gulp-amphtml-validator": "1.0.2",
     "gulp-htmllint": "0.0.16",
     "gulp-stylelint": "7.0.0",
