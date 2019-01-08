@@ -15,7 +15,7 @@
     "gulp": "4.0.0",
     "gulp-amphtml-validator": "1.0.2",
     "gulp-htmllint": "0.0.16",
-    "gulp-stylelint": "7.0.0",
+    "gulp-stylelint": "8.0.0",
     "live-server": "1.2.1",
     "stylelint": "9.6.0",
     "stylelint-config-standard": "18.2.0"
