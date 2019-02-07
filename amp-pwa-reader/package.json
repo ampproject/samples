@@ -30,7 +30,8 @@
     "memory-cache": "^0.2.0",
     "request": "^2.81.0",
     "uglify-es": "*",
-    "workbox-build": "^3.2.0"
+    "workbox-build": "^3.2.0",
+    "xml2json": "^0.11.2"
   },
   "engines": {
     "node": "6.16.0"

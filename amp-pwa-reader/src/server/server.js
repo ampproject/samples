@@ -22,6 +22,7 @@ const memCache = require('memory-cache');
 const pubBackend = require('./Backend.js');
 const enforce = require('express-sslify');
 const helmet = require('helmet');
+const xmlParser = require('xml2json');
 
 const ENVIRONMENT_PRODUCTION = 'production';
 
@@ -38,21 +39,20 @@ if (app.get('env') === ENVIRONMENT_PRODUCTION) {
 
 // how long (in seconds) to cache requests for main feed and for any article
 const cacheDurations = {feed: 600, article: 3600};
-const feedURL = 'https://query.yahooapis.com/v1/public/yql';
 
 const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
 
-// Proxy the feed request so that we can cache it.
-// YQL expects a query in the "q" parameter.
+// Here, we cache the feed, and we convert it to JSON.
 app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
   const options = {
-    url: feedURL + '?format=json&q=' + req.query.q
+    url: req.query.q
   };
+
 
   request(options, (error, response, body) => {
     if (!error) {
-      res.send(body);
+      res.send(xmlParser.toJson(body));
     } else {
       res.json({error: 'An error occurred in /feed route'});
     }

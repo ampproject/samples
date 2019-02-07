@@ -223,7 +223,7 @@ class Nav {
     // hide menu
     this.hide();
 
-    // fetch new nav entries via RSS via YQL
+    // fetch new nav entries via RSS via our server
     return this.feedReader.fetch(category).then(entries => {
 
       // if this is the first time loading cards, now would

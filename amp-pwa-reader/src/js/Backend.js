@@ -55,7 +55,8 @@ class Backend {
   }
 
   getRSSImage(entry) {
-    return entry.content ? entry.content[entry.content.length - 1].url : '';
+    const content = entry['media:content'];
+    return content ? content[content.length - 1].url : '';
   }
 
   getRSSDescription(entry) {
