@@ -17,7 +17,7 @@
 class FeedReader {
 
   constructor() {
-
+    this.cardLimit = 15; // load no more than this many article cards at once
   }
 
   fetch(category, attempts = 0) {
@@ -36,6 +36,7 @@ class FeedReader {
         }
 
         var entries = (json.rss.channel && json.rss.channel.item) || [];
+        entries = entries.slice(0, this.cardLimit);
 
         return entries.map(entry => {
           return {
