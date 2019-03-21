@@ -94,7 +94,7 @@ class Article {
   // Used during streaming. If we see <body>, add in the HTML of the card.
   // Also add in the CSS that was extracted from inline.css during the build process.
   prependCardHtml(html) {
-    return html.replace(/<body.+?>/, '$&' + this.clonedCardElem.outerHTML);
+    return html.replace(/<body.*?>/, '$&' + this.clonedCardElem.outerHTML);
   }
 
   load() {
