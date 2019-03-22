@@ -21,7 +21,7 @@ class Card {
     this.headless = headless;
     this.currentTransform = { scaleX: 1, scaleY: 1 };
     this.naturalDimensions = { width: 0, height: 0 };
-    this.streaming = false; /* !prerender; */  //TODO: also check to see if browser supports it
+    this.streaming = true; /* !prerender; */  //TODO: also check to see if browser supports it
 
     this.create();
     this.bind();
