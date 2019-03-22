@@ -147,7 +147,7 @@ class Backend {
 // TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
   hideElementsCSS(html) {
     return this.elementsToHide
-               .map(selector => selector + ' {display: none;}')
+               .map(selector => selector + ' {display: none !important;}')
                .join(' ');
   }
 
