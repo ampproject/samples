@@ -9,7 +9,9 @@
 </head>
 
 <body>
-    %%include('../partials/header.html')
+    %%include('../partials/header.html', {
+        "pageType": "cart-details"
+})
     %%include('../partials/menu.html')
     <main id="content" role="main" class="main cart">
         <div class="cart-wrapper">

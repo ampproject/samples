@@ -11,7 +11,7 @@
         <a href="/shopping-cart">
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
 
-                %%if (context.pageType != 'cart') {
+                %%if (context.pageType != 'cart-details') {
                 <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed">
                     <template type="amp-mustache">
                         {{#count}}
