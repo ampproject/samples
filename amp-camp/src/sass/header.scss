@@ -60,16 +60,18 @@
   @include desktop {
     top: .5rem;
   }
-
-  div {
-    width: 25px;
-  }
 }
 
 #cart-count {
   position: absolute;
   top: 5px;
-  right: 10px;
+  left: 22px;
+}
+
+#cart-count span {
+  display: block;
+  width: 17px;
+  height: 17px;
   text-align: center;
   border-radius: 50%;
   background-color: #f88;

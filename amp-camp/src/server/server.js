@@ -219,7 +219,7 @@ app.get('/api/cart-items', function(req, res) {
 app.get('/api/cart-count', function(req, res) {
     let cart = getCartFromSession(req);
 
-    let response = { items: [cart.cartItems.length] };
+    let response = { items: [{ count: cart.cartItems.length }] };
 
     enableCors(req, res);
     res.send(response);

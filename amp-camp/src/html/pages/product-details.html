@@ -7,7 +7,9 @@
     })
 </head>
 <body [class]="cart.added ? 'cart-added' : ''">
-    %%include('../partials/header.html')
+    %%include('../partials/header.html', {
+        "pageType": "product-details"
+    })
     %%include('../partials/menu.html')
     <amp-state id="cart">
         <script type="application/json">

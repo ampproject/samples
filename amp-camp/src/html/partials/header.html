@@ -9,18 +9,17 @@
     </a>
     <div class="cart-icon-container">
         <a href="/shopping-cart">
-            <div>
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
 
-                %%if (context.pageType == 'index') {
+                %%if (context.pageType != 'cart') {
                 <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed">
                     <template type="amp-mustache">
-                        <span>{{.}}</span>
+                        {{#count}}
+                        <span>{{count}}</span>
+                        {{/count}}
                     </template>
                 </amp-list>
                 }
-                
-            </div>
         </a>
     </div>
 </header>

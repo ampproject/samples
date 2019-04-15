@@ -7,7 +7,9 @@
     })
 </head>
 <body>
-    %%include('../partials/header.html')
+    %%include('../partials/header.html', {
+        "pageType": "product-listing"
+    })
     %%include('../partials/menu.html')
     <main id="content" role="main" class="listing">
         <amp-state id="products">
