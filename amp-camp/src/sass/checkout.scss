@@ -1,0 +1,133 @@
+@import 'mixins';
+
+.checkout {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+
+	h3,
+	p {
+		margin-bottom: 1rem;
+	}
+
+	section {
+		padding: 1rem 1rem 2.5rem;
+	}
+
+	.code {
+		font-size: 2.2rem;
+		margin-bottom: 1.5rem;
+	}
+}
+
+.checkout-steps {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	-webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+	color: #cdcccd;
+	font-size: .94rem;
+	padding: 1rem;
+
+	@include desktop {
+		max-width: 350px;
+		border: none;
+		margin-left: 1rem;
+		padding: 1rem 0;	
+	}
+}
+
+.checkout-area {
+	width: 100%;
+	padding: 1rem 0 1.5rem;
+
+	@include desktop {
+		width: 66.66667%;
+		padding: 2rem 2rem 5rem;	
+	}
+
+	h3 {
+		padding: 0 1rem;
+		margin-bottom: 1rem;
+	}
+
+	hr {
+		margin: 1rem 1.5rem .5rem 1rem;
+	}
+}
+
+.checkout-step-area {
+	padding: 0 1rem;
+
+	@include desktop {
+		margin-top: 1.5rem;	
+	}
+
+	h5 {
+		margin-bottom: 1rem;
+	}
+}
+
+.userinfo-fields {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -1rem;
+	width: 50%;
+	padding: 0 1rem;
+
+	input {
+		padding: 0;
+		font-size: .94rem;
+		font-family: Open Sans Condensed,sans-serif;
+		color: #222;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	label {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.input-container {
+		position: relative;
+		display: inline-block;
+		margin-bottom: 1.5rem;
+	}
+
+	.contact & {
+		width: 100%;
+		padding: 0;
+	}
+}
+
+.delivery-area {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	padding: 0 1rem;
+
+	@include desktop {
+		padding: 1.5rem 1rem;
+	}
+
+	h5 {
+		width: 100%;
+		margin: 1rem 0;
+	}
+}
+
+.radio-buttons {
+	width: 100%;
+}
+
+.checkout-actions {
+	@include desktop {
+		text-align: initial;
+		margin-top: 1.5rem;
+	}
+}

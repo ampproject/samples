@@ -1,0 +1,70 @@
+<meta charset="utf-8">
+<title>cAMPmor - AMP e-commerce demo</title>
+<link rel="canonical" href="https://www.ampstart.com/templates/themes/e-commerce/product-details.amp">
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+
+<style amp-boilerplate="">body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate="">body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+
+
+${ampjs}
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700" rel="stylesheet">
+
+  
+
+<style amp-custom>
+  %%include('../../css/global.css')
+  %%include('../../css/header.css')
+  %%include('../../css/menu.css')
+  %%include('../../css/footer.css')
+  %%include('../../css/social.css')
+
+  %%if (context.pageType == 'index') {
+    %%include('../../css/index.css')
+  }
+
+  %%if (context.pageType == 'blog') {
+    %%include('../../css/blog.css')
+  }
+
+  %%if (context.pageType == 'checkout') {
+    %%include('../../css/checkout.css')
+  }
+
+  %%if (context.pageType == 'contact') {
+    %%include('../../css/contact.css')
+  }
+
+  %%if (context.pageType == 'product-listing') {
+    %%include('../../css/product-listing.css')
+  }
+
+  %%if (context.pageType == 'product-details') {
+    %%include('../../css/product-details.css')
+    %%include('../../css/related-products.css')
+  }
+
+  %%if (context.pageType == 'cart-details') {
+    %%include('../../css/cart.css')
+    %%include('../../css/related-products.css')
+  }
+</style>
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">

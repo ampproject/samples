@@ -1,0 +1,164 @@
+@import 'mixins';
+
+.listing {
+	max-width: none;
+
+	@include desktop {
+		.side-panel {
+			position: sticky;
+			align-self: center;
+			padding: 2rem 2rem 0 0;
+
+			h2 {
+				font-size: 1.125rem;
+				margin-bottom: 1rem;
+			}
+		}
+	}
+
+	amp-list {
+		margin: 0 .5rem;
+
+		@include desktop {
+			margin: 0 -.5rem;
+		}
+
+		amp-img {
+			margin: 2.5rem 0 1rem;
+		}
+	}
+
+	.banner {
+		width: 100%;
+	}
+
+	.select-wrapper {
+		margin: 0 4px;
+
+		@include desktop {
+			margin: 0 4px 0 12px;	
+		}
+	}
+}
+
+.checkout-steps, 
+.listing-filters {
+	border-top: 1px solid #f3f3f3;
+	border-bottom: 1px solid #f3f3f3;
+}
+
+.listing-filters {
+	padding: 1rem;
+
+	@include desktop {
+		border: none;
+	}
+
+	select {
+		color: #666;
+	}
+
+	label {
+			display: block;
+			margin-bottom: 0.45rem; 
+	}
+}
+
+.listing-filters amp-selector button,
+.listing-content .side-panel button {
+	color: #666;
+}
+
+.listing-filters amp-selector button[selected],
+.listing-content .side-panel button[selected] {
+	color: #000;
+}
+
+.select-wrapper {
+	display: inline-block;
+
+	@include desktop {
+		width: auto;
+	}
+}
+
+.listing-content {
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding-bottom: 2rem;
+
+	.side-panel button,
+	.select-wrapper button {
+		background: none;
+		box-shadow: none;
+		border-radius: 0px;
+		width:80px;
+		border-style: none;
+	}
+}
+
+.listing-container {
+	width: 100%;
+	padding: 1rem 0 1.5rem;
+
+	@include desktop {
+		padding: .5rem 2rem 5rem;
+		width: 58.33333%;
+	}
+
+	amp-list {
+			margin-top: .45rem;
+	}
+}
+
+.listing-header {
+	position: relative;
+	align-items: center;
+
+	@include desktop {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 1.5rem 0 1rem;
+		border-top: 1px solid #f3f3f3;
+		border-bottom: 1px solid #f3f3f3;
+	}
+
+	h1 {
+		flex: 1 1 auto;
+		font-size: 1.75rem;
+		padding: 0 1rem;
+		margin: 0 0 1rem;
+
+		@include desktop {
+			margin-top: 1rem;
+		}
+	}
+}
+
+.listing-product {
+	position: relative;
+	display: inline-block;
+	min-height: 275px;
+	width: 50%;
+	padding: 0 .5rem;
+	margin-bottom: 1rem;
+
+	@include desktop {
+		width: 25%;
+		margin-bottom: 2rem;
+	}
+
+	h2 {
+			font-size: 1rem;
+	}
+
+	&>div {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		position: relative;
+		min-height: 275px;
+	}
+}

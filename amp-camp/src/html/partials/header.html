@@ -1,0 +1,26 @@
+<header class="header">
+    <div role="button" aria-label="open sidebar" on="tap:header-sidebar.toggle" tabindex="0" class="burger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="block">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+        </svg>
+    </div>
+    <a href="/">
+      <amp-img src="img/logo.png" width="120" height="37" layout="fixed" alt=""></amp-img>
+    </a>
+    <div class="cart-icon-container">
+        <a href="/shopping-cart">
+            <div>
+                <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
+
+                %%if (context.pageType == 'index') {
+                <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed">
+                    <template type="amp-mustache">
+                        <span>{{.}}</span>
+                    </template>
+                </amp-list>
+                }
+                
+            </div>
+        </a>
+    </div>
+</header>

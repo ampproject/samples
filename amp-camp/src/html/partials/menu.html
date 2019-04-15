@@ -1,0 +1,31 @@
+<amp-sidebar id="header-sidebar" layout="nodisplay">
+    <div class="menu-header">
+        <div role="button" aria-label="close sidebar" on="tap:header-sidebar.toggle" tabindex="0" class="menu-close-button">✕</div>
+    </div>
+    <nav class="menu">
+        <ul class="label">
+            <li class="logo">
+                <a href="/" class="block">
+          <amp-img src="img/logo-nav.png" width="180" height="73" layout="intrinsic" alt="Company logo" noloading="">
+            <div placeholder="" class="loading"></div>
+          </amp-img>
+          </a>
+            </li>
+            <li><a href="/product-listing?gender=women&category=shirts">Women</a></li>
+            <li class="sub-item"><a href="/product-listing?gender=women&category=shirts">Women's Shirts</a></li>
+            <li class="sub-item"><a href="/product-listing?gender=women&category=shorts">Women's Shorts</a></li>
+            <li><a href="/product-listing?gender=men&category=shirts">Men</a></li>
+            <li class="sub-item"><a href="/product-listing?gender=men&category=shirts">Men's Shirts</a></li>
+            <li class="sub-item"><a href="/product-listing?gender=men&category=shorts">Men's Shorts</a></li>
+            <li><a href="/blog-listing.html">Blog</a></li>
+            <li><a href="/contact.html">Contact us</a></li>
+        </ul>
+    </nav>
+    <h3>follow us</h3>
+    %%include('../partials/social.html')
+    <ul class="faq">
+        <li><a href="#" class="text-decoration-none">Size Guide</a></li>
+        <li><a href="#" class="text-decoration-none">Returns Policy</a></li>
+        <li><a href="#" class="text-decoration-none">Cookie &amp; privacy policy</a></li>
+    </ul>
+</amp-sidebar>

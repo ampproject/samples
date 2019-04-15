@@ -1,0 +1,109 @@
+@import 'mixins';
+
+.landing {
+	max-width: none;
+}
+.hero-wrapper {
+	overflow: hidden;
+	text-align: center;
+
+	@include desktop {
+		position: relative;
+		text-align: left;
+		color: #fff;
+
+		.button {
+			margin-left: 2rem;
+			background-color: #fff;
+			border: none;
+			color: #222;
+			font-size: .94rem
+		}
+	}
+
+	amp-img {
+		loading {
+			margin-top: 200px;
+		}
+	}
+
+	.amp-mode-mouse & {
+		amp-img {
+			transition: transform 1s;
+		}
+		&:hover amp-img {
+			transform:scale(1.05);
+		}
+	}
+}
+
+.hero-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 3rem 1.5rem;
+
+	@include desktop {
+		position: absolute;
+		margin: 0 auto;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+	}
+
+	h2 {
+		font-size: 1.38rem;
+		font-weight: 700;
+
+		@include desktop {
+			color: #fff;
+			font-size: 3.5rem;
+			padding-left: 2rem;
+			margin-bottom: 1rem;
+			max-width: 500px;
+			background:#00000066;
+		}
+	}
+
+	p {
+		padding: 1rem 1rem 1.5rem;
+		font-family: Cardo,serif;
+		width: 100%;
+		max-width: 500px;
+		margin: 0 auto;
+
+		@include desktop {
+			font-size: 1rem;
+			margin-bottom: 2rem;
+			margin-left: 0;
+			padding-left: 2rem;
+			background:#00000066;
+		}
+	}
+}
+
+@include desktop {
+
+	.hero-align {
+		margin: 0 auto;
+		width: 100%;
+		max-width: 1280px;
+	}
+
+	.hero-content-theme-secondary,
+	.hero-content-theme-secondary h2 {
+		color: #222
+	}
+
+	.button.button-lg-black {
+		color: #fff;
+		background-color: #222;
+	}
+
+	.amp-mode-mouse .hero-content-theme-secondary .button:hover {
+		background-color: #fff;
+		color: #222
+	}
+}

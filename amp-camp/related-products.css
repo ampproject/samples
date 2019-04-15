@@ -1,0 +1,102 @@
+.related-products {
+	border-top: 1px solid #f3f3f3;
+}
+
+.related-products ul {
+	margin: 15px 0;
+}
+
+.related-products ul li {
+	display: inline-block;
+	width: 105px;
+	overflow: hidden;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	margin-right: 1rem;
+}
+
+.amp-mode-mouse .related-products ul li:hover h6 {
+	text-decoration: underline;
+}
+
+.related-products amp-carousel {
+	padding: 0 2rem;
+}
+
+.related-products amp-img {
+	margin-bottom: 1rem;
+}
+
+.related-products .amp-carousel-button {
+	background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/><path d="M0-.5h24v24H0z" fill="none"/></svg>') 30px 30px transparent;
+	cursor: pointer;
+	height: 30px;
+	width: 30px;
+	top: 40%;
+}
+
+.related-products .amp-carousel-button-next,
+.related-products .amp-carousel-button-prev {
+	display: initial;
+}
+
+.related-products .amp-carousel-button-next {
+	right: 0;
+	-webkit-transform: translateY(-50%) rotate(180deg);
+	-ms-transform: translateY(-50%) rotate(180deg);
+	transform: translateY(-50%) rotate(180deg);
+}
+
+.related-products .amp-carousel-button-prev {
+	left: 0;
+}
+
+.cart .related-products {
+	width: 100%;
+	padding: 0 2rem;
+	border-top: none;
+}
+
+.related-products-area {
+	width: 100%;
+	margin-top: 1.5rem;
+}
+
+.info-content {
+	width: 100%;
+	padding-bottom: 1.5rem;
+}
+
+.info-content hr.section-divider {
+	display: none;
+}
+
+.info-content .related-products {
+	width: 100%;
+	padding: 0 2rem;
+}
+
+@media (min-width: 40.06rem) and (max-width: 52rem) {
+
+.info-content .related-products {
+	display: block;
+}
+
+}
+
+@media (min-width: 52.06rem) {
+
+.related-products-area {
+	margin-top: 2rem;
+}
+
+}
+
+@media (max-width: 40rem) {
+
+.info-content .related-products {
+	display: block;
+}
+
+}
+

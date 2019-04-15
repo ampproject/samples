@@ -1,0 +1,95 @@
+<!doctype html>
+%%include('../partials/copyright.html')
+<html ⚡="" lang="en">
+<head>
+    %%include('../partials/head.html', {
+        "pageType": "product-listing"
+    })
+</head>
+<body>
+    %%include('../partials/header.html')
+    %%include('../partials/menu.html')
+    <main id="content" role="main" class="listing">
+        <amp-state id="products">
+            <script type="application/json">
+            {
+                "gender": "<%productsGender%>",
+                "category": "<%productsCategory%>",
+                "filter": "high-low"
+            }
+            </script>
+        </amp-state>
+        <amp-img class="banner xs-hide sm-hide" src="img/<%productsGender%>-extra-wide.jpg" [src]="'img/'+products.gender+'-extra-wide.jpg'" width="3.5" height="1" layout="responsive" alt="Product listing" noloading="">
+            <div placeholder="" class="loading"></div>
+        </amp-img>
+        <section class="listing-content">
+            <div class="sidebar xs-hide sm-hide">
+                <div class="side-panel title">
+                    <h2>Category</h2>
+                        <amp-selector name="category" layout="container" on="select:AMP.setState({products:{gender: event.targetOption}}), products-list.changeToLayoutContainer()" [selected]="products.gender">
+                            <%#womenSelected%>
+                            <button type="button" option="women" selected>Women</button>
+                            <button type="button" option="men" >Men</button>
+                            <%/womenSelected%>
+                            <%^womenSelected%>
+                            <button type="button" option="women" >Women</button>
+                            <button type="button" option="men" selected>Men</button>
+                            <%/womenSelected%>
+                        </amp-selector> 
+                </div>
+            </div>
+
+            <div class="listing-container">
+                <div class="listing-header">
+                    <h1 [text]="products.gender+'’s Clothing'"><%productsGender%>’s Clothing</h1>
+                    <div class="listing-filters">
+                        <div class="select-wrapper md-hide lg-hide">
+                            <div class="title">
+                                <label for="categories">Show:</label>
+                                <amp-selector name="category" layout="container" on="select:AMP.setState({products:{category: event.targetOption}}), products-list.changeToLayoutContainer()" [selected]="products.category">
+                                    <%#shirtSelected%>
+                                    <button type="button" option="shirts" selected>Shirts</button>
+                                    <%/shirtSelected%>
+                                    <%^shirtSelected%>
+                                    <button type="button" option="shirts">Shirts</button>
+                                    <%/shirtSelected%>
+                                    <%#shortSelected%>
+                                    <button type="button" option="shorts" selected>Shorts</button>
+                                    <%/shortSelected%>
+                                    <%^shortSelected%>
+                                    <button type="button" option="shorts" >Shorts</button>
+                                    <%/shortSelected%>
+                                </amp-selector> 
+                            </div>
+                        </div>
+                        <div class="select-wrapper title">
+                            <label for="price">Sort by:</label>
+                            <select name="price" id="price" on="change: AMP.setState({products: {filter: event.value}})">
+                                <option value="high-low">Price: High-Low</option>
+                                <option value="low-high">Price: Low-High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <amp-list id="products-list" [src]="'/api/categories?categoryId=' + products.gender + '-' + products.category + '&sort=' + products.filter" src="/api/categories?categoryId=<%productsGender%>-<%productsCategory%>&sort=high-low" height="1000" width="300" layout="responsive">
+                    <template type="amp-mustache">
+                        <a href="product-details?categoryId=<%productsGender%>-<%productsCategory%>&productId={{productId}}" target="_self" class="listing-product" [href]="'product-details?categoryId=' + products.gender + '-' + products.category + '&productId={{productId}}'">
+                            <div>
+                                <div>
+                                    <amp-img src="{{image}}" width="340" height="340" layout="responsive" alt="{{ name }}" noloading="">
+                                        <div placeholder="" class="loading"></div>
+                                    </amp-img>
+                                    <h2>{{ name }}</h2> <!-- {{ description }} -->
+                                </div>
+                                <div class="title">${{ price }}</div>
+                            </div>
+                        </a>
+                    </template>
+                </amp-list>
+            </div>
+        </section>
+    </main>
+    %%include('../partials/footer.html')
+</body>
+
+</html>

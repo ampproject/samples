@@ -1,0 +1,297 @@
+<!doctype html>
+%%include('../partials/copyright.html')
+<html ⚡="" lang="en">
+<head>
+    %%include('../partials/head.html', {
+        "pageType": "product-details"
+    })
+</head>
+<body [class]="cart.added ? 'cart-added' : ''">
+    %%include('../partials/header.html')
+    %%include('../partials/menu.html')
+    <amp-state id="cart">
+        <script type="application/json">
+        {
+            "added": false
+        }
+        </script>
+    </amp-state>
+    <main id="content" role="main" class="main product-details">
+        <!--
+        <div class="commerce-cart-notification">
+            <h1 class="display-none">Your Basket</h1>
+            <div class="commerce-cart-item flex flex-wrap items-center">
+                <div>
+                    <amp-img class="commerce-cart-item-image" src="img/product/product-8.jpg" width="1" height="1" layout="responsive" alt="Caliper Brakes" noloading="">
+                        <div placeholder="" class="commerce-loader"></div>
+                    </amp-img>
+                </div>
+                <div class="commerce-cart-item-desc">
+                    <div class="title">Caliper Brakes</div>
+                    <div>Fits most wheel sizes and designed to last long.</div>
+                </div>
+                <div class="commerce-cart-item-price flex flex-wrap justify-around items-start title">
+                    <span>£349</span>
+                    <span>1</span>
+                    <div role="button" class="inline-block commerce-cart-icon" tabindex="0">✕</div>
+                </div>
+            </div>
+            <div class="commerce-cart-item flex flex-wrap items-center">
+                <div>
+                    <amp-img class="commerce-cart-item-image" src="img/product/product-1.jpg" width="1" height="1" layout="responsive" alt="Sprocket Set" noloading="">
+                        <div placeholder="" class="commerce-loader"></div>
+                    </amp-img>
+                </div>
+                <div class="commerce-cart-item-desc">
+                    <div class="title">Sprocket Set</div>
+                    <div>Steel, designed for long lasting stability.</div>
+                </div>
+                <div class="commerce-cart-item-price flex flex-wrap justify-around items-start title">
+                    <span>£470</span>
+                    <span>1</span>
+                    <div role="button" class="inline-block commerce-cart-icon" tabindex="0">✕</div>
+                </div>
+            </div>
+            <div class="flex actions-container">
+                <a href="#" class="cart-actions button button-white">send</a>
+                <a href="checkout.amp.html" class="cart-actions button button-black">checkout</a>
+            </div>
+        </div>
+        -->
+        <amp-state id="product">
+        <script type="application/json">
+        {
+            "selectedColor": "<%DefaultColor%>",
+            "selectedSize": "<%DefaultSize%>",
+            "selectedQuantity": 1,
+            <%#All_Colors%>
+                "<%ColorName%>": {
+                    "sizes" : {
+                        <%#Avaliable_Sizes%>
+                            <%#available%>
+                                <%#Last%>
+                                    "<%SizeName%>": {
+                                        "discountPrice" : "<%Discount_Price%>",
+                                        "stock" : "<%Stock%>"
+                                    }
+                                <%/Last%>
+                                <%^Last%>
+                                    "<%SizeName%>": {
+                                        "discountPrice" : "<%Discount_Price%>",
+                                        "stock" : "<%Stock%>"
+                                    },
+                                <%/Last%>
+                            <%/available%>
+                        <%/Avaliable_Sizes%>
+                    },
+                    "stock" : "<%Stock%>",
+                    "defaultSize" : "<%DefaultSize%>",
+                    "thumb": {
+                        "image1": "<%& Photo%>",
+                        "image2": "<%& Photo%>",
+                        "image3": "<%& Photo%>"
+                    },
+                    "large": {
+                        "image1": "<%& Photo%>",
+                        "image2": "<%& Photo%>",
+                        "image3": "<%& Photo%>"
+                    },
+                    "option":"<%option%>"
+                },
+                "<%& option%>": "<%ColorName%>",
+            <%/All_Colors%>
+            "selectedSlide": 0
+        }
+        </script>
+        </amp-state>
+
+        <section class="details-content flex flex-wrap">
+            <%#UniqueColor%>
+                <%#All_Colors%>
+                <div class="single-product">
+                    <amp-img src="<%& Photo%>" width="1280" height="720" alt="product image" layout="responsive">
+                        <div placeholder="" class="loading"></div>
+                    </amp-img>
+                </div>
+                <%/All_Colors%>
+            <%/UniqueColor%>
+            <%^UniqueColor%>
+            <div class="product-carousel">
+                <amp-carousel id="main-carousel" width="1280" height="720" layout="responsive" type="slides" [slide]="product.selectedSlide" 
+                on="slideChange: AMP.setState({product: {
+                    selectedSlide: event.index,
+                    selectedColor: product[event.index + 1]
+                }})">
+                    <%#All_Colors%>
+                    <amp-img src="<%& Photo%>" width="1280" height="720" layout="responsive" role="button" tabindex="0" alt="product image" noloading="">
+                        <div placeholder="" class="loading"></div>
+                    </amp-img>
+                    <%/All_Colors%>
+                </amp-carousel>
+
+                <amp-selector name="color" layout="container" [selected]="product.selectedColor" 
+                on="select:AMP.setState({
+                  product: {
+                    selectedSlide: product[event.targetOption].option -1,
+                    selectedColor: event.targetOption,
+                    selectedSize: product[event.targetOption].sizes[product.selectedSize] != null ? product.selectedSize : product[event.targetOption].defaultSize,
+                    selectedQuantity: 1
+                }})">
+                    <ul>
+                        <%#All_Colors%>
+                        <li>
+                            <%#defaultColour%>
+                            <amp-img option="<%ColorName%>" src="<%& Photo%>" height="48.5" width="45" selected="selected"></amp-img>
+                            <%/defaultColour%>
+                            <%^defaultColour%>
+                            <amp-img option="<%ColorName%>" src="<%& Photo%>" height="48.5" width="45"></amp-img>
+                            <%/defaultColour%>
+                        </li>
+                        <%/All_Colors%>
+                    </ul>
+                </amp-selector>
+            </div>
+            <%/UniqueColor%>
+            <div class="parameters-content flex flex-wrap">
+                <div class="product-description self-start">
+                    <h1><%Product_Title%></h1>
+                    <div class="title" [text]="'$' + product[product.selectedColor].sizes[product.selectedSize].discountPrice">$<%DefaultPrice%></div>
+                </div>
+                <div class="product-rating self-start">
+                    <h2>Reviews (<%ReviewCount%>)</h2> <%#ReviewFullStars %>
+                    <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon-star">
+                        <path fill="currentColor" d="M12.6229508 19.2631579L20.4491803 24l-2.0827869-8.9052632 6.8795082-5.93684206L16.157377 8.4 12.6229508 0 9.0885246 8.4 0 9.15789474l6.8795082 5.99999996L4.7967213 24"></path>
+                    </svg>
+                    <%/ReviewFullStars %> <%#ReviewEmptyStars %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon-star-empty" width="26" height="24" viewbox="0 0 26 24">
+                        <path fill="currentColor" d="M26 9.15789474L16.911475 8.4 13.377049 0 9.842623 8.4l-9.088525.75789474 6.879509 5.99999996L5.55082 24l7.826229-4.7368421L21.203279 24l-2.082787-8.9052632L26 9.15789474zM13.377049 16.9263158l-4.733606 2.8421053 1.262295-5.431579-4.228689-3.6 5.554099-.5052632 2.145901-5.11578943 2.145902 5.11578943 5.554098.5052632L16.911475 14.4l1.262295 5.4315789-4.796721-2.9052631z"></path>
+                    </svg>
+                    <%/ReviewEmptyStars %>
+                </div>
+                <hr />
+                <form id="order" method="POST" action-xhr="/api/add-to-cart" target="_top" class="flex flex-wrap">
+                    <div class="product-colors self-start">
+                        <span class="title">color:</span>
+                        <amp-selector name="color" layout="container" [selected]="product.selectedColor" 
+                        on="select:AMP.setState({
+                          product: {
+                            selectedSlide: product[event.targetOption].option -1,
+                            selectedColor: event.targetOption,
+                            selectedSize: product[event.targetOption].sizes[product.selectedSize] != null ? product.selectedSize : product[event.targetOption].defaultSize,
+                            selectedQuantity: 1
+                        }})">
+                            <ul>
+                                <%#All_Colors%>
+                                <li>
+                                    <%#defaultColour%>
+                                    <amp-img option="<%ColorName%>" selected="selected" src="<%& Swatch%>" height="16" width="27"></amp-img>
+                                    <%/defaultColour%>
+                                    <%^defaultColour%>
+                                    <amp-img option="<%ColorName%>" src="<%& Swatch%>" height="16" width="27"></amp-img>
+                                    <%/defaultColour%>
+                                </li>
+                                <%/All_Colors%>
+                            </ul>
+                        </amp-selector>
+                    </div>
+                    <div class="product-sizes">
+                        <div class="select-container">
+                            <label for="sizes" class="title">Select a size: </label>
+                            <amp-selector name="size" class="title" layout="container" on="select:AMP.setState({ product: {selectedSize:event.targetOption, selectedQuantity:1}})" [selected]="(product[product.selectedColor].sizes[product.selectedSize] != null) ? product.selectedSize : product[product.selectedColor].defaultSize">
+                                <%#All_Colors.0.Avaliable_Sizes%>
+                                <%#available%>
+                                <%#default%>
+                                <button type="button" option="<%SizeName%>" class="" [class]="(product[product.selectedColor].sizes['<%SizeName%>'] != null)? '' : 'unavailable'" selected><%SizeName%></button>
+                                <%/default%>
+                                <%^default%>
+                                <button type="button" option="<%SizeName%>" class="" [class]="(product[product.selectedColor].sizes['<%SizeName%>'] != null)? '' : 'unavailable'"><%SizeName%></button>
+                                <%/default%>
+                                <%/available%>
+                                <%^available%>
+                                <button type="button" option="<%SizeName%>" option="<%SizeName%>" class="unavailable" [class]="(product[product.selectedColor].sizes['<%SizeName%>'] != null)? '' : 'unavailable'"><%SizeName%></button>
+                                <%/available%>
+                                <%/All_Colors.0.Avaliable_Sizes%>
+                            </amp-selector>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="product-colors self-start">
+                        <div>    
+                            <span class="title">Quantity:</span> 
+                            <span [text]="'(' + product[product.selectedColor].sizes[product.selectedSize].stock + ' Available)'"> (<%All_Colors.0.Avaliable_Sizes.0.Stock%> Available)</span>
+                            <div class="buttons-group">
+                                <button type="button" class="button button-white no-transition" [disabled]="product.selectedQuantity == 1" disabled on="tap:AMP.setState({ product: {selectedQuantity : product.selectedQuantity - 1} })">-</button>
+                                <input type="text" class="title" value="1" name="quantity" width="5" height="1" [value]="product.selectedQuantity" readonly>
+                                <%#DefaultQuantityDisabled%>
+                                    <button type="button" class="button button-white no-transition" [disabled]="product[product.selectedColor].sizes[product.selectedSize].stock == product.selectedQuantity" disabled on="tap:AMP.setState({ product: {selectedQuantity : (product.selectedQuantity + 1) } })">+</button>
+                                <%/DefaultQuantityDisabled%>
+                                <%^DefaultQuantityDisabled%>
+                                    <button type="button" class="button button-white no-transition" [disabled]="product[product.selectedColor].sizes[product.selectedSize].stock == product.selectedQuantity" on="tap:AMP.setState({ product: {selectedQuantity : (product.selectedQuantity + 1) } })">+</button>
+                                <%/DefaultQuantityDisabled%>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="button-wrapper">
+                        <input type="submit" class="cart-actions button button-white" name="add-to-cart" value="add to cart">
+                        <input type="hidden" name="productId" value="<%Main_Id%>">
+                        <input type="hidden" name="categoryId" value="<%CategoryId%>">
+                        <input type="hidden" name="name" value="<%Product_Title%>">
+                        <input type="hidden" name="price" value="<%DefaultPrice%>" [value]="product[product.selectedColor].sizes[product.selectedSize].discountPrice">
+                        <input type="hidden" name="imgUrl" value="<%& All_Colors.0.Photo%>" [value]="product[product.selectedColor].large.image1">
+                    </div>
+                    <hr class="section-divider" />
+                </form>
+            </div>
+            <div class="info-content flex flex-wrap">
+                <hr class="section-divider" />
+                <div class="product-copy">
+                    <section>
+                        <h2>Overview</h2>
+                        <p><%Description%></p>
+                        <hr />
+                    </section>
+                </div>
+                <div class="product-size-guide">
+                    <!--
+                    <section class="pt3 pb3 md-pb4 px2 md-pt6">
+                        <h2 class="h5 md-h4">Size Guide</h2>
+                        <div class="mt2">
+                            <table class="commerce-table center">
+                                <thead class="commerce-table-header h7">
+                                    <tr>
+                                        <th>Rider Height</th>
+                                        <th colspan="2">Suggested Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>160cm-168cm</td>
+                                        <td>47-48cm</td>
+                                        <td>xx-small</td>
+                                    </tr>
+                                    <tr>
+                                        <td>152cm-160cm</td>
+                                        <td>49-50cm</td>
+                                        <td>x-small</td>
+                                    </tr>
+                                    <tr>
+                                        <td>148cm-152cm</td>
+                                        <td>49-50cm</td>
+                                        <td>x-small</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    -->
+                </div>
+                %%include('../partials/related-products.html')
+            </div>
+        </section>
+    </main>
+    %%include('../partials/footer.html')
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+@import 'mixins';
+
+.blog {
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+
+	h1,
+	h2 {
+		font-size: 1.75rem;
+	}
+
+	section,
+	> article  {
+		padding: 1rem 1rem 1.5rem;
+	}
+
+	time {
+		display: block;
+		margin-bottom: 1rem;
+	}
+
+	p {
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	amp-img {
+		margin-bottom: 1.5rem;
+	}
+
+	> article div {
+		margin-bottom: 0;
+	}
+
+	article {
+		div {
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	aside {
+		position: sticky;
+		top: 5rem;
+		padding: 3rem 2rem 0;
+		width: 33.33333%;
+
+		h1 {
+			padding-bottom: 1rem;
+			font-size: 1.125rem;
+			border: none;
+			margin: 0;
+			padding: 0 0 16px;
+		}
+
+		h3 {
+			font-size: .94rem;
+			padding-top: 1.5rem;
+		}
+
+		p {
+			line-height: normal;
+		}
+
+		ul {
+			justify-content: initial;
+			display: inline-block;
+			align-items: center;
+			flex-wrap: wrap;
+			margin-bottom: 2rem;
+			list-style: none;
+			padding-left: 0;
+		}
+
+		li {
+			display: inline-block;
+			margin-right: 0;
+
+			a {
+				display: inline-block;
+				margin-left: -.5rem;
+				padding: .5rem;
+			}
+		}
+	}
+
+	.button {
+		text-decoration: none;
+		margin-top: 2rem;
+	}
+
+	blockquote {
+		font-size: 2.2rem;
+		margin: 1.5rem 0 1rem;
+		line-height: 1.2;
+		border-left: none;
+		padding-left: 0;
+	}
+
+	.quote-author {
+		font-family: Open Sans Condensed,sans-serif;
+		margin-bottom: 1.5rem;
+		font-size: 1rem;
+		font-weight: 700;
+	}
+
+	.article-space {
+		margin-bottom: 2.5rem;
+	}
+
+	@include desktop {
+		h1 {
+			margin-top: 1.5rem;
+			border-top: 1px solid #f3f3f3;
+			border-bottom: 1px solid #f3f3f3;
+			padding-top: 1rem;
+			padding-bottom: 1rem;
+			margin-bottom: 2rem;
+		}
+
+		section {
+			padding: .5rem 2rem 1.5rem;
+			width: 66.66667%;
+			a {
+				display: inline-block;
+				margin-bottom: 2rem;
+			}
+		}
+
+		article {
+			div {
+				margin-right: 0;
+				margin-left: 0;
+			}
+		}
+	}
+}

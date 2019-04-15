@@ -1,0 +1,48 @@
+<!doctype html>
+%%include('../partials/copyright.html')
+<html ⚡="" lang="en">
+<head>
+    %%include('../partials/head.html', {
+        "pageType": "contact"
+    })
+</head>
+<body>
+    %%include('../partials/header.html')
+    %%include('../partials/menu.html')
+    <main id="content" role="main" class="contact">
+        <section>
+            <div class="flex flex-column">
+                <h1>Contact Us</h1>
+                <p>We’re here to keep you on two wheels. Give us a call with any questions, comments or feedback regarding any of our products. We’re available 9am-6pm on weekdays, 9-am-5pm at weekends.</p>
+                <hr class="xs-hide sm-hide">
+                <!-- Start Input -->
+                <div class="userinfo-field title">
+                    <div class="input-container">
+                        <input type="text" value="" name="name" id="name" placeholder="Full name">
+                        <label for="name" aria-hidden="true">Full name</label>
+                    </div>
+                </div>
+                <!-- End Input-->
+                <!-- Start Input -->
+                <div class="userinfo-field title">
+                    <div class="input-container">
+                        <input type="text" value="" name="email" id="email" placeholder="E-Mail address">
+                        <label for="email" aria-hidden="true">E-Mail address</label>
+                    </div>
+                </div>
+                <!-- End Input-->
+                <!-- Start Textarea -->
+                    <div class="input-container last-input title">
+                        <textarea class="title" name="message" id="message" class="block border-none" rows="2"></textarea>
+                        <label class="title" for="message" aria-hidden="true">Type your message below</label>
+                    </div>
+                <!-- End Textarea -->
+                <div>
+                    <button class="cart-actions button button-white" type="submit">send</button>
+                </div>
+        </section>
+    </main>
+    %%include('../partials/footer.html')
+</body>
+
+</html>
