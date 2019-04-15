@@ -1,1 +1,3 @@
-Note that the templates directory contains files that will be turned into partials and page.  It will eventually vanish or be moved.
+Welcome to our AMP e-commerce project, featuring data from Campmor - thanks to WompMobile!
+
+More information to follow.
