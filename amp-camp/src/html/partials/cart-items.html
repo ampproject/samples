@@ -28,7 +28,7 @@
         %%if (context.removeButton) {
         <div role="button" class="cart-remove-icon" tabindex="0"
             on="tap: AMP.setState({
-                cartItem: {
+                itemToRemove: {
                     productId: '{{productId}}',
                     size: '{{size}}',
                     color: '{{color}}'
@@ -39,5 +39,18 @@
 
     </div>
 </div>
+
+%%if (context.removeButton) {
+<!-- We autosubmit this form when the user clicks the "remove" icon on a cart item -->
+<form id="form-cart-delete" method="POST" target="_top" action-xhr="/api/delete-cart-item"
+    on="submit-success: AMP.setState({
+        cartItemsList: event.response
+    })" novalidate="">
+    <input type="hidden" name="productId" value="" [value]="itemToRemove.productId">
+    <input type="hidden" name="color" value="" [value]="itemToRemove.color">
+    <input type="hidden" name="size" value="" [value]="itemToRemove.size">
+</form>
+}
+
 {{/cartItems}}
 {{/isEmpty}}

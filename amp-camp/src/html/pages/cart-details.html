@@ -47,15 +47,6 @@
             </amp-list>
         </div>
 
-        <!-- Put form here -->
-        <form id="form-cart-delete" method="POST" target="_top" action-xhr="/api/delete-cart-item"
-            on="submit-success: AMP.setState({
-                cartItemsList: event.response
-            })" novalidate="">
-            <input type="hidden" name="productId" value="" [value]="cartItem.productId">
-            <input type="hidden" name="color" value="" [value]="cartItem.color">
-            <input type="hidden" name="size" value="" [value]="cartItem.size">
-        </form>
         <!--
         %%include('../partials/related-products.html')
         -->    
@@ -73,7 +64,7 @@
         </script>
     </amp-state>
 
-    <amp-state id="cartItem">
+    <amp-state id="itemToRemove">
         <script type="application/json">
         {
 
