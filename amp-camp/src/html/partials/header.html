@@ -10,16 +10,14 @@
     <div class="cart-icon-container">
         <a href="/shopping-cart">
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
-
-                %%if (context.pageType != 'cart-details') {
-                <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed">
+                <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed"
+                          [hidden]="!cartItemsList.items[0].cartItems.length">
                     <template type="amp-mustache">
                         {{#count}}
-                        <span>{{count}}</span>
+                        <span [text]="cartItemsList.items[0].cartItems.length">{{count}}</span>
                         {{/count}}
                     </template>
                 </amp-list>
-                }
         </a>
     </div>
 </header>
