@@ -4,7 +4,8 @@
   "description": "an AMP E-commerce sample site that sells camping equipment",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server/server.js"
   },
   "author": "Ben Morss",
   "license": "Apache-2.0",
