@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# AMP Publisher Sample
+# AMP Samples
 
-This is a collection of samples demonstrating different features of [Accelerated Mobile Pages](https://www.ampproject.org).
+This is a collection of functional standalone samples demonstrating different features of [Accelerated Mobile Pages](https://www.ampproject.org).
 
 - **[amp-paywall-demo](./amp-paywall-demo):** Demo app containing sample usages of `amp-access`, `amp-analytics` and `amp-user-notification`
 - **[amp-pwa](./amp-pwa):** React-based, single-page progressive web app that displays AMP documents via Shadow DOM
-- **[amp-update-cache](./amp-update-cache):** Demo app for `update-cache` requests.
+- **[amp-update-cache](./amp-update-cache):** Demo app for `update-cache` requests
 - **[amp-pwa-reader](./amp-pwa-reader):** Vanilla JS, detailed and SEO-friendly single-page progressive web app that displays AMP documents via Shadow DOM
+- **[amp-tube](./amp-tube):** A simple YouTube search engine and viewer app, implemented in AMP

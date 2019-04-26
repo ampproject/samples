@@ -17,26 +17,26 @@
 class FeedReader {
 
   constructor() {
-
+    this.cardLimit = 15; // load no more than this many article cards at once
   }
 
   fetch(category, attempts = 0) {
 
     let rssUrl = shadowReader.backend.getRSSUrl(category);
-    let yqlQuery = 'select * from feed where url = \'' + encodeURIComponent(rssUrl) + '\'';
-    let yqlUrl = '/feed?q=' + yqlQuery;
+    let feedUrl = '/feed?q=' + rssUrl;
 
-    return fetch(yqlUrl)
+    return fetch(feedUrl)
       .then(response => response.json() )
-      .then(rss => {
+      .then(json => {
 
         // sadly, the Guardian's RSS feeds seem to be having intermittent failures right now,
         // so rerequest if that happens
-        if(!rss.query.results && attempts < 10) {
+        if(!json.rss && attempts < 10) {
           return this.fetch(category, (attempts || 0) + 1);
         }
 
-        var entries = rss.query.results ? rss.query.results.item : [];
+        var entries = (json.rss.channel && json.rss.channel.item) || [];
+        entries = entries.slice(0, this.cardLimit);
 
         return entries.map(entry => {
           return {

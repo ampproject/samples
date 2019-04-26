@@ -1,0 +1,120 @@
+@import 'mixins';
+
+.header {
+  display: flex;
+  position: fixed;
+  background-color: #fff;
+  color: #000;
+  height: 3.5rem;
+  z-index: 999;
+  padding: 0 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  align-items: center;
+  border-bottom: 1px solid #f3f3f3;
+
+  @include desktop {
+    height: 5rem;
+    border-bottom-color: #f3f3f3;
+  }
+
+  &+:not(amp-sidebar),
+  &+amp-sidebar+* {
+    margin-top: 3.5rem;
+  }
+
+  a {
+    padding-bottom: 0;
+    margin: 0 auto;
+  }
+
+  amp-img {
+    margin: 0 auto;
+  }
+}
+
+.burger {
+  position: absolute;
+  top: 0;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  margin-top: 1rem;
+
+  @include desktop {
+    margin-left: .5rem;
+    top: .5rem;
+  }
+}
+
+.cart-icon-container {
+  position: absolute;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  top: 0;
+  right: 0;
+  padding: 0.8rem 1.5rem 0 0;
+
+  @include desktop {
+    top: .5rem;
+  }
+}
+
+#cart-count {
+  position: absolute;
+  top: 5px;
+  left: 22px;
+}
+
+#cart-count span {
+  display: block;
+  width: 17px;
+  height: 17px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #f88;
+  color: #fff;
+  font: 700 .7rem Open Sans Condensed,sans-serif;
+  animation: c .5s forwards;  
+}
+
+.menu-open-button {
+  position: absolute;
+  top: 0;
+  margin: 1rem 1rem 0 0;
+  line-height: 3.5rem;
+  font-size: 2.2rem;
+  color: #222;
+  font-size: 1.38rem;
+  padding-right: 0;
+
+  @include desktop {
+    margin-left: .5rem;
+    top: .5rem;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  svg {
+    pointer-events: none;
+  }
+}
+
+.menu a,
+.menu-open-button,
+amp-sidebar-faq a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+@include desktop {
+  .header+:not(amp-sidebar),
+  .header+amp-sidebar+*,
+  main {
+    margin-top: 5rem;
+  }
+}

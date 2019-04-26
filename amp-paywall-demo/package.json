@@ -16,16 +16,16 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "body-parser": "1.14.1",
-    "cookie-parser": "1.4.1",
-    "express": "4.13.3",
-    "gcloud": "^0.27.0",
+    "body-parser": "1.18.3",
+    "cookie-parser": "1.4.3",
+    "express": "4.16.4",
+    "gcloud": "^0.37.0",
     "hogan-express": "0.5.2",
     "hogan.js": "^3.0.2",
-    "jsonwebtoken": "^7.1.9",
-    "uuid": "2.0.1"
+    "jsonwebtoken": "^8.0.0",
+    "uuid": "3.3.2"
   },
   "devDependencies": {
-    "jshint": "^2.8.0"
+    "jshint": "2.9.7"
   }
 }

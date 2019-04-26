@@ -1,0 +1,50 @@
+<footer 
+%%if (context.pageType == 'cart-details') {
+    [class] ="footerToggle ? 'expanded' : ''"
+    on="tap:AMP.setState({footerToggle: !footerToggle})"
+    tabindex="0"
+    role="button"
+}
+>
+    <nav>
+        <ul class="footer-main">
+            <li class="footer-section">
+                <h2>About us</h2>
+                <ul>
+                    <li>
+                        <a href="#">Size Guide</a>
+                    </li>
+                    <li>
+                        <a href="#">Returns Policy</a>
+                    </li>
+                    <li>
+                        <a href="#">Cookie &amp; privacy policy</a>
+                    </li>
+                </ul>
+                <hr class="md-hide lg-hide">
+            </li>
+            <li class="footer-section">
+                <h2>Contact Us</h2>
+                <ul>
+                    <li>
+                        <a href="tel:+440000000000">+44(0)000 000 0000</a>
+                    </li>
+                    <li>
+                        <a href="mailto:info@BS-LDN">info@BS-LDN</a>
+                    </li>
+                    <li>
+                        <a href="#">Find a Store</a>
+                    </li>
+                </ul>
+                <hr class="md-hide lg-hide">
+            </li>
+            <li class="footer-section social-section">
+                <h2>follow us</h2>
+                %%include('../partials/social.html')
+            </li>
+            <li class="footer-logo">
+                <amp-img src="img/logo-footer.png" class="xs-hide sm-hide" width="180" height="75"></amp-img>
+            </li>
+        </ul>
+    </nav>
+</footer>

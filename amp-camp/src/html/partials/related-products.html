@@ -1,0 +1,26 @@
+<%#Main_Id%>
+<section class="related-products xs-hide sm-hide">
+    <div class="related-products-area">
+        <h4>You may also like</h4>
+        <br>
+        <amp-list id="products-list" src="/api/related-products?categoryId=<%CategoryId%>&productId=<%Main_Id%>" height="140" width="auto" layout="fixed-height">
+            <template type="amp-mustache">
+                <amp-carousel height="170" layout="fixed-height" type="carousel">
+                  {{#items}}
+                    <ul>
+                        <li>
+                            <a href="/product-details?categoryId=<%CategoryId%>&productId={{productId}}" class="text-decoration-none">
+                                <amp-img src="{{image}}" width="1" height="1" layout="responsive" alt="{{name}}" noloading="">
+                                    <div placeholder="" class="loading"></div>
+                                </amp-img>
+                                <h6>{{name}}</h6>
+                            </a>
+                        </li>
+                    </ul>
+                  {{/items}}
+                </amp-carousel>
+            </template>
+        </amp-list>
+    </div>
+</section>
+<%/Main_Id%>

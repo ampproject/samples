@@ -328,6 +328,12 @@ app.get('/content/:document', function(req, res) {
   res.sendFile(path.join(__dirname, 'content', req.params.document));
 });
 
+// Returns the hero image of AMP document.
+app.get('/content/hero/:document', function(req, res) {
+  res.sendFile(path.join(__dirname, 'content', 'hero', req.params.document));
+});
+
+
 // When testing the production build (via `npm run build`), simply serve the compiled html and js in the `build` dir.
 app.use(express.static('build'));
 

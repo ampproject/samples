@@ -18,37 +18,41 @@ const express = require('express');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
 const memCache = require('memory-cache');
 const pubBackend = require('./Backend.js');
+const enforce = require('express-sslify');
+const helmet = require('helmet');
+const xmlParser = require('xml2json');
+
+const ENVIRONMENT_PRODUCTION = 'production';
 
 const app = express();
 const pub = new pubBackend();
 
+app.use(helmet());
+
+if (app.get('env') === ENVIRONMENT_PRODUCTION) {
+    app.use((req, res, next) => {
+        enforce.HTTPS({ trustProtoHeader: true })(req, res, next);
+    });
+}
+
 // how long (in seconds) to cache requests for main feed and for any article
 const cacheDurations = {feed: 600, article: 3600};
-const feedURL = 'https://query.yahooapis.com/v1/public/yql';
-
-// Whitelist domains for CORS. As more CDNs cache this site, we'll need to add them here.
-const corsOptions = {'origin': [
-  /amp\.cards$/,
-  /^localhost:/,
-  /amp-cards\.cdn\.ampproject\.org$/
-]};
 
 const staticFilesMiddleware = express.static('dist');
 app.use(staticFilesMiddleware);
 
-// Proxy the feed request so that we can cache it.
-// YQL expects a query in the "q" parameter.
+// Here, we cache the feed, and we convert it to JSON.
 app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
   const options = {
-    url: feedURL + '?format=json&q=' + req.query.q
+    url: req.query.q
   };
+
 
   request(options, (error, response, body) => {
     if (!error) {
-      res.send(body);
+      res.send(xmlParser.toJson(body));
     } else {
       res.json({error: 'An error occurred in /feed route'});
     }
@@ -56,8 +60,8 @@ app.get('/feed', cache(cacheDurations.feed), function(req, res, next) {
 });
 
 // This is used when the PWA requests a new article.
-// We proxy this request so that we can inject CORS headers and we can cache.
-app.get('/article', cache(cacheDurations.article), cors(corsOptions), function(req, res, next) {
+// We proxy this request so that we can cache it.
+app.get('/article', cache(cacheDurations.article), function(req, res, next) {
   const options = {
     url: req.query.url
   };

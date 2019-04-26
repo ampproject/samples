@@ -1,0 +1,51 @@
+#
+# EditorConfig: http://EditorConfig.org
+#
+# This files specifies some basic editor conventions for the files in this
+# project. Many editors support this standard, you simply need to find a plugin
+# for your favorite!
+#
+# For a full list of possible values consult the reference.
+# https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+#
+
+# Stop searching for other .editorconfig files above this folder.
+root = true
+
+# Pick some sane defaults for all files.
+[*]
+
+# UNIX line-endings are preferred.
+# http://adaptivepatchwork.com/2012/03/01/mind-the-end-of-your-line/
+end_of_line = lf
+
+# No reason in these modern times to use anything other than UTF-8.
+charset = utf-8
+
+# Ensure that there's no bogus whitespace in the file.
+trim_trailing_whitespace = true
+
+# A little esoteric, but it's kind of a standard now.
+# http://stackoverflow.com/questions/729692/why-should-files-end-with-a-newline
+insert_final_newline = true
+
+# Pragmatism today.
+# http://programmers.stackexchange.com/questions/57
+indent_style = 2
+
+# Personal preference here. Smaller indent size means you can fit more on a line
+# which can be nice when there are lines with several indentations.
+indent_size = 2
+
+# Prefer a more conservative default line length – this allows editors with
+# sidebars, minimaps, etc. to show at least two documents side-by-side.
+# Hard wrapping by default for code is useful since many editors don't support
+# an elegant soft wrap; however, soft wrap is fine for things where text just
+# flows normally, like Markdown documents or git commit messages. Hard wrap
+# is also easier for line-based diffing tools to consume.
+# See: http://tex.stackexchange.com/questions/54140
+max_line_length = 80
+
+# Markdown uses trailing spaces to create line breaks.
+[*.md]
+trim_trailing_whitespace = false

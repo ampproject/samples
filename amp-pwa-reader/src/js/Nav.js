@@ -104,17 +104,21 @@ class Nav {
 
   startWithArticle(state) {
 
-    let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl);
+    let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl, null, false);
 
     // if we have a card, things are easy: simply pretend we click on the card!
     if (article.card) {
       return article.card.activate();
     }
 
-    // otherwise things are a little more complicated, as we have no card to click on..
+    // otherwise things are a little more complicated, as we have no card to click on.
+    // load the article, render it invisibly, created the card, and then show everything.
+
     article.load()
       .then(() => article.render())
       .then(() => {
+
+        article.getClonedCardElem();
 
         // disable transitions temporarily, don't want them at load time
         article.container.classList.add('sr-disable-transitions');
@@ -219,7 +223,7 @@ class Nav {
     // hide menu
     this.hide();
 
-    // fetch new nav entries via RSS via YQL
+    // fetch new nav entries via RSS via our server
     return this.feedReader.fetch(category).then(entries => {
 
       // if this is the first time loading cards, now would

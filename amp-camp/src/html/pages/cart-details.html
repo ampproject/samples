@@ -1,0 +1,77 @@
+<!doctype html>
+%%include('../partials/copyright.html')
+<html ⚡="" lang="en">
+
+<head>
+    %%include('../partials/head.html', {
+        "pageType": "cart-details"
+    })
+</head>
+
+<body>
+    %%include('../partials/header.html', {
+        "pageType": "cart-details"
+})
+    %%include('../partials/menu.html')
+    <main id="content" role="main" class="main cart">
+        <div class="cart-wrapper">
+            <amp-list credentials="include" layout="fill" src="/api/cart-items" [src]="cartItemsList.items">
+                <template type="amp-mustache">
+                    <section class="cart-products-area">
+                    %%include('../partials/cart-items.html', {
+                        "removeButton": true
+                    })
+                    </section>
+                    {{^isEmpty}}
+                    <section class="cart-sum-area side-panel">
+                        <h5>Order Summary</h5>
+                        <dl>
+                            <dt>Subtotal</dt>
+                            <dd>${{subtotal}}</dd>
+                            <dt>Shipping</dt>
+                            <dd>${{shipping}}</dd>
+                            <dt class="total">Total</dt>
+                            <dd class="total">${{total}}</dd>
+                        </dl>
+                        <div class="cart-actions">
+                            <div>
+                                <a href="checkout.html" class="button">checkout</a>
+                            </div>
+                            <div>
+                                <a href="/" class="button button-white">Continue Shopping</a>
+                            </div>
+                        </div>
+                     </section>
+                    {{/isEmpty}}
+                </template>
+            </amp-list>
+        </div>
+
+        <!--
+        %%include('../partials/related-products.html')
+        -->    
+    </main>
+    
+    %%include('../partials/footer.html', {
+        "pageType": "cart-details"
+    })
+    
+    <amp-state id="cartItemsList" src="/api/cart-items">
+        <script type="application/json">
+        {
+
+        }
+        </script>
+    </amp-state>
+
+    <amp-state id="itemToRemove">
+        <script type="application/json">
+        {
+
+        }
+        </script>
+    </amp-state>
+
+</body>
+
+</html>

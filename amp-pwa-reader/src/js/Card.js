@@ -17,11 +17,11 @@
 class Card {
 
   constructor(data, headless, prerender) {
-
     this.data = data;
     this.headless = headless;
     this.currentTransform = { scaleX: 1, scaleY: 1 };
     this.naturalDimensions = { width: 0, height: 0 };
+    this.streaming = true; /* !prerender; */  //TODO: also check to see if browser supports it
 
     this.create();
     this.bind();
@@ -33,7 +33,7 @@ class Card {
       this.elem.classList.add('sr-full');
       this.innerElem.setAttribute('tabindex', -1);
     } else {
-      this.article = new Article(this.data.link, this);
+      this.article = new Article(this.data.link, this, this.streaming);
       this.render();
     }
 
@@ -44,7 +44,6 @@ class Card {
   }
 
   resizeChildren(dimensions, animate, toFullView) {
-
     let width = this.imageData.width;
     let height = this.imageData.height;
     let elemWidth = dimensions.width;
@@ -84,11 +83,9 @@ class Card {
         this.elem.classList.remove('sr-disable-transitions');
       }, 0);
     }
-
   }
 
   animate(dontAnimate, scrollOffset) {
-
     let elem = this.elem;
     elem.classList.add('sr-full');
 
@@ -117,11 +114,9 @@ class Card {
       width: newWidth,
       height: newHeight
     }, /*animate*/!dontAnimate, true);
-
   }
 
   animateBack() {
-
     this.elem.classList.remove('sr-full');
 
     // animate to the right height
@@ -139,7 +134,6 @@ class Card {
   }
 
   create() {
-
     var elem = document.createElement('div'),
       innerElem = document.createElement('a'),
       img = document.createElement('img'),
@@ -193,7 +187,6 @@ class Card {
   }
 
   refresh() {
-
     this.naturalDimensions = {
       width: this.elem.offsetWidth,
       height: this.elem.offsetHeight
@@ -214,31 +207,47 @@ class Card {
   }
 
   activate() {
-
     // set main view to inert so you can't tab into it
     shadowReader.disableCardTabbing();
+
+    this.article.getClonedCardElem();
 
     // add loading spinner (and promote to layer)
     this.elem.classList.add('sr-loading', 'sr-promote-layer');
 
-    this.article.load()
-      .then(() => this.article.render())
-      .then(() => {
-        // remove loading spinner
+    // in streaming case, things happen in a different order
+    if (this.streaming) {
+      this.article.renderStreaming();
+      this.article.stream()
+        .then(() => {
+          this.elem.classList.remove('sr-loading');
+          this.hijackMenuButton();  //TODO: this should probably happen earlier in streaming case
+      })
+        .catch(error => {
+          this.elem.classList.remove('sr-loading');
+          this.elem.classList.add('sr-error');
+        });
+
+    } else {
+
+      this.article.load()
+        .then(() => this.article.render())
+        .then(() => {
+       // remove loading spinner
         this.elem.classList.remove('sr-loading');
 
         this.animate();
         this.article.show();
         this.hijackMenuButton();
       })
-      .catch(error => {
-        this.elem.classList.remove('sr-loading');
-        this.elem.classList.add('sr-error');
-      });
+        .catch(error => {
+          this.elem.classList.remove('sr-loading');
+          this.elem.classList.add('sr-error');
+        });
+    }
   }
 
   deactivate() {
-
     // restore tabbing in main view
     shadowReader.enableCardTabbing();
 

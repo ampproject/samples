@@ -1,0 +1,114 @@
+<!doctype html>
+%%include('../partials/copyright.html')
+<html ⚡="" lang="en">
+<head>
+    %%include('../partials/head.html', {
+        "pageType": "checkout"
+    })
+</head>
+<body>
+    %%include('../partials/header.html')
+    %%include('../partials/menu.html')
+    <amp-state id="cart">
+        <script type="application/json">
+        {
+            "total": 723,
+            "shipping": 0
+        }
+        </script>
+    </amp-state>
+    <main id="content" role="main" class="checkout">
+        <section class="checkout-area">
+            <h3> Checkout </h3>
+            <p style="margin:40px 0 100px 18px">
+                Tune in soon for our amazing checkout page! (We didn't like the one we had, so we're going to build a new one... soon...)
+            </p>
+        </section>
+
+<!--        
+        <section class="checkout-area">
+            <h3>Checkout</h3>
+            <ul class="checkout-steps sans-big">
+                <li class="active">Shipping</li>
+                <li>Billing</li>
+                <li>Payment</li>
+                <li>Confirmation</li>
+            </ul>
+            <hr class="xs-hide sm-hide">
+            <div class="checkout-step-area">
+                <h5>Delivery</h5>
+                <div class="userinfo-fields">
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="first-name" id="first-name" placeholder="First name">
+                            <label for="first-name" aria-hidden="true">First name</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="last-name" id="last-name" placeholder="Last name">
+                            <label for="last-name" aria-hidden="true">Last name</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="address-1" id="address-1" placeholder="Address line 1">
+                            <label for="address-1" aria-hidden="true">Address line 1</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="address-2" id="address-2" placeholder="Address line 2">
+                            <label for="address-2" aria-hidden="true">Address line 2</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="city" id="city" placeholder="City&#x2F;Region">
+                            <label for="city" aria-hidden="true">City&#x2F;Region</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="text" value="" name="postcode" id="postcode" placeholder="Postcode">
+                            <label for="postcode" aria-hidden="true">Postcode</label>
+                        </div>
+                    </div>
+                    <div class="userinfo-field title">
+                        <div class="input-container">
+                            <input type="email" value="" name="email" id="email" placeholder="E-Mail Address">
+                            <label for="email" aria-hidden="true">E-Mail Address</label>
+                        </div>
+                    </div>
+                    <div class="delivery-area">
+                        <h5>Select Delivery Method</h5>
+                        <div class="radio-buttons">
+                            <div class="input-container radio-container" on="change:AMP.setState({cart: {total: 723, shipping: 0}})">
+                                <input type="radio" value="" name="delivery-method" id="standard" checked="">
+                                <label for="standard" aria-hidden="true">Standard (arrives in 2-3 days) - FREE</label>
+                            </div>
+                            <div class="input-container radio-container" on="change:AMP.setState({cart: {total: 753, shipping: 30}})">
+                                <input type="radio" value="" name="delivery-method" id="express">
+                                <label for="express" aria-hidden="true">Express (arrives next day) - £30</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="xs-hide sm-hide">
+            <div class="cart-wrapper">
+                %%include('../partials/cart-items.html', {
+                    "removeButton": false
+                })
+                <div class="checkout-actions center">
+                    <a href="checkout-success.html" class="button button-white">Continue</a>
+                </div>
+            </div>
+        </section>
+    %%include('../partials/cart-summary.html', {"pageType": "checkout"})
+-->    
+    </main>
+    %%include('../partials/footer.html')
+</body>
+
+</html>

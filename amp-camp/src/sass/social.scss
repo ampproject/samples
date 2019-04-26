@@ -1,0 +1,63 @@
+@import 'mixins';
+
+.social {
+	margin:.5rem 0 1rem;
+
+	footer & {
+		margin: 0;
+	}
+
+	li {
+		display: inline-block;
+
+		a {
+			display: inline-block;
+			overflow: hidden;
+			padding: .5rem;
+			box-sizing: content-box;
+
+			&.icon {
+				text-indent: 100px;
+
+				&.twitter {
+					width: 24px;
+					height: 22.2px;
+				}
+
+				&.facebook {
+					width: 24px;
+					height: 23.6px;
+				}
+
+				&.instagram {
+					width: 24px;
+					height: 24px;
+				}
+			}
+		}
+	}
+
+	amp-social-share,
+	.icon {
+		background: #222;
+		background-size: 100% 100%;
+
+		footer & {
+			background: #fff;
+		}
+
+		&[type="twitter"],
+		&.twitter {
+			mask-image: url('img/social-icons.svg#twitter-svg-view');
+		}
+
+		&[type="facebook"],
+		&.facebook {
+			mask-image: url('img/social-icons.svg#facebook-svg-view');
+		}
+
+		&.instagram {
+			mask-image: url('img/social-icons.svg#instagram-svg-view');
+		}
+	}
+}

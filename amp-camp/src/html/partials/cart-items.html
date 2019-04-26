@@ -1,0 +1,56 @@
+{{#isEmpty}}
+<h3>Your Basket is Empty</h3>
+<div class="cart-continue">
+    <a href="/" class="button button-white">Continue Shopping</a>
+</div>
+{{/isEmpty}}
+{{^isEmpty}}
+<h3>Your Basket</h3>
+{{#cartItems}}
+<div class="cart-product">
+    <div class="cart-image-container">
+        <a href="/product-details?productId={{productId}}">
+            <amp-img src="{{imgUrl}}" width="1" height="1" layout="responsive" alt="{{mame}}" noloading="">
+                <div placeholder="" class="loading"></div>
+            </amp-img>
+        </a>
+    </div>
+    <div class="cart-product-left">
+        <a href="/product-details?productId={{productId}}">
+            <h6>{{name}}</h6>
+        </a>
+    </div>
+    <div class="cart-product-right title">
+        <span>{{size}}</span>
+        <span>${{price}}</span>
+        <span>{{quantity}}</span>
+
+        %%if (context.removeButton) {
+        <div role="button" class="cart-remove-icon" tabindex="0"
+            on="tap: AMP.setState({
+                itemToRemove: {
+                    productId: '{{productId}}',
+                    size: '{{size}}',
+                    color: '{{color}}'
+            }}), form-cart-delete.submit">
+            ✕
+        </div>
+        }
+
+    </div>
+</div>
+
+%%if (context.removeButton) {
+<!-- We autosubmit this form when the user clicks the "remove" icon on a cart item -->
+<form id="form-cart-delete" method="POST" target="_top" action-xhr="/api/delete-cart-item"
+    on="submit-success: AMP.setState({
+        cartItemsList: event.response
+    })" novalidate="">
+    <input type="hidden" name="productId" value="" [value]="itemToRemove.productId">
+    <input type="hidden" name="color" value="" [value]="itemToRemove.color">
+    <input type="hidden" name="size" value="" [value]="itemToRemove.size">
+</form>
+}
+
+{{/cartItems}}
+{{/isEmpty}}

@@ -1,0 +1,29 @@
+{
+  "name": "amp-tube",
+  "version": "1.0.2",
+  "description": "A simple YouTube search engine and viewer app, implemented in AMP",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && node build/build.js > dist/manifest.webmanifest && imagemin src/*.{webp,png,svg} --out-dir=dist && html-minifier --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --minify-css --custom-attr-collapse /on/ --remove-attribute-quotes --process-scripts application/json --sort-attributes --sort-class-name --minify-urls -o dist/index.html src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomayac/amp-tube.git"
+  },
+  "keywords": [
+    "AMP",
+    "Accelerated",
+    "Mobile",
+    "Pages"
+  ],
+  "author": "Thomas Steiner <steiner.thomas@gmail.com> (http://blog.tomayac.com/)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tomayac/amp-tube/issues"
+  },
+  "homepage": "https://github.com/tomayac/amp-tube#readme",
+  "devDependencies": {
+    "html-minifier": "3.5.21",
+    "imagemin-cli": "4.0.0"
+  }
+}

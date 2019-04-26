@@ -16,9 +16,11 @@
 
 class Article {
 
-  constructor(url, card) {
+  constructor(url, card, streaming) {
     this.url = shadowReader.backend.getAMPUrl(url);
+    this.proxyUrl = this.urlProxy(this.url);
     this.card = card;
+    this.streaming = streaming;
     Article.articles[this.url] = this;
   }
 
@@ -28,7 +30,7 @@ class Article {
     var xhr = new XMLHttpRequest();
 
     return new Promise((resolve, reject) => {
-      xhr.open('GET', '/article?url=' + encodeURIComponent(this.url), true);
+      xhr.open('GET', this.proxyUrl, true);
       xhr.responseType = 'document';
       xhr.setRequestHeader('Accept', 'text/html');
       xhr.onload = () => {
@@ -38,6 +40,61 @@ class Article {
       xhr.send();
     });
 
+  }
+
+  // see https://github.com/ampproject/amphtml/blob/master/spec/amp-shadow-doc.md
+  // and https://jakearchibald.com/2016/fun-hacks-faster-content/
+  // Recursively read and write chunks of data from the streaming API
+  stream() {
+    var shadowDoc = this.ampDoc;    // let's get this into the closure, and thus accessible to callback
+    var article = this;             // this too
+
+    fetch(this.proxyUrl).then(async response => {
+      let reader = response.body.getReader();
+      let decoder = new TextDecoder();
+
+      while (true) {
+        let chunk = await reader.read();
+
+        if (chunk.done) {
+          shadowDoc.writer.close();
+          break;
+        }
+
+        let html = decoder.decode(
+          chunk.value || new Uint8Array(),
+          {stream: !chunk.done}
+        );
+
+        // check each chunk of HTML to see if it contains <style amp-custom>. If so, add in some extra CSS.
+        // TODO: this will fail in the rare case that "<body" arrives in <1 chunk.
+        if (html) {
+          html = shadowReader.backend.injectCSS(html);
+
+          // when we've got the body, start the process of animating the card and showing the article,
+          // placing the card before the article
+          if (html.includes('<body')) {
+            html = article.prependCardHtml(html);
+            shadowDoc.writer.write(html);
+            article.card.animate();
+            article.show();
+
+          } else {
+            shadowDoc.writer.write(html);
+          }
+
+        }
+      }
+      
+    });
+
+    return this.ampDoc.ampdoc.whenReady();
+  }
+
+  // Used during streaming. If we see <body>, add in the HTML of the card.
+  // Also add in the CSS that was extracted from inline.css during the build process.
+  prependCardHtml(html) {
+    return html.replace(/<body.*?>/, '$&' + this.clonedCardElem.outerHTML);
   }
 
   load() {
@@ -53,7 +110,6 @@ class Article {
   }
 
   sanitize() {
-
     let doc = this.doc;
     let hasCard = !!this.card;
 
@@ -67,8 +123,7 @@ class Article {
     var stylesheet = document.createElement('link');
     stylesheet.setAttribute('rel', 'stylesheet');
     stylesheet.href = '/inline.css';
-    this.doc.body.append(stylesheet);
-
+    doc.body.append(stylesheet);
   }
 
   createShadowRoot() {
@@ -83,40 +138,33 @@ class Article {
   }
 
   cloneCard() {
-
-    let card = this.card.elem.cloneNode(true);
+    let cardElem = this.card.elem.cloneNode(true);
 
     // clear all transforms
-    card.style.transform = '';
-    card.children[0].style.transform = '';
-    card.children[1].style.transform = '';
+    cardElem.style.transform = '';
+    cardElem.children[0].style.transform = '';
+    cardElem.children[1].style.transform = '';
 
     // resize card to image ratio
-    card.style.height = (innerWidth * this.card.imageData.ratio) + 'px';
-    card.style.opacity = '0';
-    card.style.margin = '0';
+    cardElem.style.height = (innerWidth * this.card.imageData.ratio) + 'px';
+    cardElem.style.opacity = '0';
+    cardElem.style.margin = '0';
 
-    this.clonedCard = card;
-    return card;
-
+    this.clonedCardElem = cardElem;
   }
 
   generateCard() {
-
     let articleData = shadowReader.backend.getArticleData();
-    let card = new Card(articleData, /*headless*/true).elem;
+    let cardElem = new Card(articleData, /*headless*/true, /*prerender*/false, this.streaming).elem;
 
     // resize card to image ratio
-    card.style.height = (innerWidth * articleData.imageRatio) + 'px';
-    card.style.margin = '0';
+    cardElem.style.height = (innerWidth * articleData.imageRatio) + 'px';
+    cardElem.style.margin = '0';
 
-    this.clonedCard = card;
-    return card;
-
+    this.clonedCardElem = cardElem;
   }
 
   get cssVariables() {
-
     if (!this._cssVariables) {
       let htmlStyles = window.getComputedStyle(document.querySelector("html"));
       this._cssVariables = {
@@ -131,7 +179,6 @@ class Article {
   }
 
   animateIn() {
-
     // No animation if there's no card to animate from
     if (!this.card) {
       return Promise.resolve();
@@ -152,7 +199,6 @@ class Article {
   }
 
   animateOut() {
-
     // No animation if there's no card to animate from
     if (!this.card) {
       return Promise.resolve();
@@ -173,27 +219,39 @@ class Article {
   }
 
   render() {
+      // Create an empty container for the AMP page
+      this.container = this.createShadowRoot();
 
-    // Create an empty container for the AMP page
+      // Tell Shadow AMP to initialize the AMP page in prerender-mode
+      this.ampDoc = AMP.attachShadowDoc(this.container, this.doc, this.url);
+      this.ampDoc.setVisibilityState('prerender');
+
+      return this.ampDoc.ampdoc.whenReady();
+  }
+
+  // in the streaming case, simply create the shadow root, and do the rest in stream()
+  renderStreaming() {
     this.container = this.createShadowRoot();
+    this.ampDoc = AMP.attachShadowDocAsStream(this.container, this.url); 
+  }
 
-    // Tell Shadow AMP to initialize the AMP page in prerender-mode
-    this.ampDoc = AMP.attachShadowDoc(this.container, this.doc, this.url);
-    this.ampDoc.setVisibilityState('prerender');
 
-    return this.ampDoc.ampdoc.whenReady();
+  // We need to clone the featured image into the Shadow DOM so it scrolls
+  // along. There are cases were we don't have a linked card from the list
+  // view (e.g. we load directly into the article), in which case we need to
+  // generate a new one.
+  getClonedCardElem() {
+    this.card ? this.cloneCard() : this.generateCard();
 
+    if (!this.streaming) {
+      this.clonedCardElem.lastElementChild.onclick = function () { return false; };  //TODO: we will lose this in streaming case  
+    }
   }
 
   show(replaceHistoryState) {
-
-    // We need to clone the featured image into the Shadow DOM so it scrolls
-    // along. There are cases were we don't have a linked card from the list
-    // view (e.g. we load directly into the article), in which case we need to
-    // generate a new one.
-    var card = this.card ? this.cloneCard() : this.generateCard();
-    card.lastElementChild.onclick = function () { return false; };
-    this.ampDoc.ampdoc.getBody().prepend(card);
+    if (!this.streaming) {
+      this.ampDoc.ampdoc.getBody().prepend(this.clonedCardElem);  //TODO: this should perhaps be elsewhere in the code
+    }
 
     // animate the article in. Only makes sense when there's a card transition
     // at the same time, within animateIn, we check for the availability of a
@@ -201,8 +259,11 @@ class Article {
     return this.animateIn().then(() => {
 
       // Hide the original card, show the cloned one (this also animates)
+      // if we're streaming, the clonedCardElem got serialized into HTML and written into the DOM. 
+      // So we need to get that back out of the DOM.
       if (this.card) {
-        card.style.opacity = '1';
+        let clonedCardElem = this.streaming ? this.container.shadowRoot.querySelector('.sr-card') : this.clonedCardElem;
+        clonedCardElem.style.opacity = '1';
       }
 
       // add class to html element for to contain the scroll, and transform
@@ -224,7 +285,6 @@ class Article {
   }
 
   hide() {
-
     // remove class to html element for global CSS stuff
     document.documentElement.classList.remove('sr-article-shown');
 
@@ -236,7 +296,7 @@ class Article {
 
       // Show the card header, hide the cloned one
       if (this.card) {
-        this.clonedCard.style.opacity = '0';
+        this.clonedCardElem.style.opacity = '0';
       }
 
       // animate everything back to the card/listing view, then
@@ -259,6 +319,11 @@ class Article {
 
   restoreScroll() {
     document.scrollingElement.scrollTop = this._mainScrollY;
+  }
+
+  // Proxy this URL through our server to avoid CORS restrictions and enable caching
+  urlProxy(url) {
+    return '/article?url=' + encodeURIComponent(url);
   }
 
 }

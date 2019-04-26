@@ -1,0 +1,87 @@
+@import 'mixins';
+
+.related-products {
+	border-top: 1px solid #f3f3f3;
+
+	ul {
+		margin: 15px 0;
+
+		li {
+			display: inline-block;
+			width: 105px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			margin-right: 1rem;
+
+			.amp-mode-mouse &:hover h6 {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	amp-carousel {
+		padding: 0 2rem;
+	}
+
+	amp-img {
+		margin-bottom: 1rem;
+	}
+
+	.amp-carousel-button {
+		background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/><path d="M0-.5h24v24H0z" fill="none"/></svg>') 30px 30px transparent;
+		cursor: pointer;
+		height: 30px;
+		width: 30px;
+		top: 40%
+	}
+
+	.amp-carousel-button-next,
+	.amp-carousel-button-prev {
+		display: initial;
+	}
+
+	.amp-carousel-button-next {
+		right: 0;
+		transform: translateY(-50%) rotate(180deg)
+	}
+
+	.amp-carousel-button-prev {
+		left: 0;
+	}
+
+	.cart & {
+		width: 100%;
+		padding: 0 2rem;
+		border-top: none;
+	}
+}
+
+.related-products-area {
+	width: 100%;
+	margin-top: 1.5rem;
+
+	@include desktop {
+		margin-top: 2rem;
+	}
+}
+.info-content {
+	width: 100%;
+	padding-bottom: 1.5rem;
+
+	hr.section-divider {
+		display: none;
+	}
+
+	.related-products {
+		width: 100%;
+		padding: 0 2rem;
+
+		@include phone {
+			display: block;
+		}
+
+		@include sm {
+			display: block;
+		}
+	}
+}

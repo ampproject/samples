@@ -33,6 +33,9 @@ class Backend {
       'us--business': 'business',
       'us--travel': 'travel'
     };
+
+    // selectors for DOM elements we want to hide in Shadow AMP mode
+    this.elementsToHide = ['header', 'amp-sidebar', '.media-primary amp-img'];
   }
 
   getCategoryTitle(category) {
@@ -52,7 +55,8 @@ class Backend {
   }
 
   getRSSImage(entry) {
-    return entry.content ? entry.content[entry.content.length - 1].url : '';
+    const content = entry['media:content'];
+    return content ? content[content.length - 1].url : '';
   }
 
   getRSSDescription(entry) {
@@ -95,8 +99,9 @@ class Backend {
     return null;
   }
 
+// This hides article elements we don't want to show in the shadow root.
+// But it also extracts and stores properties we'll need later.
   sanitize(doc) {
-
     // remove stuff we don't need in embed mode
     let header = doc.getElementsByTagName('header');
     if (header.length)
@@ -122,7 +127,28 @@ class Backend {
       this._imageRatio = featuredImage.getAttribute('height') / featuredImage.getAttribute('width');
       featuredImage.remove();
     }
+  }
 
+// Inject CSS into the <style amp-custom> tag.
+// In the non-streaming case, it's fine to add a link to inline.css.
+// But, while streaming, we can't depend on that file being loaded and applied right away.
+// So we simply inject it directly.
+// If we owned the content pages, we'd use a much cleaner approach. We'd simply include the relevant styles
+// in the initial document with an .amp-shadow selector. That way, they'd only apply when the AMP was in a shadow root.
+// Note that the inlineCSS property gets added to this object by inline.css.js.
+  injectCSS(html) {
+    const styleTag = '<style amp-custom>';
+
+    return html.replace(styleTag, styleTag + ' ' + this.hideElementsCSS() + this.inlineCSS);
+  }
+
+// Given an array of selectors, create CSS rules that hide each of those - and insert it into AMP HTML.
+// This is the equivalent of sanitize() for the streaming case.
+// TODO: We don't grab the metadata that sanitize() grabs, which could matter someday
+  hideElementsCSS(html) {
+    return this.elementsToHide
+               .map(selector => selector + ' {display: none !important;}')
+               .join(' ');
   }
 
 }

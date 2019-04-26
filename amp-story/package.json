@@ -1,0 +1,23 @@
+{
+  "name": "amp-story-examples",
+  "version": "0.0.1",
+  "description": "Sample content for amp-story",
+  "engines": {
+    "node": "^4.0.0"
+  },
+  "author": "The AMP HTML Authors",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "live-server --host=localhost templates"
+  },
+  "devDependencies": {
+    "@mapbox/stylelint-processor-arbitrary-tags": "0.2.0",
+    "gulp": "4.0.0",
+    "gulp-amphtml-validator": "1.0.2",
+    "gulp-htmllint": "0.0.16",
+    "gulp-stylelint": "8.0.0",
+    "live-server": "1.2.1",
+    "stylelint": "9.9.0",
+    "stylelint-config-standard": "18.2.0"
+  }
+}

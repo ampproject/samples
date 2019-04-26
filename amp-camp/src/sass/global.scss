@@ -1,0 +1,836 @@
+@import 'mixins';
+
+/* Basic elements */
+
+* {
+	box-sizing: border-box
+}
+
+html {
+	font-family: sans-serif;
+	line-height: 1.15;
+	text-size-adjust: 100%;
+}
+
+article,
+aside,
+footer,
+header,
+nav,
+section {
+	display: block
+}
+
+main {
+	max-width: 1280px;
+	margin: 3.5rem auto 0;
+	display: block;
+}
+
+body {
+	background: #fff;
+	margin: 0;
+	color: #222;
+	font-family: Cardo,serif;
+	min-width: 315px;
+	overflow-x: hidden;
+	font-smooth: always;
+	-webkit-font-smoothing: antialiased;
+	font-size: .94rem;
+	line-height: normal
+}
+
+p {
+	padding: 0;
+	margin: 0
+}
+
+pre {
+	font-family: monospace,monospace;
+	font-size: 1em
+}
+
+a {
+	text-decoration: none;
+	background-color: none;
+	background-color: transparent;
+	-webkit-text-decoration-skip: objects;
+
+	&:active,
+	&:hover {
+		outline-width: 0;
+	}
+
+	&,
+	&:active,
+	&:visited {
+		color: inherit;
+	}
+}
+
+b,
+strong {
+	font-weight: inherit;
+	font-weight: bolder
+}
+
+small {
+	font-size: 80%
+}
+
+img {
+	border-style: none
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+	font-family: sans-serif;
+	font-size: 100%;
+	line-height: 1.15;
+	margin: 0
+}
+
+button,
+input {
+	overflow: visible
+}
+
+button,
+select {
+	text-transform: none
+}
+
+textarea {
+	overflow: auto
+}
+
+h1 {
+	font-size: 3.5rem;
+	line-height: 3.5rem;
+}
+
+h2 {
+	font-size: 2.2rem;
+	line-height: 2.5rem;
+}
+
+h3 {
+	font-size: 1.75rem;
+	line-height: 2rem;
+}
+
+h4 {
+	font-size: 1.38rem;
+	line-height: 1.5rem;
+}
+
+h5 {
+	font-size: 1.125rem;
+	line-height: 1.125rem;
+}
+
+h6 {
+	font-size: 1rem;
+	line-height: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	padding: 0;
+	font-weight: 400;
+	letter-spacing: .06rem;
+}
+
+ul {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+}
+
+/* so we have this... plus also rules for .input-container>select. Redundant? */
+select {
+	appearance: none;
+	border: none;
+	border-radius: 0;
+	background: none;
+	color: #666;
+}
+
+h1,h2,h3,h4,h5,h6, .sans-big {
+	line-height: normal;
+	letter-spacing: normal;
+	font-family: Open Sans Condensed,sans-serif;
+	text-transform: uppercase;
+	font-weight: 700;
+	color: #000;
+}
+
+hr {
+	box-sizing: content-box;
+	overflow: visible;
+	width: calc(100% + 2 * 1.5rem);
+	height: 1px;
+	background-color: #f3f3f3;
+	border: none;
+	margin: 0 -1.5rem;
+}
+
+dd:after {
+	content: "";
+	display: block
+}
+
+[type=reset],
+[type=submit],
+button,
+html [type=button] {
+	-webkit-appearance: button
+}
+
+[type=button]::-moz-focus-inner,
+[type=reset]::-moz-focus-inner,
+[type=submit]::-moz-focus-inner,
+button::-moz-focus-inner {
+	border-style: none;
+	padding: 0
+}
+
+[type=button]:-moz-focusring,
+[type=reset]:-moz-focusring,
+[type=submit]:-moz-focusring,
+button:-moz-focusring {
+	outline: 1px dotted ButtonText
+}
+
+[type=checkbox],
+[type=radio] {
+	box-sizing: border-box;
+	padding: 0
+}
+
+[type=number]::-webkit-inner-spin-button,
+[type=number]::-webkit-outer-spin-button {
+	height: auto
+}
+
+[type=search] {
+	-webkit-appearance: textfield;
+	outline-offset: -2px
+
+	&::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration {
+	-webkit-appearance: none
+	}
+}
+
+
+/* Buttons */
+
+.button {
+	display: inline-block;
+	background-color: #222;
+	color: #fff;
+	border: 1px solid #fff;
+	font-size: .8rem;
+	font-family: Open Sans Condensed,sans-serif;
+	font-weight: 700;
+	padding: .5rem 2rem;
+	line-height: 1.125rem;
+	text-transform: uppercase;
+	transition: background-color .2s ease-in,color .2s ease-in;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+
+	&:visited {
+		color: #fff;
+	}
+
+	&:active,
+	&:focus {
+		opacity: .8;
+	}
+
+	&[disabled],
+	&[disabled]:active,
+	&[disabled]:focus,
+	&[disabled]:hover {
+		opacity: .5;
+		outline: 0;
+		cursor: default;
+	}
+
+	&.no-transition {
+		transition: none;
+	}
+}
+
+.amp-mode-mouse .button:hover, 
+.button-white {
+	background-color: #fff;
+	color: #222;
+}
+
+.amp-mode-mouse .button-white:hover {
+	background-color: #222;
+	color: #fff;
+}
+
+.button-white {
+	border-color: #222;
+
+	&:visited {
+		color: #222;
+	}
+}
+
+.close-button {
+	display: inline-block;
+	color: #f88;
+}
+
+/* Inputs */
+
+.input-container {
+	width: 100%;
+	min-width: 100px;
+	font-size: 1rem;
+	line-height: 1.5rem;
+
+	input::-webkit-input-placeholder, 
+	input[type=email], 
+	input[type=text], 
+	input::placeholder,
+	label,
+	textarea {
+		font-size: .94rem;
+		font-family: Open Sans Condensed,sans-serif;
+		color: #222;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	input[type=email], 
+	input[type=text] {
+		margin-top: 1.5rem;
+	}
+
+	[disabled],
+	[disabled]+label {
+		opacity: .5;
+	}
+
+	[disabled]:focus {
+		outline: 0;
+	}
+
+	>label:after {
+		height: 1px;
+		background: #f3f3f3;
+	}
+
+	>input, 
+	>select, 
+	>textarea {
+		width: 100%;
+		margin-top: 1rem;
+		line-height: 1.5rem;
+		border: 0;
+		border-radius: 0;
+		background: none;
+		outline: 0;
+	}
+
+	>input, 
+	>textarea {
+		border-bottom: 1px dashed #f3f3f3;
+		color: #222;
+	}
+
+	>select {
+		border-bottom: 1px solid #4a4a4a;
+		color: #4a4a4a;
+	}
+
+	>label {
+		color: #222;
+		pointer-events: none;
+		text-align: left;
+		font-size: .94rem;
+		line-height: 1rem;
+		opacity: 0;
+		animation: .2s;
+		animation-timing-function: cubic-bezier(.4,0, .2,1);
+		animation-fill-mode: forwards;
+	}
+
+	>input:focus, 
+	>select:focus, 
+	>textarea:focus {
+		outline: 0;
+	}
+
+	>input:focus::placeholder, 
+	>select:focus::placeholder, 
+	>textarea:focus::placeholder {
+		color: transparent;
+	}
+
+	>input:not(:placeholder-shown):not([disabled])+label, 
+	>select:not(:placeholder-shown):not([disabled])+label, 
+	>textarea:not(:placeholder-shown):not([disabled])+label {
+		opacity: 1;
+	}
+
+	>input:focus+label, 
+	>select:focus+label, 
+	>textarea:focus+label {
+		animation-name: c;
+	}
+
+	>label:after {
+		content: "";
+		height: 2px;
+		position: absolute;
+		bottom: 0;
+		left: 45%;
+		background: #222;
+		transition: .2s;
+		transition-timing-function: cubic-bezier(.4,0, .2,1);
+		visibility: hidden;
+		width: 10px;
+	}
+
+	>input:focus+label:after, 
+	>select:focus+label:after, 
+	>textarea:focus+label:after {
+		left: 0;
+		width: 100%;
+		visibility: visible;
+	}
+
+	>input[type=search] {
+		appearance: none;
+	}
+
+	>input[type=range] {
+		border-bottom: 0;
+	}
+
+	>input[type=range]+label:after {
+		display: none;
+	}
+
+	>select {
+		appearance: none;
+
+		+label:before {
+			content: "⌄";
+			line-height: 1.5rem;
+			position: absolute;
+			right: 5px;
+			zoom: 2;
+			top: 0;
+			bottom: 0;
+			color: #222;
+		}
+	}
+
+	input[type=radio] {
+		border-radius: 15px;
+
+		&:checked {
+			background-color: #fff;
+		}
+
+		&:after {
+			top: 3px;
+			bottom: 3px;
+			left: 3px;
+			right: 3px;
+			border-radius: 12px;
+		}
+
+		&:checked:after {
+			content: "";
+			font-size: 3.5rem;
+			background-color: #222;
+		}
+	}
+
+	input[type=checkbox], 
+	input[type=radio] {
+		margin-top: 0;
+		appearance: none;
+		width: 15px;
+		height: 15px;
+		border: 1px solid #222;
+		vertical-align: middle;
+		margin-right: .5rem;
+		text-align: center;
+	}
+
+	input[type=checkbox]:not([disabled])+label, 
+	input[type=radio]:not([disabled])+label {
+		pointer-events: auto;
+		animation: none;
+		vertical-align: middle;
+		opacity: 1;
+		cursor: pointer;
+	}
+
+	input[type=checkbox]+label:after, 
+	input[type=radio]+label:after {
+		display: none;
+	}
+
+	input[type=checkbox]:after, 
+	input[type=radio]:after {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		content: " ";
+		line-height: 1.4rem;
+		vertical-align: middle;
+		text-align: center;
+		background-color: #fff;
+	}
+
+	input[type=checkbox]:checked:after {
+		background-color: #222;
+		color: #fff;
+		content: "✓";
+	}
+
+	>label,_:-ms-lang(x) {
+		opacity: 1;
+	}
+
+	>input:-ms-input-placeholder,_:-ms-lang(x) {
+		color: transparent;
+	}
+
+	>input::placeholder,_:-ms-lang(x) {
+		color: transparent;
+	}
+
+	>input::-ms-input-placeholder,_:-ms-lang(x) {
+		color: transparent;
+	}
+
+	>select::-ms-expand {
+		display: none;
+	}
+}
+
+.radio-container {
+	display: block;
+	margin-bottom: .5rem;
+
+	label {
+		font-family: Cardo,serif;
+		font-weight: 400;
+		text-transform: none;
+		color: #222;
+		font-size: .94rem;
+	}
+
+	input {
+		position: relative;
+	}
+
+	.amp-mode-mouse & label:hover {
+		text-decoration: underline;
+	}
+}
+
+
+.input-container-chk, 
+.radio-container {
+/*	width: auto; */
+	color: #4a4a4a;
+}
+
+.select-container {
+	position: relative;
+	padding-right: 13px;
+}
+
+/* Styles kept from bassplate */
+
+.active {
+	color: #000;
+}
+
+.bold {
+	font-weight: 700;
+}
+
+.regular {
+	font-weight: 400;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.caps {
+	text-transform: uppercase;
+	letter-spacing: 0;
+}
+
+.left-align {
+	text-align: left;
+}
+
+.center {
+	text-align: center;
+}
+
+.right-align {
+	text-align: right;
+}
+
+.underline {
+	text-decoration: underline;
+}
+
+.inline {
+	display: inline;
+}
+
+.block {
+	display: block;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.clearfix:after, 
+.clearfix:before {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+.fit {
+	max-width: 100%;
+}
+
+.flex {
+	display: flex;
+}
+
+.flex-column {
+	flex-direction: column;
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.self-start {
+	align-self: flex-start;
+}
+
+.rounded {
+	border-radius: 3px;
+}
+
+.display-none {
+	display: none;
+}
+
+amp-selector {
+	appearance: none;
+	border: none;
+	border-radius: 0;
+	background: none;
+	color: #666;
+
+	[option] {
+		outline: 1px solid #f3f3f3;
+	}
+
+	[option]:hover {
+		outline: 1px solid #222;
+	}
+
+	[option][selected] {
+		outline-color: #222;
+	}
+}
+
+
+.amp-carousel-button-next, 
+.amp-carousel-button-prev {
+	display: none;
+}
+
+.icon-star, 
+.icon-star-empty {
+	height: 14px;
+	width: 14px;
+	color: #f9ab00;
+}
+
+.icon-star-empty {
+	color: #dadada;
+}
+
+@keyframes c {
+	to {
+	opacity: 1
+	}
+}
+
+/* As far as I know, this is currently only used on product listing pages. 
+ * But it could be useful elsewhere, so I'm including it in global.scss. 
+ */
+.sidebar {
+	width: 25%;
+	display: flex;
+	flex-direction: column;
+}
+
+.cart-added .ampstart-headerbar-icon-wrapper:after {
+	content: "1";
+	display: block;
+	width: 17px;
+	height: 17px;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	border-radius: 50%;
+	background-color: #f88;
+	color: #fff;
+	font: 700 .7rem Open Sans Condensed,sans-serif;
+	opacity: 0;
+	animation: c .5s forwards;
+}
+
+/* Titles */
+.title {
+	&,
+	& select,
+	& button {
+		line-height: normal;
+		letter-spacing: normal;
+		font-family: Open Sans Condensed,sans-serif;
+		text-transform: uppercase;
+		font-weight: 700;
+		color: #000;
+	}
+}
+
+/* Image placeholder, showing loading animation */
+
+.loading {
+	color: #666;
+	margin: 24% auto;
+	animation-delay: .16s;
+
+	&,
+	&:after, 
+	&:before {
+		border-radius: 50%;
+		width: .5rem;
+		height: .5rem;
+		animation-fill-mode: both;
+		animation: a 1.44s infinite ease-in-out;
+		will-change: contents;
+	}
+
+	&:after, 
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+	}
+
+	&:before {
+		left: -1rem;
+		animation-delay: 0s;
+	}
+
+	&:after {
+		left: 1rem;
+		animation-delay: .32s;
+	}
+}
+
+.label {
+	font-size: 1.125rem;
+	color: #4f4f4f;
+	line-height: 1.125rem;
+	letter-spacing: .06rem;
+	text-transform: uppercase;
+}
+
+/* Media queries */
+
+@include desktop {
+	main {
+		min-height: calc(100vh - 181px - 5rem);
+	}
+
+	hr {
+		width: 100%;
+		margin: 0;
+	}	
+
+	.side-panel {
+		position: sticky;
+		top: 5rem;
+	}
+}
+
+
+/* Hide things! 
+ * Note: these should appear last in the file so they can overwrite other display properties. 
+ */
+
+@include xs {
+	.xs-hide {
+	display: none;
+	}
+}
+
+@include sm {
+	.sm-hide {
+	display: none;
+	}
+}
+
+@include md {
+	.md-hide {
+	display: none;
+	}
+}
+
+@include lg {
+	.lg-hide {
+	display: none;
+	}
+}

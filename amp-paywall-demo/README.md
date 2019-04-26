@@ -44,7 +44,7 @@ The second step is to integrate AMP Access into the AMP HTML files:
 1. Configure the AMP Access endpoints ([article.html](views/amp-access/article.html#21)).
 
     ```html
-    <script id="AMP Access" type="application/json">
+    <script id="amp-access" type="application/json">
       {
         "authorization": "<% host %>/amp-authorization.json?rid=READER_ID&url=CANONICAL_URL&_=RANDOM&ref=DOCUMENT_REFERRER",
         "pingback": "<% host %>/amp-pingback?rid=READER_ID&url=CANONICAL_URL&ref=DOCUMENT_REFERRER",
@@ -56,13 +56,13 @@ The second step is to integrate AMP Access into the AMP HTML files:
 2. Include the AMP Access  component ([article.html](views/amp-access/article.html#L30)):
 
     ```html
-    <script async custom-element="AMP Access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
+    <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
     ```
 
 3. Define which parts of the AMP HTML file are visible to subscribers and non-subscribers ([article.html](views/amp-access/article.html#L51)):
 
     ```html
-    <section AMP Access="access AND subscriber" amp-access-hide>
+    <section amp-access="access AND subscriber" amp-access-hide>
       Thanks for being a subscriber. You rock!
     </section>
     ```

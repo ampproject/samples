@@ -15,19 +15,24 @@
 
 'use strict';
 
-const CacheRefresh = require('./cache-refresh');
 const express = require('express');
 const multer = require('multer'); // Use multer to parse muti-part forms.
+const UpdateCacheUrlProvider = require('amp-toolbox-update-cache');
 const upload = multer();
 const app = express();
 
 app.use(express.static('public'));
 
 app.post('/api/cache/generate-update-url', upload.array(), (req, res) => {
+  // Get parameters from request.
   const privateKey = req.body.privatekey;
   const url = req.body.url;
-  const cacheRefresh = new CacheRefresh(privateKey);
-  const signedRefreshUrl = cacheRefresh.createCacheUpdateUrls(url)
+
+  // Generate update-cache URLs.
+  const updateCacheUrlProvider = UpdateCacheUrlProvider.create(privateKey);
+  const timestamp = Math.round((new Date()).getTime() / 1000) + 60;
+
+  updateCacheUrlProvider.calculateFromOriginUrl(url, timestamp)
     .then(refreshUrlInfos => {
       // Append CORS headers.
       const requestingOrigin = req.headers.origin;
@@ -37,6 +42,7 @@ app.post('/api/cache/generate-update-url', upload.array(), (req, res) => {
       res.setHeader('Access-Control-Expose-Headers', 'AMP-Access-Control-Allow-Source-Origin');
       res.setHeader('AMP-Access-Control-Allow-Source-Origin', requestingSourceOrigin);
 
+      // Sends generated URLs on the response.
       res.send(JSON.stringify({items: refreshUrlInfos}));
     });
 });
