@@ -8,6 +8,13 @@ const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
 
+const staticPageUrls = [
+    '/',
+    '/index.html',
+    '/blog-listing.html',
+    '/contact.html'
+];
+
 const app = express();
 
 app.use(formidableMiddleware());
@@ -36,6 +43,19 @@ const listener = app.listen(port, () => {
     console.log('App listening on port ' + listener.address().port);
 });
 
+//Intercepts urls for static pages, and calls 'renderPage' to inject the canonical tag
+app.use("*", function(req, res, next) {
+
+    let originalUrl = req.originalUrl;
+
+    if(req.method === 'GET' && staticPageUrls.includes(originalUrl)) {
+        let templateName = getTemplateForUrl(originalUrl);
+        renderPage(req, res, templateName);
+    } else {
+        next();
+    }
+});
+
 //serve static files
 app.use(express.static(path.join(__dirname, '/../')));
 
@@ -62,7 +82,7 @@ app.get('/product-listing', function(req, res) {
             resShortSelected = true;
         }
     }
-    mustache.tags = ['<%', '%>'];
+    
     let responseObj = {
         productsCategory: resProductsCategory,
         productsGender: resProductsGender
@@ -78,7 +98,8 @@ app.get('/product-listing', function(req, res) {
         responseObj.womenSelected = true;
     }
 
-    res.render('product-listing', responseObj);
+    //res.render('product-listing', responseObj);
+    renderPage(req, res, 'product-listing', responseObj);
 });
 
 //Product Page
@@ -96,10 +117,9 @@ app.get('/product-details', function(req, res) {
         if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
             var productObj = apiManager.parseProduct(body);
             productObj.CategoryId = categoryId;
-            mustache.tags = ['<%', '%>'];
-            res.render('product-details', productObj);
+            renderPage(req, res, 'product-details', productObj);
         } else {
-            res.render('product-not-found');
+            renderPage(req, res, 'product-not-found');
         }
     });
 });
@@ -120,8 +140,7 @@ app.get('/shopping-cart', function(req, res) {
         }
     }
 
-    mustache.tags = ['<%', '%>'];
-    res.render('cart-details', relatedProductsObj);
+    renderPage(req, res, 'cart-details', relatedProductsObj);
 });
 
 //API
@@ -312,4 +331,22 @@ function enableCors(req, res) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
     res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
+}
+
+// Uses mustache to render the dynamic page. Injects canonical tag, based on the requested URL.
+function renderPage(req, res, template, responseJsonObj) {
+    if(!responseJsonObj) {
+        responseJsonObj = {}
+    }
+    
+    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    responseJsonObj.CanonicalLink = fullUrl;
+
+    mustache.tags = ['<%', '%>'];
+    res.render(template, responseJsonObj);
+}
+
+//The root (home) uses index.html as template. In any other case, the url contains the name of the template.
+function getTemplateForUrl(originalUrl) {
+    return (originalUrl === '/') ? 'index' : originalUrl.substring(1, originalUrl.length).replace('.html', '');
 }
