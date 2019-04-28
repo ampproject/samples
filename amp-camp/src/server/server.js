@@ -7,6 +7,10 @@ const mustache = require("mustache");
 const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
+const apiManager = new productApiManager();
+
+
+/** LIST OF STATIC URLS FOR STATIC PAGES **/
 
 const staticPageUrls = [
     '/',
@@ -14,6 +18,9 @@ const staticPageUrls = [
     '/blog-listing.html',
     '/contact.html'
 ];
+
+
+/** EXPRESS AND MUSTACHE CONFIGURATION **/
 
 const app = express();
 
@@ -36,14 +43,16 @@ app.engine('html', function(filePath, options, callback) {
 app.set('view engine', 'html');
 app.set('views', __dirname + '/../');
 
-const apiManager = new productApiManager();
-
 const port = process.env.PORT || 8080;
 const listener = app.listen(port, () => {
     console.log('App listening on port ' + listener.address().port);
 });
 
-//Intercepts urls for static pages, and calls 'renderPage' to inject the canonical tag
+/** HANDLERS FOR STATIC PAGES AND STATIC FILES **/
+
+//Intercepts all requests:
+//If the request is for a static page, calls 'renderPage', passing the page's template, so the 'canonical' tag can be inserted, before rendering the page.
+//Otherwise, calls next(), so another handler can process the request.
 app.use("*", function(req, res, next) {
 
     let originalUrl = req.originalUrl;
@@ -56,10 +65,12 @@ app.use("*", function(req, res, next) {
     }
 });
 
-//serve static files
+//Serves static files
 app.use(express.static(path.join(__dirname, '/../')));
 
-//Product Listing Page
+
+/** HANDLERS FOR DYNAMIC PAGES **/
+
 app.get('/product-listing', function(req, res) {
     // defaults to women shirts
     let resProductsGender = 'women';
@@ -102,7 +113,6 @@ app.get('/product-listing', function(req, res) {
     renderPage(req, res, 'product-listing', responseObj);
 });
 
-//Product Page
 app.get('/product-details', function(req, res) {
 
     let categoryId = req.query.categoryId;
@@ -143,7 +153,9 @@ app.get('/shopping-cart', function(req, res) {
     renderPage(req, res, 'cart-details', relatedProductsObj);
 });
 
-//API
+
+/** API **/
+
 app.post('/api/add-to-cart', function(req, res) {
 
     let productId = req.fields.productId;
@@ -225,7 +237,7 @@ app.get('/api/product', function(req, res) {
     });
 });
 
-// Wrap the shopping cart into an 'items' array, so it can be consumed with amp-list.
+// Retrieve the shopping cart from session, and wrap it into an 'items' array, which is the format expected by amp-list.
 app.get('/api/cart-items', function(req, res) {
     let cart = getCartFromSession(req);
 
@@ -291,8 +303,11 @@ app.get('/api/related-products', function(req, res) {
     });
 });
 
+
+/** HELPERS **/
+
 // If the session contains a cart, then deserialize it and return that!
-// Otherwise, create a new cart and add that to the session.
+// Otherwise, create a new cart, add that to the session and return the cart object.
 function getCartFromSession(req) {
     let sessionCart = req.session.shoppingCart;
 
@@ -305,6 +320,8 @@ function getCartFromSession(req) {
     }
 }
 
+//Create a cart new item. If the cart exists in the session, add it there.
+//Otherwise, create a new cart and add the recently created item to the session.
 function updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity) {
     let cartProduct = apiManager.createCartItem(productId, categoryId, name, price, color, size, imgUrl, quantity);
     let shoppingCartJson = req.session.shoppingCart;
@@ -333,7 +350,8 @@ function enableCors(req, res) {
     res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
 }
 
-// Uses mustache to render the dynamic page. Injects canonical tag, based on the requested URL.
+//Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
+//Declares the tags that will be used by mustache, and defines the 'CanonicalLink' variable, so it can be injected int the canonical tag.
 function renderPage(req, res, template, responseJsonObj) {
     if(!responseJsonObj) {
         responseJsonObj = {}
