@@ -7,6 +7,20 @@ const mustache = require("mustache");
 const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
+const apiManager = new productApiManager();
+
+
+/** LIST OF STATIC URLS FOR STATIC PAGES **/
+
+const staticPageUrls = [
+    '/',
+    '/index.html',
+    '/blog-listing.html',
+    '/contact.html'
+];
+
+
+/** EXPRESS AND MUSTACHE CONFIGURATION **/
 
 const app = express();
 
@@ -29,17 +43,34 @@ app.engine('html', function(filePath, options, callback) {
 app.set('view engine', 'html');
 app.set('views', __dirname + '/../');
 
-const apiManager = new productApiManager();
-
 const port = process.env.PORT || 8080;
 const listener = app.listen(port, () => {
     console.log('App listening on port ' + listener.address().port);
 });
 
-//serve static files
+/** HANDLERS FOR STATIC PAGES AND STATIC FILES **/
+
+//Intercepts all requests:
+//If the request is for a static page, calls 'renderPage', passing the page's template, so the 'canonical' tag can be inserted, before rendering the page.
+//Otherwise, calls next(), so another handler can process the request.
+app.use("*", function(req, res, next) {
+
+    let originalUrl = req.originalUrl;
+
+    if(req.method === 'GET' && staticPageUrls.includes(originalUrl)) {
+        let templateName = getTemplateForUrl(originalUrl);
+        renderPage(req, res, templateName);
+    } else {
+        next();
+    }
+});
+
+//Serves static files
 app.use(express.static(path.join(__dirname, '/../')));
 
-//Product Listing Page
+
+/** HANDLERS FOR DYNAMIC PAGES **/
+
 app.get('/product-listing', function(req, res) {
     // defaults to women shirts
     let resProductsGender = 'women';
@@ -62,7 +93,7 @@ app.get('/product-listing', function(req, res) {
             resShortSelected = true;
         }
     }
-    mustache.tags = ['<%', '%>'];
+    
     let responseObj = {
         productsCategory: resProductsCategory,
         productsGender: resProductsGender
@@ -78,10 +109,10 @@ app.get('/product-listing', function(req, res) {
         responseObj.womenSelected = true;
     }
 
-    res.render('product-listing', responseObj);
+    //res.render('product-listing', responseObj);
+    renderPage(req, res, 'product-listing', responseObj);
 });
 
-//Product Page
 app.get('/product-details', function(req, res) {
 
     let categoryId = req.query.categoryId;
@@ -96,10 +127,9 @@ app.get('/product-details', function(req, res) {
         if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
             var productObj = apiManager.parseProduct(body);
             productObj.CategoryId = categoryId;
-            mustache.tags = ['<%', '%>'];
-            res.render('product-details', productObj);
+            renderPage(req, res, 'product-details', productObj);
         } else {
-            res.render('product-not-found');
+            renderPage(req, res, 'product-not-found');
         }
     });
 });
@@ -120,11 +150,12 @@ app.get('/shopping-cart', function(req, res) {
         }
     }
 
-    mustache.tags = ['<%', '%>'];
-    res.render('cart-details', relatedProductsObj);
+    renderPage(req, res, 'cart-details', relatedProductsObj);
 });
 
-//API
+
+/** API **/
+
 app.post('/api/add-to-cart', function(req, res) {
 
     let productId = req.fields.productId;
@@ -206,7 +237,7 @@ app.get('/api/product', function(req, res) {
     });
 });
 
-// Wrap the shopping cart into an 'items' array, so it can be consumed with amp-list.
+// Retrieve the shopping cart from session, and wrap it into an 'items' array, which is the format expected by amp-list.
 app.get('/api/cart-items', function(req, res) {
     let cart = getCartFromSession(req);
 
@@ -272,8 +303,11 @@ app.get('/api/related-products', function(req, res) {
     });
 });
 
+
+/** HELPERS **/
+
 // If the session contains a cart, then deserialize it and return that!
-// Otherwise, create a new cart and add that to the session.
+// Otherwise, create a new cart, add that to the session and return the cart object.
 function getCartFromSession(req) {
     let sessionCart = req.session.shoppingCart;
 
@@ -286,6 +320,8 @@ function getCartFromSession(req) {
     }
 }
 
+//Create a cart new item. If the cart exists in the session, add it there.
+//Otherwise, create a new cart and add the recently created item to the session.
 function updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity) {
     let cartProduct = apiManager.createCartItem(productId, categoryId, name, price, color, size, imgUrl, quantity);
     let shoppingCartJson = req.session.shoppingCart;
@@ -312,4 +348,23 @@ function enableCors(req, res) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
     res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
+}
+
+//Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
+//Declares the tags that will be used by mustache, and defines the 'CanonicalLink' variable, so it can be injected int the canonical tag.
+function renderPage(req, res, template, responseJsonObj) {
+    if(!responseJsonObj) {
+        responseJsonObj = {}
+    }
+    
+    let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    responseJsonObj.CanonicalLink = fullUrl;
+
+    mustache.tags = ['<%', '%>'];
+    res.render(template, responseJsonObj);
+}
+
+//The root (home) uses index.html as template. In any other case, the url contains the name of the template.
+function getTemplateForUrl(originalUrl) {
+    return (originalUrl === '/') ? 'index' : originalUrl.substring(1, originalUrl.length).replace('.html', '');
 }
