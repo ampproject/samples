@@ -16,7 +16,8 @@
 		}
 	}
 
-	amp-list {
+	#products-list {
+		position: relative;
 		margin: 0 .5rem;
 
 		@include desktop {
@@ -108,7 +109,7 @@
 		width: 58.33333%;
 	}
 
-	amp-list {
+	#products-list {
 			margin-top: .45rem;
 	}
 }
