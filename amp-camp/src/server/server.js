@@ -109,20 +109,8 @@ app.get('/product-listing', function(req, res) {
         responseObj.womenSelected = true;
     }
 
-    // get products
-    let categoryUrl = apiManager.getCategoryUrl(resProductsGender+'-'+resProductsCategory, 'high-low');
-    const options = {
-        url: categoryUrl
-    };
-    request(options, (error, response, body) => {
-        if (!error) {
-            responseObj.body = apiManager.parseCategory(body);
-        } else {
-            responseObj.body = 'An error occurred in /api/categories';
-        }
-        console.log(responseObj.body);
-        renderPage(req, res, 'product-listing', responseObj);
-    });
+    //res.render('product-listing', responseObj);
+    renderPage(req, res, 'product-listing', responseObj);
 });
 
 app.get('/product-details', function(req, res) {
