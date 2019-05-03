@@ -106,10 +106,15 @@
 	}
 
 	.title {
+		position: relative;
 		font-size: 1.38rem;
 
 		@include desktop {
 			font-size: 1.75rem;
+		}
+
+		.out-of-stock {
+			color: red;
 		}
 	}
 }
@@ -147,6 +152,13 @@
 
 	.title {
 		padding-right: 0.2rem;
+	}
+
+	.quantity-text {
+		position: relative;
+		display: inline-block;
+		width: 110px;
+		height: 16px;
 	}
 
 	.button {

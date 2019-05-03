@@ -221,6 +221,7 @@ app.get('/api/categories', function(req, res) {
 app.get('/api/product', function(req, res) {
 
     let productId = req.query.productId;
+    let ampList = req.query.ampList;
     let productUrl = apiManager.getProductUrl(productId);
 
     const options = {
@@ -230,6 +231,9 @@ app.get('/api/product', function(req, res) {
     request(options, (error, response, body) => {
         if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
             var productObj = apiManager.parseProduct(body);
+            if (ampList) {
+                productObj = {items: productObj};
+            }
             res.send(productObj);
         } else {
             res.json({ error: 'An error occurred in /api/product: ' + body });
