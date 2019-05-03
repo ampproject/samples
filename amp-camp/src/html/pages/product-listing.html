@@ -28,7 +28,11 @@
             <div class="sidebar xs-hide sm-hide">
                 <div class="side-panel title">
                     <h2>Category</h2>
-                        <amp-selector name="category" layout="container" on="select:AMP.setState({products:{gender: event.targetOption}}), products-list.changeToLayoutContainer()" [selected]="products.gender">
+                        <amp-selector name="category"
+                                      layout="container"
+                                      on="select:AMP.setState({products:{gender: event.targetOption}}), 
+                                          products-list.changeToLayoutContainer()"
+                                      [selected]="products.gender">
                             <%#womenSelected%>
                             <button type="button" option="women" selected>Women</button>
                             <button type="button" option="men" >Men</button>
@@ -48,7 +52,11 @@
                         <div class="select-wrapper md-hide lg-hide">
                             <div class="title">
                                 <label for="categories">Show:</label>
-                                <amp-selector name="category" layout="container" on="select:AMP.setState({products:{category: event.targetOption}}), products-list.changeToLayoutContainer()" [selected]="products.category">
+                                <amp-selector name="category"
+                                              layout="container"
+                                              on="select:AMP.setState({products:{category: event.targetOption}}),
+                                                  products-list.changeToLayoutContainer()"
+                                              [selected]="products.category">
                                     <%#shirtSelected%>
                                     <button type="button" option="shirts" selected>Shirts</button>
                                     <%/shirtSelected%>
