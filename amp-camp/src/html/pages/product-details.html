@@ -5,6 +5,7 @@
     %%include('../partials/head.html', {
         "pageType": "product-details"
     })
+    <link rel="preload" href="/api/product?productId=<%Main_Id%>&ampList=true" as="fetch">
 </head>
 <body [class]="cart.added ? 'cart-added' : ''">
     %%include('../partials/header.html', {
@@ -60,7 +61,7 @@
             </div>
         </div>
         -->
-        <amp-state id="product">
+        <amp-state id="product" src="/api/product?productId=<%Main_Id%>&ampList=true">
         <script type="application/json">
         {
             "selectedColor": "<%DefaultColor%>",
@@ -154,10 +155,23 @@
                 </amp-selector>
             </div>
             <%/UniqueColor%>
+
             <div class="parameters-content flex flex-wrap">
                 <div class="product-description self-start">
                     <h1><%Product_Title%></h1>
-                    <div class="title" [text]="'$' + product[product.selectedColor].sizes[product.selectedSize].discountPrice">$<%DefaultPrice%></div>
+                    <div class="title" [text]="'$' + product[product.selectedColor].sizes[product.selectedSize].discountPrice">&nbsp;
+                        <amp-list src="/api/product?productId=<%Main_Id%>&ampList=true" layout="fill" binding="no" single-item>
+                            <template type="amp-mustache">
+                                {{#DefaultPrice}}
+                                    ${{DefaultPrice}}
+                                {{/DefaultPrice}}
+                                {{^DefaultPrice}}
+                                    <span class="out-of-stock">Out of stock</span>
+                                {{/DefaultPrice}}
+                            </template>
+                            <div placeholder>$<%DefaultPrice%></div>
+                        </amp-list>
+                    </div>
                 </div>
                 <div class="product-rating self-start">
                     <h2>Reviews (<%ReviewCount%>)</h2> <%#ReviewFullStars %>
@@ -220,7 +234,12 @@
                     <div class="product-colors self-start">
                         <div>    
                             <span class="title">Quantity:</span> 
-                            <span [text]="'(' + product[product.selectedColor].sizes[product.selectedSize].stock + ' Available)'"> (<%All_Colors.0.Avaliable_Sizes.0.Stock%> Available)</span>
+                            <span class="quantity-text" [text]="'(' + product[product.selectedColor].sizes[product.selectedSize].stock + ' Available)'">
+                                <amp-list src="/api/product?productId=<%Main_Id%>&ampList=true" layout="fill" binding="no" single-item>
+                                    <template type="amp-mustache">({{All_Colors.0.Avaliable_Sizes.0.Stock}} Available)</template>
+                                    <div placeholder>(<%All_Colors.0.Avaliable_Sizes.0.Stock%> Available)</div>
+                                </amp-list>
+                            </span>
                             <div class="buttons-group">
                                 <button type="button" class="button button-white no-transition" [disabled]="product.selectedQuantity == 1" disabled on="tap:AMP.setState({ product: {selectedQuantity : product.selectedQuantity - 1} })">-</button>
                                 <input type="text" class="title" value="1" name="quantity" width="5" height="1" [value]="product.selectedQuantity" readonly>

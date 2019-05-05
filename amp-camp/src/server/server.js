@@ -109,20 +109,8 @@ app.get('/product-listing', function(req, res) {
         responseObj.womenSelected = true;
     }
 
-    // get products
-    let categoryUrl = apiManager.getCategoryUrl(resProductsGender+'-'+resProductsCategory, 'high-low');
-    const options = {
-        url: categoryUrl
-    };
-    request(options, (error, response, body) => {
-        if (!error) {
-            responseObj.body = apiManager.parseCategory(body);
-        } else {
-            responseObj.body = 'An error occurred in /api/categories';
-        }
-        console.log(responseObj.body);
-        renderPage(req, res, 'product-listing', responseObj);
-    });
+    //res.render('product-listing', responseObj);
+    renderPage(req, res, 'product-listing', responseObj);
 });
 
 app.get('/product-details', function(req, res) {
@@ -233,6 +221,7 @@ app.get('/api/categories', function(req, res) {
 app.get('/api/product', function(req, res) {
 
     let productId = req.query.productId;
+    let ampList = req.query.ampList;
     let productUrl = apiManager.getProductUrl(productId);
 
     const options = {
@@ -242,6 +231,9 @@ app.get('/api/product', function(req, res) {
     request(options, (error, response, body) => {
         if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
             var productObj = apiManager.parseProduct(body);
+            if (ampList) {
+                productObj = {items: productObj};
+            }
             res.send(productObj);
         } else {
             res.json({ error: 'An error occurred in /api/product: ' + body });
