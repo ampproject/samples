@@ -72,15 +72,22 @@ app.use(function(req, res, next) {
     res.send(cachedBody)
     return
   } 
-  const oldSend = res.send;
+  // Replace response.send with our own method to be able to intercept html responses
+  // before sending it to the client. This way we can use AMP Optimizer and cache the 
+  // repsonse. 
+  //
+  // See https://github.com/ampproject/amp-toolbox/tree/master/packages/optimizer
+  const originalSend = res.send;
   res.send = function() {
     ampOptimizer.transformHtml(arguments[0]).then(transformed => {
       // console.log('[cache miss]', key);
       // rewrite body to optimized AMP version
       arguments[0] = transformed;
-      // cache the response (we assume a limited number of pages fitting into memory)
+      // Cache the response in memory. In our demo case we can safely assume 
+      // that all pages fit into memory. 
       cache.set(key, transformed);
-      oldSend.apply(this, arguments);
+      // Pass the optimized version to the original send method.
+      originalSend.apply(this, arguments);
     });
   }
   next()
