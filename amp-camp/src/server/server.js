@@ -7,6 +7,8 @@ const mustache = require("mustache");
 const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
+const ampCors = require('amp-toolbox-cors');
+
 const apiManager = new productApiManager();
 
 
@@ -30,6 +32,16 @@ app.use(sessions({
     secret: 'eommercedemoofamazigness',
     duration: 24 * 60 * 60 * 1000,
     activeDuration: 1000 * 60 * 5
+}));
+
+//Configure amp-toolbox-cors for CORS.
+//Appengine will set the environment to 'production', if so: add the site domain, otherwise, leave it out, so localhost can be used.
+let sourceOriginPattern = null;
+if (app.get('env') === 'production') {
+   sourceOriginPattern = /https:\/\/camp\.samples\.amp\.dev$/
+}
+app.use(ampCors({
+   sourceOriginPattern,
 }));
 
 app.engine('html', function(filePath, options, callback) {
@@ -178,7 +190,6 @@ app.post('/api/add-to-cart', function(req, res) {
         res.header("AMP-Redirect-To", origin + "/shopping-cart");
     }
 
-    enableCors(req, res);
     //amp-form requires json response
     res.json({});
 });
@@ -244,7 +255,6 @@ app.get('/api/cart-items', function(req, res) {
 
     let response = { items: [cart] };
 
-    enableCors(req, res);
     res.send(response);
 });
 
@@ -253,7 +263,6 @@ app.get('/api/cart-count', function(req, res) {
 
     let response = { items: [{ count: cart.cartItems.length }] };
 
-    enableCors(req, res);
     res.send(response);
 });
 
@@ -274,7 +283,6 @@ app.post('/api/delete-cart-item', function(req, res) {
         shoppingCartResponse.items.push(shoppingCart);
     }
 
-    enableCors(req, res);
     res.send(shoppingCartResponse);
 });
 
@@ -336,19 +344,6 @@ function updateShoppingCartOnSession(req, productId, categoryId, name, price, co
 
     shoppingCartObj.addItem(cartProduct);
     req.session.shoppingCart = serializer.serialize(shoppingCartObj);
-}
-
-function enableCors(req, res) {
-
-    //set to all for dev purposes only, change it by configuration to final domain
-    let sourceOrigin = req.query.__amp_source_origin;
-    let origin = req.get('origin') || sourceOrigin;
-
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
-    res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
 }
 
 //Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
