@@ -11,11 +11,20 @@
         <a href="/shopping-cart">
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
                 <amp-list id="cart-count" src="/api/cart-count" height="17" width="17"
-                          layout="fixed" binding="no"
-                          [hidden]="!cartItemsList.items[0].cartItems.length">
+                          layout="fixed" binding="no" 
+%%if (context.pageType == 'cart-details') {                          
+                          [hidden]="!cartItemsList.items[0].cartItems.length"
+}
+>
                     <template type="amp-mustache">
                         {{#count}}
-                        <span [text]="cartItemsList.items[0].cartItems.length">{{count}}</span>
+                        <span 
+%%if (context.pageType == 'cart-details') {                          
+                           [text]="cartItemsList.items[0].cartItems.length"
+}
+                        >
+                            {{count}}
+                        </span>
                         {{/count}}
                     </template>
                 </amp-list>
