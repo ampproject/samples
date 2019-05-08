@@ -95,9 +95,17 @@ class ApiManager {
 
     /* Transforms product ratings into an array of stars to be rendered on the template with mustache.*/
     enhanceProductRatings(productObj) {
-        var roundedRating = parseInt(productObj.RoundedRating);
+        var roundedRating = parseInt(productObj.RoundedRating);        
         var reviewFullStars = new Array();
         var reviewEmptyStars = new Array();
+
+        // If there are no reviews, make some up!
+        if (!productObj.ReviewCount) {
+            productObj.ReviewCount =  Math.floor(Math.random() * Math.floor(20));
+            roundedRating = Math.floor(Math.random() * Math.floor(4)) + 1;
+        }
+
+
         for (var i = 0; i < 5; i++) {
             if (i < roundedRating) {
                 reviewFullStars.push(1);
