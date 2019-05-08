@@ -19,6 +19,9 @@ const staticPageUrls = [
     '/contact.html'
 ];
 
+const prodRegexp = /https:\/\/camp\.samples\.amp\.dev$/;
+const devRegrexp = /(localhost)./;
+
 
 /** EXPRESS AND MUSTACHE CONFIGURATION **/
 
@@ -344,11 +347,13 @@ function enableCors(req, res) {
     let sourceOrigin = req.query.__amp_source_origin;
     let origin = req.get('origin') || sourceOrigin;
 
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
-    res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
+    if(sourceOrigin.match(/https:\/\/camp\.samples\.amp\.dev$/) || sourceOrigin.match(/(localhost)./)) {
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
+        res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);        
+    }
 }
 
 //Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
