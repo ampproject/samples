@@ -10,7 +10,8 @@
     <div class="cart-icon-container">
         <a href="/shopping-cart">
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
-                <amp-list id="cart-count" src="/api/cart-count" height="17" width="17" layout="fixed"
+                <amp-list id="cart-count" src="/api/cart-count" height="17" width="17"
+                          layout="fixed" binding="no"
                           [hidden]="!cartItemsList.items[0].cartItems.length">
                     <template type="amp-mustache">
                         {{#count}}
