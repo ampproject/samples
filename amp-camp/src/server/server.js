@@ -7,8 +7,15 @@ const mustache = require("mustache");
 const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
+const ampOptimizer = require('amp-toolbox-optimizer');
 const apiManager = new productApiManager();
 
+// a simple in-memory response cache
+const cache = new Map();
+
+ampOptimizer.setConfig({
+  validAmp: true,
+});
 
 /** LIST OF STATIC URLS FOR STATIC PAGES **/
 
@@ -50,19 +57,55 @@ const listener = app.listen(port, () => {
 
 /** HANDLERS FOR STATIC PAGES AND STATIC FILES **/
 
+// Optimize and cache HTML responses
+app.use(function(req, res, next) {
+  if (req.method != 'GET' || !req.accepts('text/html')) {
+    return next();
+  }
+  // Set max-age to 1 min
+  res.set('Cache-Control', 'max-age=60');
+  let key = req.originalUrl;
+  // Check if there's a cached response
+  let cachedBody = cache.get(key);
+  if (cachedBody) {
+    // console.log('[cache hit]', key);
+    res.send(cachedBody)
+    return
+  } 
+  // Replace response.send with our own method to be able to intercept html responses
+  // before sending it to the client. This way we can use AMP Optimizer and cache the 
+  // repsonse. 
+  //
+  // See https://github.com/ampproject/amp-toolbox/tree/master/packages/optimizer
+  const originalSend = res.send;
+  res.send = function() {
+    ampOptimizer.transformHtml(arguments[0]).then(transformed => {
+      // console.log('[cache miss]', key);
+      // rewrite body to optimized AMP version
+      arguments[0] = transformed;
+      // Cache the response in memory. In our demo case we can safely assume 
+      // that all pages fit into memory. 
+      cache.set(key, transformed);
+      // Pass the optimized version to the original send method.
+      originalSend.apply(this, arguments);
+    });
+  }
+  next()
+});
+
 //Intercepts all requests:
 //If the request is for a static page, calls 'renderPage', passing the page's template, so the 'canonical' tag can be inserted, before rendering the page.
 //Otherwise, calls next(), so another handler can process the request.
-app.use("*", function(req, res, next) {
+app.use(function(req, res, next) {
 
     let originalUrl = req.originalUrl;
 
     if(req.method === 'GET' && staticPageUrls.includes(originalUrl)) {
-        let templateName = getTemplateForUrl(originalUrl);
-        renderPage(req, res, templateName);
-    } else {
-        next();
+      let templateName = getTemplateForUrl(originalUrl);
+      renderPage(req, res, templateName);
+      return;
     }
+    next();
 });
 
 //Serves static files
@@ -304,7 +347,6 @@ app.get('/api/related-products', function(req, res) {
     });
 });
 
-
 /** HELPERS **/
 
 // If the session contains a cart, then deserialize it and return that!
@@ -353,11 +395,7 @@ function enableCors(req, res) {
 
 //Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
 //Declares the tags that will be used by mustache, and defines the 'CanonicalLink' variable, so it can be injected int the canonical tag.
-function renderPage(req, res, template, responseJsonObj) {
-    if(!responseJsonObj) {
-        responseJsonObj = {}
-    }
-    
+function renderPage(req, res, template, responseJsonObj={}) {
     let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
     responseJsonObj.CanonicalLink = fullUrl;
 

@@ -10,9 +10,11 @@
   "author": "Ben Morss",
   "license": "Apache-2.0",
   "dependencies": {
+    "amp-toolbox-optimizer": "^1.2.0-alpha.0",
     "amphtml-autoscript": "1.5.0",
     "amphtml-validator": "^1.0.23",
     "browser-sync": "^2.26.3",
+    "client-sessions": "^0.8.0",
     "del": "^3.0.0",
     "express": "^4.16.3",
     "express-formidable": "^1.2.0",
@@ -28,12 +30,11 @@
     "jsdom": "^11.12.0",
     "mustache-express": "^1.2.7",
     "request": "^2.88.0",
+    "serialize-to-js": "^1.2.2",
     "through2": "^2.0.5",
     "uglify-es": "^3.3.10",
     "workbox-build": "^3.6.3",
-    "workbox-sw": "^3.6.3",
-    "client-sessions": "^0.8.0",
-    "serialize-to-js": "^1.2.2"
+    "workbox-sw": "^3.6.3"
   },
   "devDependencies": {
     "gulp": "github:gulpjs/gulp",
