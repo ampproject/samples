@@ -200,6 +200,7 @@ app.get('/api/add-to-cart', function(req, res) {
 app.get('/api/categories', function(req, res) {
 
     let categoryId = req.query.categoryId;
+    let ampList = req.query.ampList;
     let sort = req.query.sort;
 
     let categoryUrl = apiManager.getCategoryUrl(categoryId, sort);
@@ -211,9 +212,9 @@ app.get('/api/categories', function(req, res) {
 
     request(options, (error, response, body) => {
         if (!error) {
-            res.send(apiManager.parseCategory(body));
+            res.send (apiManager.parseCategory (body, ampList));
         } else {
-            res.json({ error: 'An error occurred in /api/categories' });
+            res.json ({ error: 'An error occurred in /api/categories' });
         }
     });
 });
@@ -230,11 +231,7 @@ app.get('/api/product', function(req, res) {
 
     request(options, (error, response, body) => {
         if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
-            var productObj = apiManager.parseProduct(body);
-            if (ampList) {
-                productObj = {items: productObj};
-            }
-            res.send(productObj);
+            res.send(apiManager.parseProduct(body, ampList));
         } else {
             res.json({ error: 'An error occurred in /api/product: ' + body });
         }

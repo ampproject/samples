@@ -48,7 +48,7 @@ class ApiManager {
         return parsedCategory;
     }
 
-    parseCategory(apiCategoryResponse) {
+    parseCategory(apiCategoryResponse, ampList) {
 
         let prodCategory = JSON.parse(apiCategoryResponse);
         let prodListing = prodCategory.matchingProducts;
@@ -72,7 +72,8 @@ class ApiManager {
             productCount++;
         }
         parsedCategory.productCount = productCount;
-        return parsedCategory;
+
+        return ampList ? {items: parsedCategory} : parsedCategory;
     }
 
     //Example url: https://campmoramp.ampify.wompmobile.com/campmor/fetchProduct/31893
