@@ -10,6 +10,9 @@ const serializer = require('serialize-to-js');
 const ampOptimizer = require('amp-toolbox-optimizer');
 const apiManager = new productApiManager();
 
+/* CONSTANTS */
+const ampCacheDuration = 86400 * 7;
+
 // a simple in-memory response cache
 const cache = new Map();
 
@@ -62,8 +65,8 @@ app.use(function(req, res, next) {
   if (req.method != 'GET' || !req.accepts('text/html')) {
     return next();
   }
-  // Set max-age to 1 min
-  res.set('Cache-Control', 'max-age=60');
+
+  res.set('Cache-Control', 'max-age=' + ampCacheDuration);
   let key = req.originalUrl;
   // Check if there's a cached response
   let cachedBody = cache.get(key);
