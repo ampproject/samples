@@ -10,6 +10,7 @@
   "author": "Ben Morss",
   "license": "Apache-2.0",
   "dependencies": {
+    "amp-toolbox-cors": "^0.2.5",
     "amp-toolbox-optimizer": "^1.2.0-alpha.0",
     "amphtml-autoscript": "1.5.0",
     "amphtml-validator": "^1.0.23",
