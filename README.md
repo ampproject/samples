@@ -18,6 +18,7 @@ limitations under the License.
 
 This is a collection of functional standalone samples demonstrating different features of [Accelerated Mobile Pages](https://www.ampproject.org).
 
+- **[amp-camp](./amp-camp):** Demo showing how to create an e-commerce site with AMP
 - **[amp-paywall-demo](./amp-paywall-demo):** Demo app containing sample usages of `amp-access`, `amp-analytics` and `amp-user-notification`
 - **[amp-pwa](./amp-pwa):** React-based, single-page progressive web app that displays AMP documents via Shadow DOM
 - **[amp-update-cache](./amp-update-cache):** Demo app for `update-cache` requests
