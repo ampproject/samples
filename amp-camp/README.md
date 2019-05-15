@@ -20,6 +20,6 @@ Supported features:
 
  - Shows real data from Campmor API (thanks to WompMobile!).
  - Advanced interactivity in product pages. 
- - Allows adding and removing items from the cart (supporting AMP Cache and origin   scenarios).
+ - Allows adding and removing items from the cart (supporting AMP Cache and origin scenarios).
  - Uses some cool tools, like [amp-toolbox-optimizer](https://www.npmjs.com/package/amp-toolbox-optimizer) and [amp-toolbox-cors](https://www.npmjs.com/package/amp-toolbox-cors).
  - And more!
