@@ -8,7 +8,7 @@ const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
 const ampCors = require('amp-toolbox-cors');
-const ampOptimizer = require('amp-toolbox-optimizer');
+const AmpOptimizer = require('amp-toolbox-optimizer');
 const apiManager = new productApiManager();
 
 /* CONSTANTS */
@@ -17,9 +17,7 @@ const ampCacheDuration = 86400 * 7;
 // a simple in-memory response cache
 const cache = new Map();
 
-ampOptimizer.setConfig({
-  validAmp: true,
-});
+const ampOptimizer = AmpOptimizer.create();
 
 /** LIST OF STATIC URLS FOR STATIC PAGES **/
 
