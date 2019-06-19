@@ -46,12 +46,7 @@ app.use(sessions({
 //Configure amp-toolbox-cors for CORS.
 //Appengine will set the environment to 'production', if so: add the site domain, otherwise, leave it out, so localhost can be used.
 let sourceOriginPattern = null;
-if (app.get('env') === 'production') {
-   sourceOriginPattern = /https:\/\/camp-samples-amp-dev\.cdn\.ampproject\.org$/
-}
-app.use(ampCors({
-   sourceOriginPattern,
-}));
+app.use(ampCors());
 
 app.engine('html', function(filePath, options, callback) {
     fs.readFile(filePath, function(err, content) {
