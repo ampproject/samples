@@ -44,12 +44,7 @@ app.use(sessions({
 //Configure amp-toolbox-cors for CORS.
 //Appengine will set the environment to 'production', if so: add the site domain, otherwise, leave it out, so localhost can be used.
 let sourceOriginPattern = null;
-if (app.get('env') === 'production') {
-   sourceOriginPattern = /https:\/\/camp\.samples\.amp\.dev$/
-}
-app.use(ampCors({
-   sourceOriginPattern,
-}));
+app.use(ampCors());
 
 app.engine('html', function(filePath, options, callback) {
     fs.readFile(filePath, function(err, content) {
@@ -90,18 +85,18 @@ app.use(function(req, res, next) {
   //
   // See https://github.com/ampproject/amp-toolbox/tree/master/packages/optimizer
   const originalSend = res.send;
-  res.send = function() {
-    ampOptimizer.transformHtml(arguments[0]).then(transformed => {
-      // console.log('[cache miss]', key);
-      // rewrite body to optimized AMP version
-      arguments[0] = transformed;
-      // Cache the response in memory. In our demo case we can safely assume 
-      // that all pages fit into memory. 
-      cache.set(key, transformed);
-      // Pass the optimized version to the original send method.
-      originalSend.apply(this, arguments);
-    });
-  }
+  // res.send = function() {
+  //   ampOptimizer.transformHtml(arguments[0]).then(transformed => {
+  //     // console.log('[cache miss]', key);
+  //     // rewrite body to optimized AMP version
+  //     arguments[0] = transformed;
+  //     // Cache the response in memory. In our demo case we can safely assume 
+  //     // that all pages fit into memory. 
+  //     cache.set(key, transformed);
+  //     // Pass the optimized version to the original send method.
+  //     originalSend.apply(this, arguments);
+  //   });
+  // }
   next()
 });
 
