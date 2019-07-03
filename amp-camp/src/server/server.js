@@ -42,7 +42,6 @@ app.use(sessions({
 }));
 
 //Configure amp-toolbox-cors for CORS.
-//Appengine will set the environment to 'production', if so: add the site domain, otherwise, leave it out, so localhost can be used.
 app.use(ampCors({
   verifyOrigin: false
 }));
@@ -218,12 +217,12 @@ app.post('/api/add-to-cart', function(req, res) {
     let imgUrl = req.fields.imgUrl;
     let origin = req.get('origin');
     let quantity = req.fields.quantity;
-
+    let cannonicalUrl = 'https://' + req.get('host');
     //If comes from the cache
     if (req.headers['amp-same-origin'] !== 'true') {
         //transfrom POST into GET and redirect to same url
         let queryString = 'productId=' + productId + '&categoryId=' + categoryId + '&name=' + name + '&price=' + price + '&color=' + color + '&size=' + size + '&quantity=' + quantity + '&origin=' + origin + '&imgUrl=' + imgUrl;
-        res.header("AMP-Redirect-To", origin + "/api/add-to-cart?" + queryString);
+        res.header("AMP-Redirect-To", cannonicalUrl + "/api/add-to-cart?" + queryString);
     } else {
         updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity);
         res.header("AMP-Redirect-To", origin + "/shopping-cart");
