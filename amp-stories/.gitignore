@@ -1,0 +1,8 @@
+node_modules
+/coverage
+/dist
+/build
+
+# Misc
+*.DS_Store
+.vscode/*

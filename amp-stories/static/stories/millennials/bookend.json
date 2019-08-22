@@ -1,0 +1,59 @@
+{
+  "bookendVersion": "v1.0",
+  "shareProviders": [
+    "email",
+    {
+      "provider": "facebook",
+      "app_id": "FACBOOK_APP_ID"
+    },
+    "twitter",
+    "linkedin",
+    "pinterest",
+    "tumblr",
+    "whatsapp",
+    "line",
+    "sms"
+  ],
+  "components": [
+    {
+      "type": "heading",
+      "text": "What's the story with AMP stories"
+    },
+    {
+      "type": "small",
+      "title": "Behind the story",
+      "url": "/stories/behind-the-story",
+      "image": "/static/stories/story1/thumbnail.png"
+    },
+    {
+      "type": "small",
+      "title": "AMP Animations",
+      "url": "/stories/animations",
+      "image": "/static/stories/story2/thumbnail.png"
+    },
+    {
+      "type": "small",
+      "title": "Use video elements",
+      "url": "/stories/media-components",
+      "image": "/static/stories/story3/thumbnail.png"
+    },
+    {
+      "type": "small",
+      "title": "AMP Layouts",
+      "url": "/stories/layout",
+      "image": "/static/stories/story4/thumbnail.png"
+    },
+    {
+      "type": "small",
+      "title": "Integrate links, CTAs, and Ads",
+      "url": "/stories/links-cta-ads",
+      "image": "/static/stories/story5/thumbnail.png"
+    },
+    {
+      "type": "small",
+      "title": "It's your turn now",
+      "url": "/stories/wrap-up",
+      "image": "/static/stories/story6/thumbnail.png"
+    }
+  ]
+}

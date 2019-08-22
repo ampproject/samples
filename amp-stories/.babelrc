@@ -1,0 +1,26 @@
+{
+  "ignore": ["./dist/**/*"],
+  "presets": [
+    ["@babel/preset-env", {
+      "shippedProposals": true,
+      "targets": {
+        "node": "current"
+      }
+    }],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    ["babel-plugin-styled-components", {
+      "minify": false,
+    }],
+    "@babel/plugin-proposal-class-properties",
+    [
+      "babel-plugin-module-resolver",
+      {
+        "alias": {
+          "": "./src"
+        }
+      }
+    ]
+  ]
+}
