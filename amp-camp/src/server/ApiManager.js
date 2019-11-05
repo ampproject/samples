@@ -1,39 +1,95 @@
 class ApiManager {
 
     constructor() {
+        this._validParams = {
+            gender: ['men', 'women'],
+            category: ['shirts', 'shorts'],
+            sortOrder: ['high-low', 'low-high']
+        };
 
-        this.apiUrlEndpoint = 'https://campmor.ampify.wompmobile.com/campmor';
-        this.apiCategoriesEndpoint = this.apiUrlEndpoint + '/fetchCategories';
-        this.apiProductEndpoint = this.apiUrlEndpoint + '/fetchProduct';
-        this.MAX_RELATED_PRODUCTS = 11;
+        this._filters2Param = {
+            'men-shirts': '200368502',
+            'men-shorts': '200368503',
+            'women-shirts': '200368507',
+            'women-shorts': '200368509'
+        };
 
+        this._sortOrder2Param = {
+            'high-low': 'priceHtoL',
+            'low-high': 'priceLtoH'         
+        };
 
-        var apiUrlValues = [
-            ['men-shirts', '200368502'],
-            ['men-shorts', '200368503'],
-            ['women-shirts', '200368507'],
-            ['women-shorts', '200368509'],
-            ['high-low', 'priceHtoL'],
-            ['low-high', 'priceLtoH']
-        ];
+        this._errors = {
+            nonexistentAPIParam: "The API doesn't support this parameter",
+            invalidArgument: "A value passed to this function or method just didn't make sense"
+        };
+
+        this._sortOrderParamKey = 'sortBy';
+        this._maxRelatedProducts = 11;
+        this._apiUrlEndpoint = 'https://campmor.ampify.wompmobile.com/campmor';
+
+        this.apiCategoriesEndpoint = this._apiUrlEndpoint + '/fetchCategories';
+        this.apiProductEndpoint = this._apiUrlEndpoint + '/fetchProduct';
+
         this.apiUrlMap = new Map(apiUrlValues);
-
     }
 
-    //Example url: https://campmor.ampify.wompmobile.com/campmor/fetchCategories?categoryId=200368507&sortBy=priceLtoH
-    getCategoryUrl(categoryId, sort) {
-        var apiUrlParams = 'categoryId=' + this.apiUrlMap.get(categoryId) + (sort != undefined ? '&sortBy=' + this.apiUrlMap.get(sort) : '');
-        return this.apiCategoriesEndpoint + '?' + apiUrlParams;
+
+/***********************************************************
+ ***                  API CALLER METHODS                 ***
+ ***********************************************************/
+
+
+
+/***********************************************************
+ ***                    HELPER METHODS                   ***
+ ***********************************************************/
+
+/*** getApiUrl()
+ * Given a filters object and a sort order, convert that into the URL expected by the API.
+ * Currently the filters object is expected to contain a gender (men/women) and a category (shirts/shorts).
+ * There are other genders and clothing types, but our API doesn't support those at this time.
+ * Sample: https://campmor.ampssify.wompmobile.com/campmor/fetchCategories?categoryId=200368507&sortBy=priceLtoH
+ */
+    getApiUrl(filters, sortOrder) {
+        let filtersParam = this._filters2Param[filters.gender + '-' + filters.category];
+        let sortOrderParam = this._sortOrder2Param[sortOrder];
+        if (!filtersParam || !sortOrderParam)
+            throw(this._errors.nonexistentAPIParam);
+
+        let queryString = filtersParam + '&' + this._sortOrderParamKey + '=' + sortOrderParam;
+
+        return this.apiCategoriesEndpoint + '?' + queryString;
     }
+
+// Determine whether a given value is among the values the API accepts for a given param
+    isValidParam(key, value) {
+        if (key in this._validParams)
+            return this._validParams[key].includes(value);
+        else
+            throw error(this.invalidArgument);
+    }
+
+/**
+ * The price given to us by the API may be a number or a string. It may have one decimal point or two.
+ * Normalize prices by converting each to a number.
+ * Then, for integers, convert that number to a string with no decimal places.
+ * Otherwise, convert it to a string with two decimal places.
+ */
+    normalizePrice(price) {
+        let numPrice = Number(price);
+        let decimalPlaces = Number.isInteger(numPrice) ? 0 : 2;
+        return numPrice.toFixed(decimalPlaces);
+    }
+
 
     //Returns all items from the category sent as parameter, with he exception of the one with productId == to the first param.
     getRelatedProducts(productId, apiCategoryResponse) {
         let parsedCategory = this.parseCategory(apiCategoryResponse);
         let relatedCategoryItems = parsedCategory.items;
 
-        //only return up to this.MAX_RELATED_PRODUCTS
-        if(relatedCategoryItems.length > this.MAX_RELATED_PRODUCTS) {
-            relatedCategoryItems.splice(this.MAX_RELATED_PRODUCTS, relatedCategoryItems.length - this.MAX_RELATED_PRODUCTS);
+        if(relatedCategoryItems.length > this._maxRelatedProducts) {
+            relatedCategoryItems.splice(this._maxRelatedProducts, relatedCategoryItems.length - this._maxRelatedProducts);
         }
 
         //remove the item currently being shown
@@ -49,7 +105,6 @@ class ApiManager {
     }
 
     parseCategory(apiCategoryResponse, ampList) {
-
         let prodCategory = JSON.parse(apiCategoryResponse);
         let prodListing = prodCategory.matchingProducts;
         let productCount = 0;
@@ -82,7 +137,6 @@ class ApiManager {
     }
 
     parseProduct(apiProductResponse) {
-
         var productObj = JSON.parse(apiProductResponse);
 
         this.enhanceProductRatings(productObj);
@@ -92,6 +146,11 @@ class ApiManager {
 
         return productObj;
     }
+
+
+/***********************************************************
+ ***           API RESULT ENHANCER METHODS               ***
+ ***********************************************************/
 
     /* Transforms product ratings into an array of stars to be rendered on the template with mustache.*/
     enhanceProductRatings(productObj) {
@@ -125,14 +184,14 @@ class ApiManager {
     }
 
     enhanceProductSizes(productObj) {
-        var all_Colors_Array = productObj.All_Colors;
+        let all_Colors_Array = productObj.All_Colors;
 
-        for(var i = 0; i < all_Colors_Array.length; i++){
+        for(let i = 0; i < all_Colors_Array.length; i++){
             let avaliable_Sizes_Array = all_Colors_Array[i].Avaliable_Sizes;
 
             let lastAvailable;
 
-            for(var j = 0; j < avaliable_Sizes_Array.length; j++) {
+            for(let j = 0; j < avaliable_Sizes_Array.length; j++) {
                 if(avaliable_Sizes_Array[j].available) {
 
                     //Default size (color level): The first available size for a given color.
@@ -193,69 +252,7 @@ class ApiManager {
         return cartProduct;
     }
 
-    createCart(clientId) {
 
-        let shoppingCart = {
-            clientId: clientId,
-            cartItems: [],
-            subtotal: 0,
-            shipping: 30,
-            total: 0,
-            isEmpty: true,
-            addItem : function(item) {
-
-                //check if item exists in cart before pushing
-                var foundItem = this.cartItems.filter(function(elem){
-                    return(elem.productId == item.productId && elem.color == item.color && elem.size == item.size);
-                });
-
-                if(foundItem.length > 0) {
-                    foundItem[0].quantity += item.quantity;
-                } else {
-                    this.cartItems.push(item);    
-                }
-                
-                this.subtotal = this.subtotal + (item.price * item.quantity);
-                this.total = this.subtotal + this.shipping;
-                this.isEmpty = false;
-            },
-            removeItem: function(productId, color, size) {
-
-                for (var i = 0; i < this.cartItems.length; i++) {
-                    if (this.cartItems[i].productId === productId && this.cartItems[i].color === color && this.cartItems[i].size === size) {
-
-                        let cartItem = this.cartItems[i];
-                        //update totals
-                        this.subtotal = this.subtotal - (cartItem.price * cartItem.quantity);
-                        this.total = this.subtotal + this.shipping;
-
-                        //remove item
-                        this.cartItems.splice(i, 1);
-
-                        if(this.cartItems.length == 0) {
-                            this.isEmpty = true;
-                        }
-                    }
-                }
-            }
-        };
-
-        return shoppingCart;
-    }
-
-/*** HELPERS ***/
-
-/**
- * The price given to us by the API may be a number or a string. It may have one decimal point or two.
- * Normalize prices by converting each to a number.
- * Then, for integers, convert that number to a string with no decimal places.
- * Otherwise, convert it to a string with two decimal places.
- */
-    normalizePrice(price) {
-        let numPrice = Number(price);
-        let decimalPlaces = Number.isInteger(numPrice) ? 0 : 2;
-        return numPrice.toFixed(decimalPlaces);
-    }
 }
 
 module.exports = ApiManager;

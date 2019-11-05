@@ -1,24 +1,41 @@
+//TODO: allow verbose mode for increased logging
+
 const express = require('express');
 const request = require('request');
 const path = require('path');
 const fs = require('fs');
-const productApiManager = require('./ApiManager.js');
 const mustache = require("mustache");
 const formidableMiddleware = require('express-formidable');
 const sessions = require("client-sessions");
 const serializer = require('serialize-to-js');
 const ampOptimizer = require('amp-toolbox-optimizer');
+const productApiManager = require('./ApiManager.js');
+const cartManager = require('./Cart.js');
+
 const apiManager = new productApiManager();
 
 /* CONSTANTS */
-const ampCacheDuration = 86400 * 7;
+
+const ampCacheDuration = 86400 * 7;      // 7 days
+
+// Constants for the user session. All times in ms.
+const sessionInfo = {
+    duration: 86400 * 7 * 1000,          // 1 week
+    activeDuration: 3600 * 1000,         // 1 hour to extend if expiresIn < activeDuration
+    cookieName: 'session',
+    secret: 'woo-hoo-for-amp-ecomm!'
+};
+
+const defaultPort = 8080;                // use this port locally unless something else is set in the environment
+
+// Use these filters on product listing page if nothing else is specified in the URL
+const defaultProductFilters = {
+    gender: 'women',
+    category: 'shirts'
+}
 
 // a simple in-memory response cache
 const cache = new Map();
-
-ampOptimizer.setConfig({
-  validAmp: true,
-});
 
 /** LIST OF STATIC URLS FOR STATIC PAGES **/
 
@@ -30,35 +47,50 @@ const staticPageUrls = [
 ];
 
 
-/** EXPRESS AND MUSTACHE CONFIGURATION **/
+// use performance optimizations provided by the AMP cache, but on our origin.
+// see https://www.npmjs.com/package/amp-toolbox-optimizer for details
+ampOptimizer.setConfig({
+  validAmp: true,
+});
+
+
+/** THE EXPRESS.JS SERVER **/
 
 const app = express();
 
+app.set('view engine', 'html');
+app.set('views', __dirname + '/../');
+
 app.use(formidableMiddleware());
+
 app.use(sessions({
-    cookieName: 'session',
-    secret: 'eommercedemoofamazigness',
-    duration: 24 * 60 * 60 * 1000,
-    activeDuration: 1000 * 60 * 5
+    duration: sessionInfo.duration,
+    activeDuration: sessionInfo.activeDuration,
+    cookieName: sessionInfo.cookieName,
+    secret: sessionInfo.secret
 }));
 
 app.engine('html', function(filePath, options, callback) {
     fs.readFile(filePath, function(err, content) {
+        mustache.tags = ['<%', '%>'];
+
         if (err)
-            return callback(err)
-        var rendered = mustache.to_html(content.toString(), options);
-        return callback(null, rendered)
+            return callback(err);        
+
+        let rendered = mustache.to_html(content.toString(), options);
+        return callback(null, rendered);
     });
 });
-app.set('view engine', 'html');
-app.set('views', __dirname + '/../');
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || defaultPort;
 const listener = app.listen(port, () => {
     console.log('App listening on port ' + listener.address().port);
 });
 
-/** HANDLERS FOR STATIC PAGES AND STATIC FILES **/
+
+/***********************************************************
+ ***     HANDLERS FOR STATIC PAGES AND STATIC FILES      ***
+ ***********************************************************/
 
 // Optimize and cache HTML responses
 app.use(function(req, res, next) {
@@ -67,20 +99,25 @@ app.use(function(req, res, next) {
   }
 
   res.set('Cache-Control', 'max-age=' + ampCacheDuration);
+
   let key = req.originalUrl;
+
   // Check if there's a cached response
   let cachedBody = cache.get(key);
   if (cachedBody) {
     // console.log('[cache hit]', key);
-    res.send(cachedBody)
-    return
+    res.send(cachedBody);
+    return;
   } 
+
   // Replace response.send with our own method to be able to intercept html responses
   // before sending it to the client. This way we can use AMP Optimizer and cache the 
-  // repsonse. 
+  // response. 
   //
   // See https://github.com/ampproject/amp-toolbox/tree/master/packages/optimizer
+
   const originalSend = res.send;
+
   res.send = function() {
     ampOptimizer.transformHtml(arguments[0]).then(transformed => {
       // console.log('[cache miss]', key);
@@ -93,12 +130,14 @@ app.use(function(req, res, next) {
       originalSend.apply(this, arguments);
     });
   }
-  next()
+
+  next();
 });
 
-//Intercepts all requests:
-//If the request is for a static page, calls 'renderPage', passing the page's template, so the 'canonical' tag can be inserted, before rendering the page.
-//Otherwise, calls next(), so another handler can process the request.
+// Intercepts all requests:
+// If the request is for a static page, calls 'renderPage', passing the page's template,
+// so the 'canonical' tag can be inserted, before rendering the page.
+// Otherwise, calls next(), so another handler can process the request.
 app.use(function(req, res, next) {
 
     let originalUrl = req.originalUrl;
@@ -108,59 +147,42 @@ app.use(function(req, res, next) {
       renderPage(req, res, templateName);
       return;
     }
+
     next();
 });
 
-//Serves static files
 app.use(express.static(path.join(__dirname, '/../')));
 
 
-/** HANDLERS FOR DYNAMIC PAGES **/
 
+/***********************************************************
+ ***             HANDLERS FOR DYNAMIC PAGES              ***
+ ***********************************************************/
+
+//TODO: what if there's an error?
 app.get('/product-listing', function(req, res) {
-    // defaults to women shirts
-    let resProductsGender = 'women';
-    let resProductsCategory = 'shirts';
-    let resShirtSelected = true;
-    let resShortSelected = false;
+    let gender = apiManager.isValidParam('gender', req.query.gender) ?
+                 req.query.gender : defaultProductFilters.gender;
 
-    let productsGender = req.query.gender || resProductsGender;
-    let productsCategory = req.query.category || resProductsCategory;
-    let listingUrl = apiManager.getCategoryUrl(productsGender + '-' + productsCategory);
+    let category = apiManager.isValidParam('category', req.query.category) ?
+                   req.query.category : defaultProductFilters.category;
 
-    if (!listingUrl.match('categoryId=undefined')) {
-        resProductsCategory = productsCategory;
-        resProductsGender = productsGender;
-        if (!resProductsGender.match('women')) {
-            resProductsGender = 'men';
-        }
-        if (!resProductsCategory.match('shirt')) {
-            resShirtSelected = false;
-            resShortSelected = true;
-        }
-    }
-    
     let responseObj = {
-        productsCategory: resProductsCategory,
-        productsGender: resProductsGender
+        productsCategory: gender,
+        productsGender: category
     };
 
-    if (resShirtSelected) {
-        responseObj.shirtSelected = true;
-    } else if (resShortSelected) {
-        responseObj.shortSelected = true;
-    }
+    responseObj.shirtSelected = category == 'shirt';
+    responseObj.shortSelected = !responseObj.shirtSelected;
 
-    if (resProductsGender == 'women') {
-        responseObj.womenSelected = true;
-    }
+    responseObj.womenSelected = gender == 'women';
+    responseObj.menSelected = !responseObj.womenSelected; // do we need this?
 
-    //res.render('product-listing', responseObj);
     renderPage(req, res, 'product-listing', responseObj);
 });
 
-app.get('/product-details', function(req, res) {
 
+app.get('/product-details', function(req, res) {
     let categoryId = req.query.categoryId;
     let productId = req.query.productId;
     let productUrl = apiManager.getProductUrl(productId);
@@ -174,53 +196,53 @@ app.get('/product-details', function(req, res) {
             var productObj = apiManager.parseProduct(body);
             productObj.CategoryId = categoryId;
             renderPage(req, res, 'product-details', productObj);
+
         } else {
+
             renderPage(req, res, 'product-not-found');
         }
     });
 });
 
+
+/* The shopping cart page contains two dynamic components:
+ * 1. The contents of the cart itself. We retrieve the JSON.
+ *    Note that the cart JSON includes the isEmpty flag, the products in the cart, and more.
+ * 2. Related products. For now, these are inspired by the first item in the cart.
+ *    Also, for now, we don't have those in this template. TODO: include them!
+ */
+
 app.get('/shopping-cart', function(req, res) {
-
-    //get related products for the cart page: items belonging to the category of the first item in the cart, excluding the item.
-    let shoppingCart = req.session.shoppingCart;
-    let relatedProductsObj = new Object();
-
-    if (shoppingCart) {
-        shoppingCart = serializer.deserialize(shoppingCart);
-        let cartItems = shoppingCart.cartItems;
-        if(cartItems.length > 0) {
-            let firstCartItem = cartItems[0];
-            relatedProductsObj.Main_Id = firstCartItem.productId;
-            relatedProductsObj.CategoryId = firstCartItem.categoryId;
-        }
-    }
-
-    renderPage(req, res, 'cart-details', relatedProductsObj);
+    const cart = new Cart(req);
+    renderPage(req, res, 'cart-details', cart.cart);
 });
 
 
-/** API **/
 
+/***********************************************************
+ ***             HANDLERS FOR API ENDPOPINTS             ***
+ ***********************************************************/
+
+// Note this is the POST case
+//TODO: will there be garbage in the POST? Or can we just stick all those fields in the query string?
 app.post('/api/add-to-cart', function(req, res) {
 
-    let productId = req.fields.productId;
-    let categoryId = req.fields.categoryId;
-    let name = req.fields.name;
-    let price = req.fields.price;
-    let color = req.fields.color;
-    let size = req.fields.size;
-    let imgUrl = req.fields.imgUrl;
-    let origin = req.get('origin');
-    let quantity = req.fields.quantity;
+    const origin = req.get('origin');
+    let params = [];
 
     //If comes from the cache
+    //transfrom POST into GET and redirect to same url
     if (req.headers['amp-same-origin'] !== 'true') {
-        //transfrom POST into GET and redirect to same url
-        let queryString = 'productId=' + productId + '&categoryId=' + categoryId + '&name=' + name + '&price=' + price + '&color=' + color + '&size=' + size + '&quantity=' + quantity + '&origin=' + origin + '&imgUrl=' + imgUrl;
+        for (let[key, value] of Object.entries(req.fields))
+            params.push(key + '=' + value);
+
+        let queryString = params.join('&');
         res.header("AMP-Redirect-To", origin + "/api/add-to-cart?" + queryString);
+
     } else {
-        updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity);
+        const cart = new Cart(req);
+        cart.addItem(req.fields);
+        //TODO: we don't always need to do this, do we...
         res.header("AMP-Redirect-To", origin + "/shopping-cart");
     }
 
@@ -229,31 +251,25 @@ app.post('/api/add-to-cart', function(req, res) {
     res.json({});
 });
 
-app.get('/api/add-to-cart', function(req, res) {
-    let productId = req.query.productId;
-    let categoryId = req.query.categoryId;
-    let name = req.query.name;
-    let price = req.query.price;
-    let color = req.query.color;
-    let size = req.query.size;
-    let imgUrl = req.query.imgUrl;
-    let quantity = req.query.quantity;
 
-    updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity);
+app.get('/api/add-to-cart', function(req, res) {
+    const cart = new Cart(req);
+    cart.addItem(req.query);
+
     res.redirect('/shopping-cart');
 });
 
-app.get('/api/categories', function(req, res) {
 
+app.get('/api/categories', function(req, res) {
     let categoryId = req.query.categoryId;
     let ampList = req.query.ampList;
     let sort = req.query.sort;
 
-    let categoryUrl = apiManager.getCategoryUrl(categoryId, sort);
-    console.log("Calling Category Url: " + categoryUrl);
+    let apiUrl = apiManager.getApiUrl(categoryId, sort);
+    console.log("Calling API Url: " + apiUrl);
 
     const options = {
-        url: categoryUrl
+        url: apiUrl
     };
 
     request(options, (error, response, body) => {
@@ -265,8 +281,8 @@ app.get('/api/categories', function(req, res) {
     });
 });
 
-app.get('/api/product', function(req, res) {
 
+app.get('/api/product', function(req, res) {
     let productId = req.query.productId;
     let ampList = req.query.ampList;
     let productUrl = apiManager.getProductUrl(productId);
@@ -303,32 +319,26 @@ app.get('/api/cart-count', function(req, res) {
     res.send(response);
 });
 
+
+//TODO: it's a little strange the way we build the item here...
 app.post('/api/delete-cart-item', function(req, res) {
+    let cart = new Cart(req);
 
-    let productId = req.fields.productId;
-    let color = req.fields.color;
-    let size = req.fields.size;
+    const item = {productId: req.fields.productId, color: req.fields.color, size: req.fields.size};
+    cart.removeItem(item);
 
-    let shoppingCartResponse = { items: [] };
-
-    let shoppingCart = req.session.shoppingCart;
-
-    if (shoppingCart) {
-        shoppingCart = serializer.deserialize(shoppingCart);
-        shoppingCart.removeItem(productId, color, size);
-        req.session.shoppingCart = serializer.serialize(shoppingCart);
-        shoppingCartResponse.items.push(shoppingCart);
-    }
+    let json = {items: [cart.cart.items]};
 
     enableCors(req, res);
-    res.send(shoppingCartResponse);
+    res.send(json);
 });
+
 
 app.get('/api/related-products', function(req, res) {
     let categoryId = req.query.categoryId;
     let productId = req.query.productId;
 
-    let categoryUrl = apiManager.getCategoryUrl(categoryId);
+    let categoryUrl = apiManager.getApiUrl(categoryId);
 
     //the response will be a 1 element items array, to be able to combine amp-list with amp-mustache
     //see: https://github.com/ampproject/amphtml/issues/4405#issuecomment-379696849
@@ -350,41 +360,10 @@ app.get('/api/related-products', function(req, res) {
     });
 });
 
+
 /** HELPERS **/
 
-// If the session contains a cart, then deserialize it and return that!
-// Otherwise, create a new cart, add that to the session and return the cart object.
-function getCartFromSession(req) {
-    let sessionCart = req.session.shoppingCart;
-
-    if (sessionCart) {
-        return serializer.deserialize(sessionCart);
-    } else {
-        let newCart = apiManager.createCart();
-        req.session.shoppingCart = serializer.serialize(newCart);
-        return newCart;
-    }
-}
-
-//Create a cart new item. If the cart exists in the session, add it there.
-//Otherwise, create a new cart and add the recently created item to the session.
-function updateShoppingCartOnSession(req, productId, categoryId, name, price, color, size, imgUrl, quantity) {
-    let cartProduct = apiManager.createCartItem(productId, categoryId, name, price, color, size, imgUrl, quantity);
-    let shoppingCartJson = req.session.shoppingCart;
-    let shoppingCartObj;
-
-    if (shoppingCartJson) {
-        shoppingCartObj = serializer.deserialize(shoppingCartJson);
-    } else {
-        shoppingCartObj = apiManager.createCart();
-    }
-
-    shoppingCartObj.addItem(cartProduct);
-    req.session.shoppingCart = serializer.serialize(shoppingCartObj);
-}
-
 function enableCors(req, res) {
-
     //set to all for dev purposes only, change it by configuration to final domain
     let sourceOrigin = req.query.__amp_source_origin;
     let origin = req.get('origin') || sourceOrigin;
@@ -396,14 +375,16 @@ function enableCors(req, res) {
     res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
 }
 
-//Receives a template for a page to render. If it's a dynamic page, will receive a JSON object, otherwise, will create and empty one.
-//Declares the tags that will be used by mustache, and defines the 'CanonicalLink' variable, so it can be injected int the canonical tag.
-function renderPage(req, res, template, responseJsonObj={}) {
+/**
+ * renderPage() receives an HTML template. We use it for server-side rendering.
+ * To render a dynamic page, send this a JSON object. If that isn't passed, we'll create an empty one.
+ * Mustache wants the full URL of the page, so we create that for it!
+ */
+function renderPage(req, res, template, mustacheJson={}) {
     let fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    responseJsonObj.CanonicalLink = fullUrl;
+    mustacheJson.CanonicalLink = fullUrl;
 
-    mustache.tags = ['<%', '%>'];
-    res.render(template, responseJsonObj);
+    res.render(template, mustacheJson);
 }
 
 //The root (home) uses index.html as template. In any other case, the url contains the name of the template.
