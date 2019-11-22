@@ -6,6 +6,7 @@ const mustache = require('mustache');
 const formidableMiddleware = require('express-formidable');
 const sessions = require('client-sessions');
 const ampOptimizer = require('@ampproject/toolbox-optimizer');
+const ampCors = require('amp-toolbox-cors');
 const ApiManager = require('./ApiManager.js');
 const Cart = require('./Cart.js');
 
@@ -53,16 +54,17 @@ app.set('views', __dirname + '/../');
 
 app.use(formidableMiddleware());
 
+// verifyOrigin:false is only there so this will work on localhost.
+// It should be removed in production.
+app.use(ampCors({
+    verifyOrigin: false
+}));
+
 app.use(sessions({
     duration: sessionInfo.duration,
     activeDuration: sessionInfo.activeDuration,
     cookieName: sessionInfo.cookieName,
     secret: sessionInfo.secret
-}));
-
-//Configure amp-toolbox-cors for CORS.
-app.use(ampCors({
-  verifyOrigin: false
 }));
 
 app.engine('html', function(filePath, options, callback) {
@@ -135,8 +137,9 @@ app.use(function(req, res, next) {
 // so the 'canonical' tag can be inserted, before rendering the page.
 // Otherwise, calls next(), so another handler can process the request.
 app.use(function(req, res, next) {
-
+    console.log('in interceptor');
     let originalUrl = req.originalUrl;
+    console.log('originalURL is', originalUrl);
 
     if(req.method === 'GET' && staticPageUrls.includes(originalUrl)) {
       let templateName = getTemplateForUrl(originalUrl);
@@ -256,8 +259,6 @@ app.post('/api/add-to-cart', function(req, res) {
         res.header("AMP-Redirect-To", origin + "/shopping-cart");
     }
 
-    enableCors(req, res);
-
     //amp-form requires json response
     res.json({});
 });
@@ -338,7 +339,6 @@ app.post('/api/delete-cart-item', function(req, res) {
 
     let json = cart.cart;
 
-    enableCors(req, res);
     res.send(json);
 });
 
@@ -373,19 +373,6 @@ app.get('/api/related-products', function(req, res) {
 
 
 /** HELPERS **/
-
-//TODO: can we dump this and use the standard AMP CORS module instead?
-function enableCors(req, res) {
-    //set to all for dev purposes only, change it by configuration to final domain
-    let sourceOrigin = req.query.__amp_source_origin;
-    let origin = req.get('origin') || sourceOrigin;
-
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Expose-Headers", "AMP-Access-Control-Allow-Source-Origin,AMP-Redirect-To");
-    res.header("AMP-Access-Control-Allow-Source-Origin", sourceOrigin);
-}
 
 /**
  * renderPage() receives an HTML template. We use it for server-side rendering.

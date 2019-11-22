@@ -146,7 +146,7 @@ gulp.task('clean', function clean() {
 /**
  * Builds the output from sources.
  */
-gulp.task('build', gulp.series('images', 'favicon', 'rootConfig', 'html', 'server'));
+gulp.task('build', gulp.series('images', 'favicon', 'rootConfig', 'html', 'server', 'validate'));
 
 /**
  * First rebuilds the output then triggers a reload of the browser.
