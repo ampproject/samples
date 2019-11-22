@@ -15,7 +15,7 @@
     %%include('../partials/menu.html')
     <main id="content" role="main" class="main cart">
         <div class="cart-wrapper">
-            <amp-list credentials="include" layout="fill" src="/api/cart-items" [src]="cartItemsList.items">
+            <amp-list credentials="include" layout="fill" src="/api/cart-items" [src]="cartItemsList">
                 <template type="amp-mustache">
                     <section class="cart-products-area">
                     %%include('../partials/cart-items.html', {
@@ -27,11 +27,11 @@
                         <h5>Order Summary</h5>
                         <dl>
                             <dt>Subtotal</dt>
-                            <dd>${{subtotal}}</dd>
+                            <dd>${{subtotalString}}</dd>
                             <dt>Shipping</dt>
-                            <dd>${{shipping}}</dd>
+                            <dd>${{shippingString}}</dd>
                             <dt class="total">Total</dt>
-                            <dd class="total">${{total}}</dd>
+                            <dd class="total">${{totalString}}</dd>
                         </dl>
                         <div class="cart-actions">
                             <div>

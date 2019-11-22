@@ -1,25 +1,47 @@
+const serializer = require('serialize-to-js');
+
 class Cart {
 
 /** Constructor:
  * Retrieve the serialized cart from the express.js session, if it exists.
- * If it doesn't, create a new cart and add it to the session.
- * Deserialize the cart so we can use it!
+ * If it doesn't, create a new cart, serialize it, and add it to the session.
+ * In any case, deserialize the cart so we can access it!
  */
     constructor(req) {
-        this._itemProps = ['productId', 'categoryId', 'name', 'price', 'color', 'size', 'imgUrl', 'quantity'];
+        // a new cart item must contain all of these properties
+        this._itemPropertyNames = ['productId', 'categoryId', 'name', 'price', 'color', 'size', 'imgUrl', 'quantity'];
 
-        this.serializedCart = req.session.cart || this.create();
+        this._shippingPercentage = 8; // 8% flat rate shipping
+
+        // the cart in serialized form
+        this.serializedCart = req.session.cart || serializer.serialize(this.createNew());
+
+        // the cart as an object
         this.cart = serializer.deserialize(this.serializedCart);
+
+        // cache the request
+        this.req = req;
     }
 
-    create() {
+// createNew() returns a default cart.
+// Note that we store dollar values as strings so that the site can display them without preprocessing.
+    createNew() {
         return {
             items: [],
             subtotal: 0,
-            shipping: 30,
+            shipping: 0,
             total: 0,
-            isEmpty: false;
+            subtotalString: '0.00',
+            shippingString: '0.00',
+            totalString: '0.00',
+            isEmpty: false
         };
+    }
+
+// Serialize our cart and copy our cart to the session.
+    copyCartToSession() {
+        this._serializedCart = serializer.serialize(this.cart);
+        this.req.session.cart = this._serializedCart;
     }
 
 /** addItem() expects an object that contains the product's proprties.
@@ -38,7 +60,7 @@ class Cart {
         if (foundItem) {
             foundItem.quantity += goodItem.quantity;
         } else {
-            this.cart.push(goodItem);
+            this.cart.items.push(goodItem);
         }
         
         this.updateProperties();
@@ -47,10 +69,12 @@ class Cart {
     removeItem(item) {
         const itemIndex = this.findItemIndex(item);
 
-        if (!itemIndex)
+        if (itemIndex === false) {
+            console.error("Cart.removeItem() couldn't find this item:", item);
             return false;
+        }
 
-        const item = this.cart.items[itemIndex];
+//        const item = this.cart.items[itemIndex]; // this line is WRONG
         this.cart.items.splice(itemIndex, 1);
 
         this.updateProperties();
@@ -64,34 +88,23 @@ class Cart {
         return foundItem[0] || false;
     }
 
-    // make sure the item has the properties we expect, and sanitize them all.
-/* We expect any cart item to have the followig properties:
+// TODO: make sure the item has the properties we expect, and sanitize them all.
+/* We expect any cart item to have the following properties:
  * productId, categoryId, name, price, color, size, imgUrl, quantity
  */
     checkItem(item) {
+        item.priceString = item.price;   
+        item.price = Number(item.price);
+        item.quantity = Number(item.quantity);
+
         return item;
-/*        
-        let cleanItem = {};
-
-        const price = Number(item.price);
-        if (price > 0)
-            cleanItem.price = price;
-        else
-            return false;
-
-        const categoryId = Number(item.categoryId);
-        if (categoryId > 0)
-            cleanItem.categoryId = categoryId;
-        else
-            return false;
-*/            
     }
 
-// find the index of a given cart item
+// find the index of a given cart item. If we don't find it, return false.
     findItemIndex(item) {
         const cartItems = this.cart.items;
 
-        for (let i = 0; i < items.length)
+        for (let i = 0; i < cartItems.length; i++)
             if (cartItems[i].productId == item.productId && cartItems[i].color == item.color && cartItems[i].size == item.size)
                 return i;
 
@@ -100,14 +113,29 @@ class Cart {
 
 // Compute the properties of the cart: total, subtotal, and is it empty?
     updateProperties() {
-        const items = this.cart.items;
+        let subtotal = this.cart.items.reduce(
+            (acc, cur) => acc + (cur.price * cur.quantity),
+            0
+        );
 
-        for (let i = 0; i < items.length) {
-            this.cart.subTotal += items[i].price * items[i].quantity;
-        }
+        this.cart.subtotal = this.round(subtotal, 2);
 
-        this.cart.total = this.cart.subTotal + this.cart.shipping;
-        this.cart.isEmpty = !!items.length;
+        this.cart.shipping = this.round(this.cart.subtotal * (this._shippingPercentage / 100), 2);
+        this.cart.total = this.round(this.cart.subtotal + this.cart.shipping, 2);
+        this.cart.isEmpty = this.cart.items.length === 0;
+
+        this.cart.subtotalString = this.cart.subtotal.toFixed(2);
+        this.cart.shippingString = this.cart.shipping.toFixed(2);
+        this.cart.totalString = this.cart.total.toFixed(2);
+
+        this.copyCartToSession();
+    }
+
+// Sometimes JavaScript does funny things with floating point arithmetic, so we like to always round
+    round(num, places) {
+        return Math.round(num * (10 ** places)) / (10 ** places);
     }
 
 }
+
+module.exports = Cart;

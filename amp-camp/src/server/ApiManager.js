@@ -7,7 +7,7 @@ class ApiManager {
             sortOrder: ['high-low', 'low-high']
         };
 
-        this._filters2Param = {
+        this._category2Param = {
             'men-shirts': '200368502',
             'men-shorts': '200368503',
             'women-shirts': '200368507',
@@ -19,47 +19,95 @@ class ApiManager {
             'low-high': 'priceLtoH'         
         };
 
+        this._defaultSortOrder = 'high-low';
+
         this._errors = {
-            nonexistentAPIParam: "The API doesn't support this parameter",
-            invalidArgument: "A value passed to this function or method just didn't make sense"
+            nonexistentAPIParam: "Error: The API doesn't support this parameter key or value",
+            invalidArgument: "Error: A value passed to this function or method just didn't make sense"
         };
 
-        this._sortOrderParamKey = 'sortBy';
+        this._paramKeys = {
+            category: 'categoryId',
+            sortOrder: 'sortBy',
+            page: 'page'
+        }
+
         this._maxRelatedProducts = 11;
         this._apiUrlEndpoint = 'https://campmor.ampify.wompmobile.com/campmor';
 
-        this.apiCategoriesEndpoint = this._apiUrlEndpoint + '/fetchCategories';
+        this.apiCategoryEndpoint = this._apiUrlEndpoint + '/fetchCategories';
         this.apiProductEndpoint = this._apiUrlEndpoint + '/fetchProduct';
-
-        this.apiUrlMap = new Map(apiUrlValues);
     }
 
 
 /***********************************************************
- ***                  API CALLER METHODS                 ***
+ ***               API DATA PARSING METHODS              ***
  ***********************************************************/
 
+/*
+ * These methods are used to parse data from the Campmor API provided by WompMobile. 
+ * The API actually gets called in server.js, since that's where express.js lives. 
+ */
+
+/*** getRelatedProducts()
+ * Getting related products is simple for now.
+ * Pass this method data from the category API.
+ * Then, we make sure the list isn't too long.
+ * And we make sure the currently displayed product isn't included.
+ */
+    getRelatedProducts(productId, apiCategoryResponse) {
+        let fixedCategory = this.fixCategoryData(apiCategoryResponse);
+        let relatedCategoryItems = fixedCategory.items;
+
+        if(relatedCategoryItems.length > this._maxRelatedProducts) {
+            relatedCategoryItems.splice(this._maxRelatedProducts, relatedCategoryItems.length - this._maxRelatedProducts);
+        }
+
+        //remove the item currently being shown
+        for(var i = 0; i < relatedCategoryItems.length; i++){
+            if(relatedCategoryItems[i].productId === productId) {
+                relatedCategoryItems.splice(i, 1);
+                break;
+            }
+        }
+
+        fixedCategory.items = relatedCategoryItems;
+        return fixedCategory;
+    }
+
+
+    // Check for a couple of basic error messages in an API response
+    isResponseError(response) {
+        return response.includes('Product not found') || response.includes('An error has occurred');
+    }
 
 
 /***********************************************************
  ***                    HELPER METHODS                   ***
  ***********************************************************/
 
-/*** getApiUrl()
- * Given a filters object and a sort order, convert that into the URL expected by the API.
+/*** getCategoryUrl()
+ * Given a category parameter and a sort order parameter from the query string,
+ * convert those into the URL expected by the API.
  * Currently the filters object is expected to contain a gender (men/women) and a category (shirts/shorts).
  * There are other genders and clothing types, but our API doesn't support those at this time.
- * Sample: https://campmor.ampssify.wompmobile.com/campmor/fetchCategories?categoryId=200368507&sortBy=priceLtoH
+ * Sample: https://campmor.ampify.wompmobile.com/campmor/fetchCategories?categoryId=200368507&sortBy=priceLtoH
  */
-    getApiUrl(filters, sortOrder) {
-        let filtersParam = this._filters2Param[filters.gender + '-' + filters.category];
-        let sortOrderParam = this._sortOrder2Param[sortOrder];
-        if (!filtersParam || !sortOrderParam)
+    getCategoryUrl(category, sortOrder) {
+        let params = [];
+        let categoryAPIParam = this._category2Param[category];
+        let sortOrderAPIParam = this._sortOrder2Param[sortOrder] || this._defaultSortOrder;
+        
+        if (!categoryAPIParam || !sortOrderAPIParam)
             throw(this._errors.nonexistentAPIParam);
 
-        let queryString = filtersParam + '&' + this._sortOrderParamKey + '=' + sortOrderParam;
+        let queryString = `${this._paramKeys.category}=${categoryAPIParam}&${this._paramKeys.sortOrder}=${sortOrderAPIParam}&${this._paramKeys.page}=1`;
+        return this.apiCategoryEndpoint + '?' + queryString;
+    }
 
-        return this.apiCategoriesEndpoint + '?' + queryString;
+// Generate an API Url of the sort https://campmoramp.ampify.wompmobile.com/campmor/fetchProduct/31893
+    getProductUrl(productId) {
+        return this.apiProductEndpoint + '/' + productId;
     }
 
 // Determine whether a given value is among the values the API accepts for a given param
@@ -82,40 +130,23 @@ class ApiManager {
         return numPrice.toFixed(decimalPlaces);
     }
 
-
-    //Returns all items from the category sent as parameter, with he exception of the one with productId == to the first param.
-    getRelatedProducts(productId, apiCategoryResponse) {
-        let parsedCategory = this.parseCategory(apiCategoryResponse);
-        let relatedCategoryItems = parsedCategory.items;
-
-        if(relatedCategoryItems.length > this._maxRelatedProducts) {
-            relatedCategoryItems.splice(this._maxRelatedProducts, relatedCategoryItems.length - this._maxRelatedProducts);
-        }
-
-        //remove the item currently being shown
-        for(var i = 0; i < relatedCategoryItems.length; i++){
-            if(relatedCategoryItems[i].productId === productId) {
-                relatedCategoryItems.splice(i, 1);
-                break;
-            }
-        }
-
-        parsedCategory.items = relatedCategoryItems;
-        return parsedCategory;
-    }
-
-    parseCategory(apiCategoryResponse, ampList) {
+/**
+ * 
+ * Take a response from the Category API and fix up the data so that it matches our use case.
+ * "ampList" is a Boolean indicating whether or not the data returned is to be used by an <amp-list>.
+ */
+    fixCategoryData(apiCategoryResponse, ampList) {
         let prodCategory = JSON.parse(apiCategoryResponse);
         let prodListing = prodCategory.matchingProducts;
         let productCount = 0;
 
-        var parsedCategory = {
+        var fixedCategory = {
             items: []
         };
 
         for (var prod of prodListing) {
             let originalProd = prod.Value;
-            let parsedProd = new Object();
+            let parsedProd = {};
             parsedProd.productId = originalProd.Main_Id;
             parsedProd.name = originalProd.Product_Title.replace(/ - Women's| - Men's/g,'');
             parsedProd.description = originalProd.Product_Title;                  // Missing field in Campmor API
@@ -123,20 +154,18 @@ class ApiManager {
             parsedProd.image = originalProd.Photo;
             parsedProd.category = originalProd.Main_Id;                           // Missing field in Campmor API */
 
-            parsedCategory.items.push(parsedProd);
+            fixedCategory.items.push(parsedProd);
             productCount++;
         }
-        parsedCategory.productCount = productCount;
+        fixedCategory.productCount = productCount;
 
-        return ampList ? {items: parsedCategory} : parsedCategory;
+        return ampList ? {items: fixedCategory} : fixedCategory;
     }
 
-    //Example url: https://campmoramp.ampify.wompmobile.com/campmor/fetchProduct/31893
-    getProductUrl(productId) {
-        return this.apiProductEndpoint + '/' + productId;
-    }
-
-    parseProduct(apiProductResponse) {
+/* Take a response from the Prooduct API, and call various helper methods
+ * to make it work for our use case.
+ */
+    fixProductData(apiProductResponse) {
         var productObj = JSON.parse(apiProductResponse);
 
         this.enhanceProductRatings(productObj);
@@ -152,18 +181,20 @@ class ApiManager {
  ***           API RESULT ENHANCER METHODS               ***
  ***********************************************************/
 
+ /* When the API returns results that aren't too our liking, we can make them... better! */
+//TODO: make this more consistent
+
     /* Transforms product ratings into an array of stars to be rendered on the template with mustache.*/
     enhanceProductRatings(productObj) {
         var roundedRating = parseInt(productObj.RoundedRating);        
-        var reviewFullStars = new Array();
-        var reviewEmptyStars = new Array();
+        var reviewFullStars = [];
+        var reviewEmptyStars = [];
 
         // If there are no reviews, make some up!
         if (!productObj.ReviewCount) {
             productObj.ReviewCount =  Math.floor(Math.random() * Math.floor(20));
             roundedRating = Math.floor(Math.random() * Math.floor(4)) + 1;
         }
-
 
         for (var i = 0; i < 5; i++) {
             if (i < roundedRating) {
@@ -172,6 +203,7 @@ class ApiManager {
                 reviewEmptyStars.push(1);
             }
         }
+
         productObj.ReviewFullStars = reviewFullStars;
         productObj.ReviewEmptyStars = reviewEmptyStars;
         productObj.ReviewCount = productObj.ReviewCount || 0;

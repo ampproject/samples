@@ -1,18 +1,15 @@
-//TODO: allow verbose mode for increased logging
-
 const express = require('express');
 const request = require('request');
 const path = require('path');
 const fs = require('fs');
-const mustache = require("mustache");
+const mustache = require('mustache');
 const formidableMiddleware = require('express-formidable');
-const sessions = require("client-sessions");
-const serializer = require('serialize-to-js');
-const ampOptimizer = require('amp-toolbox-optimizer');
-const productApiManager = require('./ApiManager.js');
-const cartManager = require('./Cart.js');
+const sessions = require('client-sessions');
+const ampOptimizer = require('@ampproject/toolbox-optimizer');
+const ApiManager = require('./ApiManager.js');
+const Cart = require('./Cart.js');
 
-const apiManager = new productApiManager();
+const apiManager = new ApiManager();
 
 /* CONSTANTS */
 
@@ -45,13 +42,6 @@ const staticPageUrls = [
     '/blog-listing.html',
     '/contact.html'
 ];
-
-
-// use performance optimizations provided by the AMP cache, but on our origin.
-// see https://www.npmjs.com/package/amp-toolbox-optimizer for details
-ampOptimizer.setConfig({
-  validAmp: true,
-});
 
 
 /** THE EXPRESS.JS SERVER **/
@@ -119,7 +109,8 @@ app.use(function(req, res, next) {
   const originalSend = res.send;
 
   res.send = function() {
-    ampOptimizer.transformHtml(arguments[0]).then(transformed => {
+    const ourAmpOptimizer = ampOptimizer.create();
+    ourAmpOptimizer.transformHtml(arguments[0]).then(transformed => {
       // console.log('[cache miss]', key);
       // rewrite body to optimized AMP version
       arguments[0] = transformed;
@@ -168,15 +159,13 @@ app.get('/product-listing', function(req, res) {
                    req.query.category : defaultProductFilters.category;
 
     let responseObj = {
-        productsCategory: gender,
-        productsGender: category
+        productsCategory: category,
+        productsGender: gender
     };
 
-    responseObj.shirtSelected = category == 'shirt';
+    responseObj.shirtSelected = category == 'shirts';
     responseObj.shortSelected = !responseObj.shirtSelected;
-
     responseObj.womenSelected = gender == 'women';
-    responseObj.menSelected = !responseObj.womenSelected; // do we need this?
 
     renderPage(req, res, 'product-listing', responseObj);
 });
@@ -192,13 +181,12 @@ app.get('/product-details', function(req, res) {
     };
 
     request(options, (error, response, body) => {
-        if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
-            var productObj = apiManager.parseProduct(body);
+        if (!error && !apiManager.isResponseError(body)) {
+            var productObj = apiManager.fixProductData(body);
             productObj.CategoryId = categoryId;
             renderPage(req, res, 'product-details', productObj);
 
         } else {
-
             renderPage(req, res, 'product-not-found');
         }
     });
@@ -223,7 +211,24 @@ app.get('/shopping-cart', function(req, res) {
  ***             HANDLERS FOR API ENDPOPINTS             ***
  ***********************************************************/
 
-// Note this is the POST case
+/*
+ * If we get a POST request to /add-to-cart, it's time for first step in our adding-to-cart process.
+ * Ideally, the request will come with cookies, in which case we just read the session cookie,
+ * make the cart mutation, and return.
+ * If it doesn't come with cookies, then this might be a new user. Or we might be on the AMP cache
+ * on a browser that's blocking third-party cookies.
+ * AMP adds the AMP-Same-Origin header to requests from the origin (i.e., not from cache).
+ * So, if that header is missing, we're on the cache, and cookies might be blocked.
+ * In this case, we put the parameters from the POST into a query string.
+ * We build a new URL from the origin domain and that query string.
+ * Then we use the AMP-Redirect-To header to ask AMP to redirect to that URL.
+ * This creates a GET request which we receive from the origin! Now, we can read the session cookie
+ * and make the change.
+ * Then we do one final AMP-Redirect to our origin site, minus the query string,
+ * so that the user doesn't have to deal with that query string. Voila!
+ * 
+*/
+//TODO: Actually implement that.
 //TODO: will there be garbage in the POST? Or can we just stick all those fields in the query string?
 app.post('/api/add-to-cart', function(req, res) {
 
@@ -247,6 +252,7 @@ app.post('/api/add-to-cart', function(req, res) {
     }
 
     enableCors(req, res);
+
     //amp-form requires json response
     res.json({});
 });
@@ -265,7 +271,7 @@ app.get('/api/categories', function(req, res) {
     let ampList = req.query.ampList;
     let sort = req.query.sort;
 
-    let apiUrl = apiManager.getApiUrl(categoryId, sort);
+    let apiUrl = apiManager.getCategoryUrl(categoryId, sort);
     console.log("Calling API Url: " + apiUrl);
 
     const options = {
@@ -273,8 +279,8 @@ app.get('/api/categories', function(req, res) {
     };
 
     request(options, (error, response, body) => {
-        if (!error) {
-            res.send (apiManager.parseCategory (body, ampList));
+        if (!error && !apiManager.isResponseError(body)) {
+            res.send (apiManager.fixCategoryData(body, ampList));
         } else {
             res.json ({ error: 'An error occurred in /api/categories' });
         }
@@ -292,8 +298,8 @@ app.get('/api/product', function(req, res) {
     };
 
     request(options, (error, response, body) => {
-        if (!error && body != 'Product not found' && !body.includes('An error has occurred')) {
-            res.send(apiManager.parseProduct(body, ampList));
+        if (!error && !apiManager.isResponseError(body)) {
+            res.send(apiManager.fixProductData(body, ampList));
         } else {
             res.json({ error: 'An error occurred in /api/product: ' + body });
         }
@@ -302,46 +308,48 @@ app.get('/api/product', function(req, res) {
 
 // Retrieve the shopping cart from session, and wrap it into an 'items' array, which is the format expected by amp-list.
 app.get('/api/cart-items', function(req, res) {
-    let cart = getCartFromSession(req);
-
-    let response = { items: [cart] };
+    const cart = new Cart(req);
+    let response = { items: [cart.cart] };
 
     enableCors(req, res);
     res.send(response);
 });
 
 app.get('/api/cart-count', function(req, res) {
-    let cart = getCartFromSession(req);
-
-    let response = { items: [{ count: cart.cartItems.length }] };
+    let cart = new Cart(req);
+    let response = { items: [{ count: cart.cart.items.length }] };
 
     enableCors(req, res);
     res.send(response);
 });
 
-
-//TODO: it's a little strange the way we build the item here...
 app.post('/api/delete-cart-item', function(req, res) {
     let cart = new Cart(req);
 
-    const item = {productId: req.fields.productId, color: req.fields.color, size: req.fields.size};
+    const item = {
+        productId: req.fields.productId,
+        color: req.fields.color,
+        size: req.fields.size
+    };
     cart.removeItem(item);
 
-    let json = {items: [cart.cart.items]};
+    let json = cart.cart;
 
     enableCors(req, res);
     res.send(json);
 });
 
-
+/*
+ * For now, Related Products is simply other products in the same category.
+ * So we get a list of products from the category API,
+ * then call a method that enhances that list so it's suitable.
+ */
 app.get('/api/related-products', function(req, res) {
     let categoryId = req.query.categoryId;
     let productId = req.query.productId;
 
-    let categoryUrl = apiManager.getApiUrl(categoryId);
+    let categoryUrl = apiManager.getCategoryUrl(categoryId);
 
-    //the response will be a 1 element items array, to be able to combine amp-list with amp-mustache
-    //see: https://github.com/ampproject/amphtml/issues/4405#issuecomment-379696849
     let relatedProductsResponse = { items: [] };
 
     const options = {
@@ -349,13 +357,13 @@ app.get('/api/related-products', function(req, res) {
     };
 
     request(options, (error, response, body) => {
-        if (!error) {
+        if (!error && !apiManager.isResponseError(body)) {
             let relatedProducts = apiManager.getRelatedProducts(productId, body);
             relatedProductsResponse.items.push(relatedProducts);
             res.send(relatedProductsResponse);
         } else {
             res.json({ error: 'An error occurred in /api/related-products' });
-            console.log(error);
+            console.error(error);
         }
     });
 });
@@ -363,6 +371,7 @@ app.get('/api/related-products', function(req, res) {
 
 /** HELPERS **/
 
+//TODO: can we dump this and use the standard AMP CORS module instead?
 function enableCors(req, res) {
     //set to all for dev purposes only, change it by configuration to final domain
     let sourceOrigin = req.query.__amp_source_origin;

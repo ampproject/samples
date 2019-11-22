@@ -106,11 +106,12 @@ gulp.task('server', function buildImages() {
 });
 
 /**
- * Builds the HTML files. Only files from 'pages' are built, such that partials
- * are ignored as targets.
+ * Builds the HTML files. Only files from 'pages' are built.
+ * We don't want to build partials!
  */
 gulp.task('html', gulp.series('styles', function buildHtml() {
     const pageFilter = filter(['**/pages/*.html']);
+
     return gulp.src(paths.html.src)
         .pipe(pageFilter)
         .pipe(fileinclude({
@@ -145,7 +146,7 @@ gulp.task('clean', function clean() {
 /**
  * Builds the output from sources.
  */
-gulp.task('build', gulp.series('images', 'favicon', 'rootConfig', 'html', 'server', 'validate'));
+gulp.task('build', gulp.series('images', 'favicon', 'rootConfig', 'html', 'server'));
 
 /**
  * First rebuilds the output then triggers a reload of the browser.
