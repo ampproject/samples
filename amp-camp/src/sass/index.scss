@@ -1,5 +1,22 @@
 @import 'mixins';
 
+@media (max-width: $sm-max-width) {
+  .wide {
+    display: none;
+  }
+  .narrow {
+    display: block;
+  }
+}
+@media (min-width: $sm-min-width) {
+  .wide {
+    display: block;
+  }
+  .narrow {
+    display: none;
+  }
+}
+
 .landing {
 	max-width: none;
 }

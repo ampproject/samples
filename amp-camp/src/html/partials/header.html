@@ -13,7 +13,7 @@
         <a href="/shopping-cart">
                 <amp-img src="img/campmor_backpack.png" width="35" height="27"></amp-img>
                 <amp-list id="cart-count" src="/api/cart-count" height="17" width="17"
-                          layout="fixed" binding="no" 
+                          layout="fixed" binding="no" credentials="include"
 %%if (context.pageType == 'cart-details') {                          
                           [hidden]="!cartItemsList.items[0].items.length"
 }

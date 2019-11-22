@@ -60,6 +60,11 @@ app.use(sessions({
     secret: sessionInfo.secret
 }));
 
+//Configure amp-toolbox-cors for CORS.
+app.use(ampCors({
+  verifyOrigin: false
+}));
+
 app.engine('html', function(filePath, options, callback) {
     fs.readFile(filePath, function(err, content) {
         mustache.tags = ['<%', '%>'];
@@ -311,7 +316,6 @@ app.get('/api/cart-items', function(req, res) {
     const cart = new Cart(req);
     let response = { items: [cart.cart] };
 
-    enableCors(req, res);
     res.send(response);
 });
 
@@ -319,7 +323,6 @@ app.get('/api/cart-count', function(req, res) {
     let cart = new Cart(req);
     let response = { items: [{ count: cart.cart.items.length }] };
 
-    enableCors(req, res);
     res.send(response);
 });
 

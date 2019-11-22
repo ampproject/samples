@@ -55,7 +55,8 @@
 		&.facebook {
 			mask-image: url('img/social-icons.svg#facebook-svg-view');
 		}
-
+		
+		&[type="instagram"],
 		&.instagram {
 			mask-image: url('img/social-icons.svg#instagram-svg-view');
 		}
