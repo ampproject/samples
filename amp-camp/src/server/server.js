@@ -32,6 +32,8 @@ const defaultProductFilters = {
     category: 'shirts'
 }
 
+const defaultCategoryID = 'women-shirts'; // everyone needs women's shirts!
+
 // a simple in-memory response cache
 const cache = new Map();
 
@@ -137,9 +139,7 @@ app.use(function(req, res, next) {
 // so the 'canonical' tag can be inserted, before rendering the page.
 // Otherwise, calls next(), so another handler can process the request.
 app.use(function(req, res, next) {
-    console.log('in interceptor');
     let originalUrl = req.originalUrl;
-    console.log('originalURL is', originalUrl);
 
     if(req.method === 'GET' && staticPageUrls.includes(originalUrl)) {
       let templateName = getTemplateForUrl(originalUrl);
@@ -236,34 +236,42 @@ app.get('/shopping-cart', function(req, res) {
  * so that the user doesn't have to deal with that query string. Voila!
  * 
 */
-//TODO: Actually implement that.
-//TODO: will there be garbage in the POST? Or can we just stick all those fields in the query string?
 app.post('/api/add-to-cart', function(req, res) {
 
-    const origin = req.get('origin');
-    let params = [];
+    // If the request comes from the cache, and we have no session cookie, 
+    // transform the POST request into a GET URL, and redirect to that URL.
+    if (req.headers['amp-same-origin'] !== 'true' && !('cart' in req.session)) {
+        const origin = req.get('origin');
+        let params = [];
 
-    //If comes from the cache
-    //transfrom POST into GET and redirect to same url
-    if (req.headers['amp-same-origin'] !== 'true') {
         for (let[key, value] of Object.entries(req.fields))
             params.push(key + '=' + value);
 
         let queryString = params.join('&');
         res.header("AMP-Redirect-To", origin + "/api/add-to-cart?" + queryString);
 
+    // Otherwise, just make the mutation.
+    // We don't have to redirect to the shopping cart page, but for now we do, for convenience.
+    // We just don't redirect to the origin.
+    // TODO: do something in the case that somehow the __amp_source_origin header is missing.
+
     } else {
         const cart = new Cart(req);
         cart.addItem(req.fields);
-        //TODO: we don't always need to do this, do we...
-        res.header("AMP-Redirect-To", origin + "/shopping-cart");
+        res.header("AMP-Redirect-To", req.query.__amp_source_origin + '/shopping-cart');
     }
 
-    //amp-form requires json response
+    // <amp-form> requires a JSON response
     res.json({});
 });
 
-
+/*
+ * Note that this is the GET case.
+ * The front end makes mutation requests via POST.
+ * If we get here, it means we're in the middle of the process of redirecting from cache to origin.
+ * Our job is to make the mutation, then redirect to the shopping cart page,
+ * without the query string, of course.
+ */
 app.get('/api/add-to-cart', function(req, res) {
     const cart = new Cart(req);
     cart.addItem(req.query);
@@ -278,7 +286,6 @@ app.get('/api/categories', function(req, res) {
     let sort = req.query.sort;
 
     let apiUrl = apiManager.getCategoryUrl(categoryId, sort);
-    console.log("Calling API Url: " + apiUrl);
 
     const options = {
         url: apiUrl
@@ -348,7 +355,7 @@ app.post('/api/delete-cart-item', function(req, res) {
  * then call a method that enhances that list so it's suitable.
  */
 app.get('/api/related-products', function(req, res) {
-    let categoryId = req.query.categoryId;
+    let categoryId = req.query.categoryId || defaultCategoryID;
     let productId = req.query.productId;
 
     let categoryUrl = apiManager.getCategoryUrl(categoryId);
