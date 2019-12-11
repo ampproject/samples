@@ -20,7 +20,7 @@ class Cart {
         this.cart = serializer.deserialize(this.serializedCart);
 
         // cache the request
-        this.req = req;
+        this._req = req;
     }
 
 // createNew() returns a default cart.
@@ -41,7 +41,7 @@ class Cart {
 // Serialize our cart and copy our cart to the session.
     copyCartToSession() {
         this._serializedCart = serializer.serialize(this.cart);
-        this.req.session.cart = this._serializedCart;
+        this._req.session.cart = this._serializedCart;
     }
 
 /** addItem() expects an object that contains the product's proprties.

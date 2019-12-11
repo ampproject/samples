@@ -35,8 +35,8 @@ class ApiManager {
         this._maxRelatedProducts = 11;
         this._apiUrlEndpoint = 'https://campmor.ampify.wompmobile.com/campmor';
 
-        this.apiCategoryEndpoint = this._apiUrlEndpoint + '/fetchCategories';
-        this.apiProductEndpoint = this._apiUrlEndpoint + '/fetchProduct';
+        this._apiCategoryEndpoint = this._apiUrlEndpoint + '/fetchCategories';
+        this._apiProductEndpoint = this._apiUrlEndpoint + '/fetchProduct';
     }
 
 
@@ -102,12 +102,12 @@ class ApiManager {
             throw(this._errors.nonexistentAPIParam);
 
         let queryString = `${this._paramKeys.category}=${categoryAPIParam}&${this._paramKeys.sortOrder}=${sortOrderAPIParam}&${this._paramKeys.page}=1`;
-        return this.apiCategoryEndpoint + '?' + queryString;
+        return this._apiCategoryEndpoint + '?' + queryString;
     }
 
 // Generate an API Url of the sort https://campmoramp.ampify.wompmobile.com/campmor/fetchProduct/31893
     getProductUrl(productId) {
-        return this.apiProductEndpoint + '/' + productId;
+        return this._apiProductEndpoint + '/' + productId;
     }
 
 // Determine whether a given value is among the values the API accepts for a given param
