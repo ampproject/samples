@@ -15,14 +15,14 @@
                 <amp-list id="cart-count" src="/api/cart-count" height="17" width="17"
                           layout="fixed" binding="no" credentials="include"
 %%if (context.pageType == 'cart-details') {                          
-                          [hidden]="!cartItemsList.items[0].cartItems.length"
+                          [hidden]="!cartItemsList.items[0].items.length"
 }
 >
                     <template type="amp-mustache">
                         {{#count}}
                         <span 
 %%if (context.pageType == 'cart-details') {                          
-                           [text]="cartItemsList.items[0].cartItems.length"
+                           [text]="cartItemsList.items[0].items.length"
 }
                         >
                             {{count}}

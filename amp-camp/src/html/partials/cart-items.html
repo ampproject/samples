@@ -6,7 +6,7 @@
 {{/isEmpty}}
 {{^isEmpty}}
 <h3>Your Basket</h3>
-{{#cartItems}}
+{{#items}}
 <div class="cart-product">
     <div class="cart-image-container">
         <a href="/product-details?productId={{productId}}">
@@ -22,7 +22,7 @@
     </div>
     <div class="cart-product-right title">
         <span>{{size}}</span>
-        <span>${{price}}</span>
+        <span>${{priceString}}</span>
         <span>{{quantity}}</span>
 
         %%if (context.removeButton) {
@@ -52,5 +52,5 @@
 </form>
 }
 
-{{/cartItems}}
+{{/items}}
 {{/isEmpty}}
