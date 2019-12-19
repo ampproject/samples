@@ -6,7 +6,7 @@ const mustache = require('mustache');
 const formidableMiddleware = require('express-formidable');
 const sessions = require('client-sessions');
 const ampOptimizer = require('@ampproject/toolbox-optimizer');
-const ampCors = require('amp-toolbox-cors');
+const ampCors = require('@ampproject/toolbox-cors');
 const ApiManager = require('./ApiManager.js');
 const Cart = require('./Cart.js');
 
@@ -132,6 +132,7 @@ app.use(function(req, res, next) {
   }
 
   next();
+
 });
 
 // Intercepts all requests:
@@ -312,7 +313,9 @@ app.get('/api/product', function(req, res) {
 
     request(options, (error, response, body) => {
         if (!error && !apiManager.isResponseError(body)) {
-            res.send(apiManager.fixProductData(body, ampList));
+            const productData = apiManager.fixProductData(body, ampList);
+            res.send({items: productData});
+
         } else {
             res.json({ error: 'An error occurred in /api/product: ' + body });
         }
