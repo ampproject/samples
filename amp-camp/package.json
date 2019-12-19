@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "1.1.2",
-    "amp-toolbox-cors": "^1.2.0-alpha.2",
+    "@ampproject/toolbox-cors": "1.1.1",
     "amphtml-autoscript": "1.5.2",
     "amphtml-validator": "^1.0.29",
     "browser-sync": "^2.26.7",
