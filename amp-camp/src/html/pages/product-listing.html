@@ -15,13 +15,13 @@
         <amp-state id="products">
             <script type="application/json">
             {
-                "gender": "<%productsGender%>",
-                "category": "<%productsCategory%>",
+                "gender": "[%productsGender%]",
+                "category": "[%productsCategory%]",
                 "filter": "high-low"
             }
             </script>
         </amp-state>
-        <amp-img class="banner xs-hide sm-hide" src="img/<%productsGender%>-extra-wide.jpg" [src]="'img/'+products.gender+'-extra-wide.jpg'" width="3.5" height="1" layout="responsive" alt="Product listing" noloading="">
+        <amp-img class="banner xs-hide sm-hide" src="img/[%productsGender%]-extra-wide.jpg" [src]="'img/'+products.gender+'-extra-wide.jpg'" width="3.5" height="1" layout="responsive" alt="Product listing" noloading="">
             <div placeholder="" class="loading"></div>
         </amp-img>
         <section class="listing-content">
@@ -33,21 +33,21 @@
                                       on="select:AMP.setState({products:{gender: event.targetOption}}), 
                                           products-list.changeToLayoutContainer()"
                                       [selected]="products.gender">
-                            <%#womenSelected%>
+                            [%#womenSelected%]
                             <button type="button" option="women" selected>Women</button>
                             <button type="button" option="men" >Men</button>
-                            <%/womenSelected%>
-                            <%^womenSelected%>
+                            [%/womenSelected%]
+                            [%^womenSelected%]
                             <button type="button" option="women" >Women</button>
                             <button type="button" option="men" selected>Men</button>
-                            <%/womenSelected%>
+                            [%/womenSelected%]
                         </amp-selector> 
                 </div>
             </div>
 
             <div class="listing-container">
                 <div class="listing-header">
-                    <h1 [text]="products.gender+'’s Clothing'"><%productsGender%>’s Clothing</h1>
+                    <h1 [text]="products.gender+'’s Clothing'">[%productsGender%]’s Clothing</h1>
                     <div class="listing-filters">
                         <div class="select-wrapper md-hide lg-hide">
                             <div class="title">
@@ -57,18 +57,18 @@
                                               on="select:AMP.setState({products:{category: event.targetOption}}),
                                                   products-list.changeToLayoutContainer()"
                                               [selected]="products.category">
-                                    <%#shirtSelected%>
+                                    [%#shirtSelected%]
                                     <button type="button" option="shirts" selected>Shirts</button>
-                                    <%/shirtSelected%>
-                                    <%^shirtSelected%>
+                                    [%/shirtSelected%]
+                                    [%^shirtSelected%]
                                     <button type="button" option="shirts">Shirts</button>
-                                    <%/shirtSelected%>
-                                    <%#shortSelected%>
+                                    [%/shirtSelected%]
+                                    [%#shortSelected%]
                                     <button type="button" option="shorts" selected>Shorts</button>
-                                    <%/shortSelected%>
-                                    <%^shortSelected%>
+                                    [%/shortSelected%]
+                                    [%^shortSelected%]
                                     <button type="button" option="shorts" >Shorts</button>
-                                    <%/shortSelected%>
+                                    [%/shortSelected%]
                                 </amp-selector> 
                             </div>
                         </div>
@@ -83,13 +83,13 @@
                 </div>
                 <amp-list id="products-list"
                           [src]="'/api/categories?categoryId=' + products.gender + '-' + products.category + '&sort=' + products.filter"
-                          src="/api/categories?categoryId=<%productsGender%>-<%productsCategory%>&sort=high-low"
+                          src="/api/categories?categoryId=[%productsGender%]-[%productsCategory%]&sort=high-low"
                           height="1000" width="300"
                           layout="responsive"
                           binding="no"
                 >
                     <template type="amp-mustache">
-                        <a href="product-details?categoryId=<%productsGender%>-<%productsCategory%>&productId={{productId}}"
+                        <a href="product-details?categoryId=[%productsGender%]-[%productsCategory%]&productId={{productId}}"
                            target="_self"
                            class="listing-product"
                            [href]="'product-details?categoryId=' + products.gender + '-' + products.category + '&productId={{productId}}'"

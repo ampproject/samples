@@ -9,12 +9,15 @@ const minimist = require('minimist');
 const del = require('del');
 const gulpAmpValidator = require('gulp-amphtml-validator');
 const bs = require('browser-sync').create();
-const autoScript = require('amphtml-autoscript').create();
 const reload = bs.reload;
 const nodemon = require('gulp-nodemon');
 const replace = require('gulp-replace');
 const noop = require('gulp-noop');
+const through2 = require('through2');
 const mergeMediaQuery = require('gulp-merge-media-queries');
+const AmpOptimizer = require('@ampproject/toolbox-optimizer');
+
+const ampOptimizer = AmpOptimizer.create();
 
 // Build type is configurable such that some options can be changed e.g. whether
 // to minimise CSS. Usage 'gulp <task> --env development'.
@@ -118,8 +121,14 @@ gulp.task('html', gulp.series('styles', function buildHtml() {
             prefix: '%%',
             basepath: '@file'
         }))
-        .pipe(autoScript())
-        .pipe(gulp.dest(paths.html.dest));
+    .pipe(through2.obj(async (file, _, cb) => {
+      if (file.isBuffer()) {
+        const optimizedHtml = await ampOptimizer.transformHtml(file.contents.toString())
+        file.contents = Buffer.from(optimizedHtml)
+      }
+      cb(null, file);
+    }))
+    .pipe(gulp.dest(paths.html.dest));
 }));
 
 /**
