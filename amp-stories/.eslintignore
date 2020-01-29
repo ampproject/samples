@@ -1,0 +1,7 @@
+node_modules
+/coverage
+/dist
+/build
+/flow-typed
+/flow-stub
+**/__types__/**
