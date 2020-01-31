@@ -5,7 +5,6 @@ const fs = require('fs');
 const mustache = require('mustache');
 const formidableMiddleware = require('express-formidable');
 const sessions = require('client-sessions');
-const ampOptimizer = require('@ampproject/toolbox-optimizer');
 const ampCors = require('@ampproject/toolbox-cors');
 const ApiManager = require('./ApiManager.js');
 const Cart = require('./Cart.js');
@@ -71,7 +70,7 @@ app.use(sessions({
 
 app.engine('html', function(filePath, options, callback) {
     fs.readFile(filePath, function(err, content) {
-        mustache.tags = ['<%', '%>'];
+        mustache.tags = ['[%', '%]'];
 
         if (err)
             return callback(err);        
@@ -91,7 +90,7 @@ const listener = app.listen(port, () => {
  ***     HANDLERS FOR STATIC PAGES AND STATIC FILES      ***
  ***********************************************************/
 
-// Optimize and cache HTML responses
+// Cache HTML responses
 app.use(function(req, res, next) {
   if (req.method != 'GET' || !req.accepts('text/html')) {
     return next();
@@ -108,31 +107,7 @@ app.use(function(req, res, next) {
     res.send(cachedBody);
     return;
   } 
-
-  // Replace response.send with our own method to be able to intercept html responses
-  // before sending it to the client. This way we can use AMP Optimizer and cache the 
-  // response. 
-  //
-  // See https://github.com/ampproject/amp-toolbox/tree/master/packages/optimizer
-
-  const originalSend = res.send;
-
-  res.send = function() {
-    const ourAmpOptimizer = ampOptimizer.create();
-    ourAmpOptimizer.transformHtml(arguments[0]).then(transformed => {
-      // console.log('[cache miss]', key);
-      // rewrite body to optimized AMP version
-      arguments[0] = transformed;
-      // Cache the response in memory. In our demo case we can safely assume 
-      // that all pages fit into memory. 
-      cache.set(key, transformed);
-      // Pass the optimized version to the original send method.
-      originalSend.apply(this, arguments);
-    });
-  }
-
   next();
-
 });
 
 // Intercepts all requests:
