@@ -111,6 +111,9 @@ gulp.task('server', function buildImages() {
 /**
  * Builds the HTML files. Only files from 'pages' are built.
  * We don't want to build partials!
+ * Use the AMP Optimizer to add any scripts required by AMP components,
+ * and to perform the optimizations done by AMP caches right here in our HTML,
+ * greatly speeding up our AMP pages when served from our origin.
  */
 gulp.task('html', gulp.series('styles', function buildHtml() {
     const pageFilter = filter(['**/pages/*.html']);
