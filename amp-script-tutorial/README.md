@@ -2,7 +2,9 @@
 
 ## About
 
-This repository contains the code you'll use to do the [&lt;amp-script&gt; tutorial](https://amp.dev/documentation/guides-and-tutorials/develop/custom-javascript-tutorial/)! This tutorial presents a form containing a password input. We want your password to follow certain rules, and so the user can't submit the form until those rules have been followed. In the tutorial, you begin with HTML that enforces the rules using &lt;amp-form&gt;'s `pattern` attribute. You then transform that into a more user-friendly experience which uses &lt;amp-script&gt;.
+This repository contains the code you'll use to do the [&lt;amp-script&gt; tutorial](https://amp.dev/documentation/guides-and-tutorials/develop/custom-javascript-tutorial/)!
+
+This tutorial presents a form containing a password input. We want your password to follow certain rules, and so the user can't submit the form until those rules have been followed. In the tutorial, you begin with HTML that enforces the rules using &lt;amp-form&gt;'s `pattern` attribute. You then transform that into a more user-friendly experience which uses &lt;amp-script&gt;.
 
 This repo contains two subdirectories:
 * `starter_code`: the code you start with
