@@ -1,0 +1,142 @@
+<!doctype html>
+<html ⚡ lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <link rel="canonical" href=".">
+    <title>&lt;amp-script&gt;</title>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
+    <style amp-custom>
+      body {
+        line-height: 2rem;
+        font-size: 1rem;
+        font-family: Roboto, Arial, sans-serif;
+        color: #222;
+      }
+
+      main {
+        padding: 56px 0;
+        margin: 10px;
+        max-width: 750px;
+      }
+
+      p {
+        margin-bottom: 2.5rem;
+        font-size: 1.25rem;
+      }
+
+      input {
+        height: 1.25rem;
+        font-size: .875rem;
+        margin-left: .25rem;
+        padding: 0 .25rem;
+        color: #222;
+      }
+
+      button {
+        background-color: #005af0;
+        color: #eee;
+        font-size: 1rem;
+        margin-top: 1rem;
+        padding: .5rem 1rem;
+        border-radius: 6px;
+      }
+
+      button:disabled {
+        background-color: #ccc;
+        color: #666;
+      }
+
+      main h2 {
+        max-width: 600px;
+        margin-left: .5rem;
+        margin-right: .5rem;
+      }
+
+      .top {
+        top: 0;
+      }
+
+      .nav-bar h1 {
+        margin: 0;
+        text-align: center;
+      }
+
+      .nav-bar {
+        background: #005af0;
+        box-shadow: 0 2px 10px 0 rgba(0,0,0,.07);
+        color: #ffffff;
+        height: 56px;
+        line-height: 56px;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .card {
+        background: #dee6ef;
+        padding: 1rem;
+        margin: .5rem;
+        border-radius: 8px;
+      }
+
+      .form-input {
+        margin-bottom: .5rem;
+      }
+
+      #rules {
+        line-height: 1.5rem;
+        margin-top: 1.25rem;
+        padding-left: .5rem;
+        font-size: .875rem;
+      }
+
+      li.valid {
+        color: #2d7b1f;
+      } 
+
+      li.invalid {
+        color:#c11136;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav-bar top">
+      <h1>&lt;amp-script&gt; exercise!</h1>
+    </header>
+    <main>
+      <p>Welcome to our site! <br/> To register, enter your email address and a secure password.</p>
+      <form method="post" action-xhr="#" target="_top" class="card">
+        <div class="form-input">
+          <label>Email:</label>
+          <input type="text" name="email" tabindex=1 role="input" required>
+        </div>
+        <div class="form-input">
+          <label>Password:</label>
+          <input type=password 
+                name="password"
+                required
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-z\d]).{8,}$"
+                role="input"
+                tabindex=2
+                on="tap:rules.show">
+        </div>
+        <div id="rules" hidden>
+          <span>Your password must contain each of the following:</span>
+          <ul>
+            <li>Lowercase letter</li>
+            <li>Capital letter</li>
+            <li>Number</li>
+            <li>Special character (like @$!%*?&)</li>
+            <li>At least 8 characters</li>
+          </ul>
+        </div>
+        <button type="submit" tabindex="3">Submit</button> 
+      </form>
+    </main>
+  </body>
+</html>
