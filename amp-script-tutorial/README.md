@@ -18,7 +18,7 @@ If your computer is already running a local server, you don't need to set anythi
 
 `http://localhost/amp-script-tutorial/starter_code/index.html`
 
-Alternately, you can set up a quick local server using something like [serve](https://www.npmjs.com/package/serve), the node.js-based static content server.
+Alternately, you can set up a quick local server using something like [serve](https://www.npmjs.com/package/serve), the Node.js-based static content server.
 
 Assuming you've installed [node](https://nodejs.org/), you can simply go to your command line, enter the directory where your code lives, and type:
 
