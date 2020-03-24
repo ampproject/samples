@@ -4,7 +4,7 @@
 
 This repository contains the code you'll use to do the [&lt;amp-script&gt; tutorial](https://amp.dev/documentation/guides-and-tutorials/develop/custom-javascript-tutorial/)!
 
-This tutorial presents a form containing a password input. We want your password to follow certain rules, and so the user can't submit the form until those rules have been followed. In the tutorial, you begin with HTML that enforces the rules using &lt;amp-form&gt;'s `pattern` attribute. You then transform that into a more user-friendly experience which uses &lt;amp-script&gt;.
+This tutorial presents a form containing a password input. Any password entered in this input must meet certain criteria, and so the form won't allow the user to submit until it does. In the tutorial, you begin with HTML that enforces the rules using &lt;amp-form&gt;'s `pattern` attribute. You then transform that into a more user-friendly experience which uses &lt;amp-script&gt;.
 
 This repo contains two subdirectories:
 * `starter_code`: the code you start with
@@ -18,7 +18,7 @@ If your computer is already running a local server, you don't need to set anythi
 
 `http://localhost/amp-script-tutorial/starter_code/index.html`
 
-Alternately, you can set up a simple local server using something like [serve](https://www.npmjs.com/package/serve), the node.js-based static content server.
+Alternately, you can set up a quick local server using something like [serve](https://www.npmjs.com/package/serve), the node.js-based static content server.
 
 Assuming you've installed [node](https://nodejs.org/), you can simply go to your command line, enter the directory where your code lives, and type:
 
