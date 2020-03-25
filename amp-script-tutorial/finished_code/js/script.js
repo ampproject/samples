@@ -2,6 +2,7 @@ console.log('Hello, amp-script!');
 
 const passwordBox = document.getElementById("passwordBox");
 const submitButton = document.getElementById("submitButton");
+const rulesArea = document.getElementById("rules");
 
 const checkRegexes = {
   lower: /[a-z]/,
@@ -48,7 +49,8 @@ function initCheckPassword(element) {
     }
   };
 
-  element.addEventListener("keyup", checkPassword);   
+  element.addEventListener("focus", () => rulesArea.removeAttribute("hidden"));
+  element.addEventListener("keyup", checkPassword);
 }
 
 initCheckPassword(passwordBox);
