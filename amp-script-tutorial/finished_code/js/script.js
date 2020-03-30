@@ -22,7 +22,7 @@ function initCheckPassword(element) {
   const checkFail = (el) => {
     el.classList.remove("valid");
     el.classList.add("invalid");
-  }
+  };
 
 /*
  * Retrieve the contents of the password input. Check it against our regexes.

@@ -100,13 +100,6 @@
         font-size: .875rem;
       }
 
-      li.valid {
-        color: #2d7b1f;
-      } 
-
-      li.invalid {
-        color:#c11136;
-      }
     </style>
   </head>
   <body>
@@ -128,7 +121,7 @@
                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-z\d]).{8,}$"
                 role="input"
                 tabindex=2
-                on="tap:rules.show">
+                on="tap:rules.show; input-debounced:rules.show">
         </div>
         <div id="rules" hidden>
           <span>Your password must contain each of the following:</span>
