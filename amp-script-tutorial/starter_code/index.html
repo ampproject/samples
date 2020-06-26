@@ -8,7 +8,6 @@
     <title>&lt;amp-script&gt;</title>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
     <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
-    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
     <style amp-custom>
       body {
         line-height: 2rem;
@@ -111,7 +110,7 @@
       <form method="post" action-xhr="#" target="_top" class="card">
         <div class="form-input">
           <label>Email:</label>
-          <input type="text" name="email" tabindex=1 role="input" required>
+          <input type="text" name="email" tabindex="1" role="input" required>
         </div>
         <div class="form-input">
           <label>Password:</label>
@@ -119,7 +118,7 @@
                 name="password"
                 required
                 role="input"
-                tabindex=2
+                tabindex="2"
                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-z\d]).{8,}$"
                 on="tap:rules.show; input-debounced:rules.show">
         </div>
