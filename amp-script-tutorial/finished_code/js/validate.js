@@ -8,7 +8,7 @@ const checkRegexes = {
   lower: /[a-z]/,
   upper: /[A-Z]/,
   digit: /\d/,
-  special: /[^a-z\d]/i,
+  special: /[^a-zA-Z\d]/i,
   eight: /.{8}/
 };
 
