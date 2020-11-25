@@ -44,7 +44,7 @@
     "@babel/preset-env": "7.2.3",
     "@babel/register": "7.0.0",
     "amphtml-validator": "1.0.23",
-    "eslint": "5.12.0",
+    "eslint": "5.16.0",
     "eslint-config-metalab": "10.0.0",
     "nodemon": "1.18.9",
     "prettier": "1.15.3"
