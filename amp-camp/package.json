@@ -38,9 +38,9 @@
   },
   "devDependencies": {
     "gulp": "github:gulpjs/gulp",
-    "gulp-merge-media-queries": "^0.2.1",
-    "gulp-nodemon": "^2.2.1",
-    "gulp-noop": "^1.0.0",
-    "gulp-replace": "^1.0.0"
+    "gulp-merge-media-queries": "0.2.1",
+    "gulp-nodemon": "2.5.0",
+    "gulp-noop": "1.0.1",
+    "gulp-replace": "1.1.3"
   }
 }
