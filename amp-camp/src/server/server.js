@@ -75,7 +75,7 @@ app.engine('html', function(filePath, options, callback) {
         if (err)
             return callback(err);        
 
-        let rendered = mustache.to_html(content.toString(), options);
+        let rendered = mustache.render(content.toString(), options);
         return callback(null, rendered);
     });
 });
