@@ -25,7 +25,7 @@
     "get-timezone-offset": "1.0.3",
     "google-spreadsheet": "2.0.6",
     "jsonwebtoken": "8.4.0",
-    "mdi-react": "5.1.0",
+    "mdi-react": "5.6.0",
     "midori": "3.3.0",
     "node-fetch": "2.3.0",
     "pluralize": "7.0.0",
