@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "7.0.0",
-    "babel-plugin-module-resolver": "3.1.1",
+    "babel-plugin-module-resolver": "3.2.0",
     "busboy": "0.2.14",
     "classnames": "2.2.6",
     "cookies": "0.7.3",
