@@ -45,7 +45,7 @@
     "@babel/plugin-proposal-class-properties": "7.2.1",
     "@babel/preset-env": "7.2.0",
     "@babel/register": "7.0.0",
-    "amphtml-validator": "1.0.23",
+    "amphtml-validator": "1.0.35",
     "babel-plugin-module-resolver": "3.1.1",
     "copy-dir": "^1.2.0",
     "eslint": "5.10.0",
