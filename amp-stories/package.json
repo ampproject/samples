@@ -19,7 +19,7 @@
   "dependencies": {
     "@babel/preset-react": "7.0.0",
     "babel-plugin-styled-components": "^1.10.6",
-    "clean-css": "4.2.1",
+    "clean-css": "4.2.4",
     "http-server": "^0.11.1",
     "js-beautify": "^1.10.2",
     "midori": "3.3.0",
