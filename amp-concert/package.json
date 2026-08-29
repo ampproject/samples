@@ -24,7 +24,7 @@
     "geoip-country": "3.2.0",
     "get-timezone-offset": "1.0.3",
     "google-spreadsheet": "2.0.6",
-    "jsonwebtoken": "8.4.0",
+    "jsonwebtoken": "9.0.0",
     "mdi-react": "5.1.0",
     "midori": "3.3.0",
     "node-fetch": "2.3.0",
