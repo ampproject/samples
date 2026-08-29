@@ -16,7 +16,7 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "body-parser": "1.18.3",
+    "body-parser": "1.20.6",
     "cookie-parser": "1.4.3",
     "express": "4.16.4",
     "gcloud": "^0.37.0",
